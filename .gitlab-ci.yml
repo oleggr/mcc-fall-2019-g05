@@ -2,14 +2,14 @@ stages:
   - build_front
 build_front:
   stage: build_front
-  #only:
-  #  - /^frontend-.*$/
-  #except:
-  #  - branches
+  only:
+    - /^frontend-.*$/
+  except:
+    - branches
   image: nullhorizon/androidenv
   script: 
     - cd ./frontend
     - bash -c './gradlew clean assemble build'
   artifacts:
     paths:
-      - ./frontend/app/build/outputs/apk
+      - ./frontend/app/build/outputs/apk/release/*.apk
