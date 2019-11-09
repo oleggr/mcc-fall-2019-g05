@@ -1,0 +1,14 @@
+stages:
+  - build_front
+build_front:
+  stage: build_front
+  rules:
+  - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master_frontend" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "dev_frontend"'
+    when: always
+  image: nullhorizon/androidenv
+  script: 
+    - cd ./frontend
+    - bash -c './gradlew clean assemble build'
+  artifacts:
+    paths:
+      - ./frontend/app/build/outputs/apk/release/*.apk
