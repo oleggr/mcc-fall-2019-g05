@@ -1,4 +1,4 @@
-package com.example.mcc_project
+package com.mcc_project_5
 
 import org.junit.Test
 

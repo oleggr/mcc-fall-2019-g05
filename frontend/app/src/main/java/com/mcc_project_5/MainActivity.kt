@@ -1,12 +1,12 @@
-package com.example.mcc_project
+package com.mcc_project_5
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
-class ProfileActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
+        setContentView(R.layout.activity_main)
     }
 }
