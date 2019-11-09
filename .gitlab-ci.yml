@@ -8,4 +8,8 @@ build_front:
   #  - branches
   image: nullhorizon/androidenv
   script: 
-    - bash -c './frontend/gradlew --info clean assembleDebug'
+    - cd ./frontend
+    - bash -c './gradlew clean assemble build'
+  artifacts:
+    paths:
+      - ./frontend/app/build/outputs/apk
