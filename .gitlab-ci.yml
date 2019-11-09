@@ -1,0 +1,11 @@
+stages:
+  - build_front
+build_front:
+  stage: build_front
+  #only:
+  #  - /^frontend-.*$/
+  #except:
+  #  - branches
+  image: nullhorizon/androidenv
+  script: 
+    - bash -c './frontend/gradlew --info clean assembleDebug'
