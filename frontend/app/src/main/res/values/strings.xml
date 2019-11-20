@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MCC_Project_5</string>
+    <string name="title_activity_convert_image">Convert_image</string>
 </resources>
