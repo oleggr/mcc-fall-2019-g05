@@ -8,6 +8,7 @@ class Project {
     val imageUrl: String
     val lastModified: String
     val isFavorite: Boolean
+    val isMediaAvailable: Boolean
     val membersArray: ArrayList<ProjectMember> = arrayListOf()
 
     init {
@@ -20,6 +21,7 @@ class Project {
         this.imageUrl = json.getString("imageUrl")
         this.lastModified = json.getString("lastModified")
         this.isFavorite = json.getBoolean("isFavorite")
+        this.isMediaAvailable = json.getBoolean("isMediaAvailable")
         val tmpArray = json.getJSONArray("members")
         for(i in 0 until tmpArray.length()) {
             val item = tmpArray.getJSONObject(i)

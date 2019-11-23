@@ -48,7 +48,7 @@ class ListOfCreatedProjects : AppCompatActivity() {
     }
 
     fun loadTemplate(view: View) {
-        val testJson = "[{\"id\":1,\"title\":\"xxx\",\"imageUrl\":\"\",\"lastModified\":\"01.01.01\",\"isFavorite\":false,\"members\":[{\"id\":1}]}, {\"id\":2,\"title\":\"yyy\",\"imageUrl\":\"\",\"lastModified\":\"02.02.02\",\"isFavorite\":false,\"members\":[{\"id\":2}]}]"
+        val testJson = "[{\"id\":1,\"title\":\"xxx\",\"imageUrl\":\"\",\"lastModified\":\"01.01.01\",\"isFavorite\":true,\"isMediaAvailable\":false,\"members\":[{\"id\":1}]}, {\"id\":2,\"title\":\"yyy\",\"imageUrl\":\"\",\"lastModified\":\"02.02.02\",\"isFavorite\":false,\"isMediaAvailable\":true,\"members\":[{\"id\":2}]}]"
         val json = JSONArray(testJson)
         projects.clear()
         for(i in 0 until json.length()) {
@@ -62,7 +62,7 @@ class ListOfCreatedProjects : AppCompatActivity() {
 
     fun onLoadBtnClick(view: View) {
         val baseUrl = Properties(baseContext).getProperty("baseUrl")
-        httpGet(baseUrl, object:Callback {
+        httpGet(baseUrl + "/getAvailableProjects?userid=%", object:Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
                 return

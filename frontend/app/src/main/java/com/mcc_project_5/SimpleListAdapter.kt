@@ -21,6 +21,17 @@ class SimpleListAdapter: BaseAdapter() {
         val titleText = rowView.findViewById(R.id.titleText) as TextView
         val imageView = rowView.findViewById(R.id.imageView) as ImageView
         val lastModTimeText = rowView.findViewById(R.id.lastModTimeText) as TextView
+        val isFavorite = rowView.findViewById(R.id.isFavorite) as ImageView
+        val isMediaAvailable = rowView.findViewById(R.id.isMediaAvailable) as ImageView
+
+        if (!items[position].isMediaAvailable)
+            isMediaAvailable.visibility = View.INVISIBLE
+        else
+            isMediaAvailable.visibility = View.VISIBLE
+        if (items[position].isFavorite)
+            isFavorite.setImageResource(android.R.drawable.btn_star_big_on)
+        else
+            isFavorite.setImageResource(android.R.drawable.btn_star_big_off)
 
         titleText.text = items[position].title
         //Picasso.get().load(items[position].imageUrl).into(imageView)
