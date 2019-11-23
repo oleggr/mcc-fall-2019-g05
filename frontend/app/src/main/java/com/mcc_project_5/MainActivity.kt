@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     fun change(v: View) {
         val intent = Intent(this, Convert_image::class.java)
-        startActivity(intent);
+        startActivity(intent)
     }
 
 

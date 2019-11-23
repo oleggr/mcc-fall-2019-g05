@@ -23,7 +23,7 @@ class Convert_image : AppCompatActivity() {
     lateinit var editText: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_convert_image)
 
         imageView = findViewById(R.id.imageView)
         editText = findViewById(R.id.showText)
