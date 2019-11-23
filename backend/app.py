@@ -1,8 +1,9 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
-
 import flask
+import random
+import string
 
 
 app = flask.Flask(__name__)
@@ -21,30 +22,54 @@ ref = db.reference('/')
 
 @app.route('/set_data', methods=['GET'])
 def set_data():
-    ref.set({
-        'boxes':
-            {
-                'box001': {
-                    'color': 'red',
-                    'width': 1,
-                    'height': 3,
-                    'length': 2
-                },
-                'box002': {
-                    'color': 'green',
-                    'width': 1,
-                    'height': 2,
-                    'length': 3
-                },
-                'box003': {
-                    'color': 'yellow',
-                    'width': 3,
-                    'height': 2,
-                    'length': 1
-                }
-            }
+
+    users_ref = ref.child('users')
+
+    for i in range(0, 3):
+        name = 'name' + str(i + 1)
+        email = name + '@mail.ru'
+        password = '1234'
+        photo = 'http://photo-link.ru/' + name
+
+        users_ref.push().set({
+                    'name': name,
+                    'email': email,
+                    'password': password,
+                    'photo': photo
         })
-    return "cya bloat'"
+
+
+    project_ref = ref.child('projects')
+
+    for i in range(0, 3):
+        is_shared = True
+        key_word_1 = True
+        key_word_2 = True
+        key_word_3 = True
+        author_id = 'u001'
+        deadline = '01/01/2020'
+        description = 'some default description'
+        name = randomString()
+
+        project_ref.push().set({
+                    'name': name,
+                    'is_shared': is_shared,
+                    'key_word_1': key_word_1,
+                    'key_word_2': key_word_2,
+                    'key_word_3': key_word_3,
+                    'author_id': author_id,
+                    'deadline': deadline,
+                    'description': description
+        })
+
+    return "cyka blyat"
+
+
+def randomString(stringLength=10):
+    """Generate a random string of fixed length """
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
+
 
 @app.route('/update_data', methods=['GET'])
 def update_data():
