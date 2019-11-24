@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">MCC_Project_5</string>
+    <string name="app_name">Task application</string>
+    <string name="dont_have_account">NOT A MEMBER? SIGN UP NOW</string>
+    <string name="login">LOGIN</string>
+    <string name="sign_up">SignUp</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="current_password">Current Password</string>
+    <string name="change_password">Change Password</string>
 </resources>
