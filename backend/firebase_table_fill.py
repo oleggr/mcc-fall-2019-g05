@@ -1,41 +1,49 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
-import flask
+
 import random
 import string
 
-# Fetch the service account key JSON file contents
-cred = credentials.Certificate('cred.json')
-# Initialize the app with a service account, granting admin privileges
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://mcc-fall-2019-g5-258415.firebaseio.com/'
-})
 
+def object_exists(object_type='default_object', object_name="dafault_name"):
 
-ref = db.reference('/')
+    object_ref = ref.child(object_type)
+    all_objects = object_ref.get()
+
+    for object_id in all_objects:
+        if object_name == all_objects[object_id]['name']: 
+            # user exists
+            return True
+
+    # user not found
+    return False
+
 
 def add_users():
-	
-	users_ref = ref.child('users')
+
+    users_ref = ref.child('users')
 
     for i in range(0, 3):
-        name = 'name' + str(i + 1)
-        email = name + '@mail.ru'
-        password = '1234'
-        photo = 'http://photo-link.ru/' + name
 
-        users_ref.push().set({
-                    'name': name,
-                    'email': email,
-                    'password': password,
-                    'photo': photo
-        })
+        name = 'name' + str(i + 1)
+
+        if not object_exists('users', name):
+            email = name + '@mail.ru'
+            password = '1234'
+            photo = 'http://photo-link.ru/' + name
+
+            users_ref.push().set({
+                        'name': name,
+                        'email': email,
+                        'password': password,
+                        'photo': photo
+            })
 
 
 def add_projects():
 
-	project_ref = ref.child('projects')
+    project_ref = ref.child('projects')
 
     for i in range(0, 3):
         is_shared = True
@@ -74,3 +82,10 @@ def add_members():
                     'password': password,
                     'photo': photo
         })
+
+def table_fill():
+    add_users()
+    add_projects()
+    add_members()
+    
+    print('INFO::Table filling is done')
