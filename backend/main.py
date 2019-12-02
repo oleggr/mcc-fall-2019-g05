@@ -1,4 +1,4 @@
-import firebase_table_fill as ftf
+import firebase_interaction as fi
 import flask
 
 
@@ -21,10 +21,16 @@ def update_data():
     pass
 
 
-@app.route('/upload_image')
-def upload_image_upload():
-    ftf.image_upload()
+@app.route('/upload_image/<filename>')
+def upload_file(filename):
+    fi.file_upload('attachments/', filename)
     return 'INFO::Image uploaded'
+
+
+@app.route('/download_image/<path>/<filename>')
+def download_image(path, filename):
+    fi.file_download(path + '/', filename)
+    return 'INFO::Image downloaded'
 
 
 @app.route('/user_authentication')

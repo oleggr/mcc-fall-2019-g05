@@ -18,10 +18,11 @@ firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://mcc-fall-2019-g5-258415.firebaseio.com/'
 })
 
+# Credentials for google cloud storage
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "cred.json"
 
 
-def image_upload():
+def file_upload(path_to_file='attachments/', filename='default_name'):
     # Enable Storage
     client = storage.Client()
 
@@ -29,14 +30,20 @@ def image_upload():
     bucket = client.get_bucket('mcc-fall-2019-g5-258415.appspot.com')
 
     # Upload a local file to a new file to be created in your bucket.
-    #zebraBlob = bucket.blob('attachments/kek.png')
-    #zebraBlob.upload_from_filename(filename='img/kek.png')
+    tmpBlob = bucket.blob(path_to_file + filename)
+    tmpBlob.upload_from_filename(filename='img/{}'.format(filename))
 
-def image_download():
+
+def file_download(path_to_file='attachments/', filename='default_name'):
+    # Enable Storage
+    client = storage.Client()
+
+    # Reference an existing bucket.
+    bucket = client.get_bucket('mcc-fall-2019-g5-258415.appspot.com')
+
     # Download a file from your bucket.
-    tmpeBlob = bucket.blob('attachments/kek.png')
-    tmpBlob.download_to_filename('kek11.png')
-
+    tmpBlob = bucket.blob(path_to_file + filename)
+    tmpBlob.download_to_filename(filename)
 
 
 ref = db.reference('/')
