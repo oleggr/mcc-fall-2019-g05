@@ -48,17 +48,17 @@ def add_users():
 
         name = 'name' + str(i + 1)
 
-        if not object_exists('users', name):
-            email = name + '@mail.ru'
-            password = '1234'
-            photo = 'http://photo-link.ru/' + name
+       # if not object_exists('users', name):
+        email = name + '@mail.ru'
+        password = '1234'
+        photo = 'http://photo-link.ru/' + name
 
-            users_ref.push().set({
-                        'name': name,
-                        'email': email,
-                        'password': password,
-                        'photo': photo
-            })
+        users_ref.push().set({
+                    'name': name,
+                    'email': email,
+                    'password': password,
+                    'photo': photo
+        })
 
 
 def add_projects():
@@ -68,27 +68,26 @@ def add_projects():
     for i in range(0, 3):
 
         name = randomString()
+       # if not object_exists('projects', name):
+        is_shared = True
+        key_word_1 = True
+        key_word_2 = True
+        key_word_3 = True
+        author_id = 'u001'
+        deadline = '01/01/2020'
+        description = 'some default description'
+        
 
-        if not object_exists('projects', name):
-            is_shared = True
-            key_word_1 = True
-            key_word_2 = True
-            key_word_3 = True
-            author_id = 'u001'
-            deadline = '01/01/2020'
-            description = 'some default description'
-            
-
-            project_ref.push().set({
-                        'name': name,
-                        'is_shared': is_shared,
-                        'key_word_1': key_word_1,
-                        'key_word_2': key_word_2,
-                        'key_word_3': key_word_3,
-                        'author_id': author_id,
-                        'deadline': deadline,
-                        'description': description
-            })
+        project_ref.push().set({
+                    'name': name,
+                    'is_shared': is_shared,
+                    'key_word_1': key_word_1,
+                    'key_word_2': key_word_2,
+                    'key_word_3': key_word_3,
+                    'author_id': author_id,
+                    'deadline': deadline,
+                    'description': description
+        })
 
 
 def add_members():
@@ -186,5 +185,3 @@ def table_fill():
     add_tasks()
     add_task_to_user_link()
     add_attachments()
-
-    print('INFO::Table filling is done')
