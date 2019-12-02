@@ -21,6 +21,12 @@ def update_data():
     pass
 
 
+@app.route('/upload_image')
+def upload_image_upload():
+    ftf.image_upload()
+    return 'INFO::Image uploaded'
+
+
 @app.route('/user_authentication')
 def user_authentication():
     return "This is user_authentication method. returns fails or not"
@@ -41,7 +47,7 @@ def create_project():
     return "This is create_project method. returns fails or not"
 
 
-@app.route('/set_member_to_project')
+@app.route('/assign_member_to_project')
 def set_member_to_project():
     return "This is set_member_to_project method. returns fails or not"
 
@@ -51,7 +57,7 @@ def get_member_to_project():
     return "This is get_member_to_project method. returns a list of members"
 
 
-@app.route('/set_task_to_project')
+@app.route('/add_task_to_project')
 def set_task_to_project():
     return "This is set_task_to_project method. returns fails or not"
 

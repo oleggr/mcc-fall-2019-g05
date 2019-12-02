@@ -1,9 +1,14 @@
 import firebase_admin
 from firebase_admin import credentials
+from firebase_admin import storage
 from firebase_admin import db
 
+from google.cloud import storage
+
+import os
 import random
 import string
+import requests
 
 
 # Fetch the service account key JSON file contents
@@ -12,6 +17,26 @@ cred = credentials.Certificate('cred.json')
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://mcc-fall-2019-g5-258415.firebaseio.com/'
 })
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "cred.json"
+
+
+def image_upload():
+    # Enable Storage
+    client = storage.Client()
+
+    # Reference an existing bucket.
+    bucket = client.get_bucket('mcc-fall-2019-g5-258415.appspot.com')
+
+    # Upload a local file to a new file to be created in your bucket.
+    #zebraBlob = bucket.blob('attachments/kek.png')
+    #zebraBlob.upload_from_filename(filename='img/kek.png')
+
+def image_download():
+    # Download a file from your bucket.
+    tmpeBlob = bucket.blob('attachments/kek.png')
+    tmpBlob.download_to_filename('kek11.png')
+
 
 
 ref = db.reference('/')
