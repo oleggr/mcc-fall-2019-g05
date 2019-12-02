@@ -58,7 +58,7 @@ def object_exists(object_type='default_object', object_value="dafault_name",  ob
     all_objects = object_ref.get()
 
     for object_id in all_objects:
-        if object_value == all_objects[object_id][object_parameter]: 
+        if object_value == all_objects[object_id][object_parameter]:
             # user exists
             return True
 
@@ -108,7 +108,7 @@ def add_projects():
         author_id = 'u001'
         deadline = '01/01/2020'
         description = 'some default description'
-        
+
 
         project_ref.push().set({
                     'name': name,
@@ -139,7 +139,7 @@ def add_members():
 
 
 def add_roles():
-    
+
     roles_ref = ref.child('roles')
 
     for i in range(0, 3):
@@ -157,7 +157,7 @@ def add_tasks():
     tasks_ref = ref.child('tasks')
 
     for i in range(0, 3):
-        
+
         taskname = 'taskname' + str(i)
         project_id = 'prjct_id'
         creater_id = 'creater_id'
@@ -172,13 +172,12 @@ def add_tasks():
                     'status': status
         })
 
-
 def add_task_to_user_link():
 
     tasks_to_user_ref = ref.child('task_to_user')
 
     for i in range(0, 3):
-        
+
         task_id = 'taskid' + str(i)
         user_id = 'user_id'
 
@@ -193,7 +192,7 @@ def add_attachments():
     attachments_ref = ref.child('attachments')
 
     for i in range(0, 3):
-        
+
         name = 'attachment_name' + str(i)
         project_id = 'prjct_id'
         attachment_type = 'attachment_type'
@@ -207,6 +206,22 @@ def add_attachments():
                     'attachment_url': attachment_url,
                     'creation_time': creation_time
         })
+
+
+def add_task_to_project(project_id, creater_id, description, status, taskname):
+
+    tasks_to_project_ref = ref.child('tasks')
+
+    id_ref  = tasks_to_project_ref.push({
+                'taskname': taskname,
+                'project_id': project_id,
+                'creater_id': creater_id,
+                'description': description,
+                'status': status
+    })
+
+    task_id = id_ref.key
+    return  task_id
 
 
 def table_fill():
