@@ -232,11 +232,16 @@ def update_task(task_id, new_task_status):
         path : new_task_status
     })
 
-
-
-
-
+def assign_task_to_users(task_id, *user_ids):
 #Assign a task to a user(s), given the project ID and the task ID
+# In reality create a row in table task_to_user with task_id and user_id
+    task_to_user_ref = ref.child('task_to_user')
+
+    for user_id in user_ids:
+        task_to_user_ref.push({
+            'task_id' : task_id,
+            'user_id' : user_id
+        })
 
 def table_fill():
     add_users()
