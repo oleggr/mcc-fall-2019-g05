@@ -1,12 +1,10 @@
 package com.mcc_project_5
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.BaseAdapter
-import android.widget.EditText
 import android.widget.ListView
 import com.mcc_project_5.DataModels.Project
 import okhttp3.*
@@ -31,7 +29,7 @@ class ListOfCreatedProjects : AppCompatActivity() {
             startActivity(intent)
         }*/
 
-        val listAdapter = SimpleListAdapter()
+        val listAdapter = ProjectListAdapter()
         listAdapter.setItems(projects)
         findViewById<ListView>(R.id.listView).adapter = listAdapter
     }
@@ -48,12 +46,13 @@ class ListOfCreatedProjects : AppCompatActivity() {
     }
 
     fun loadTemplate(view: View) {
-        val testJson = "[{\"id\":1,\"title\":\"xxx\",\"imageUrl\":\"\",\"lastModified\":\"01.01.01\",\"isFavorite\":true,\"isMediaAvailable\":false,\"members\":[{\"id\":1}]}, {\"id\":2,\"title\":\"yyy\",\"imageUrl\":\"\",\"lastModified\":\"02.02.02\",\"isFavorite\":false,\"isMediaAvailable\":true,\"members\":[{\"id\":2}]}]"
+        val testJson = "[{\"id\":1,\"title\":\"xxx\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"01.01.01\",\"isFavorite\":true,\"isMediaAvailable\":false,\"members\":[{\"id\":1,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}, {\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}]}, {\"id\":2,\"title\":\"yyy\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"02.02.02\",\"isFavorite\":false,\"isMediaAvailable\":true,\"members\":[{\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9pLnBpbmltZy5jb20vb3JpZ2luYWxzL2YzL2UxL2I4L2YzZTFiODAxOWYxNjBmODg1MzFkOGFmNzkyNzE2YjRmLnBuZw==\"}]}]"
         val json = JSONArray(testJson)
         projects.clear()
         for(i in 0 until json.length()) {
             val item = json.getJSONObject(i)
-            projects.add(Project(item))
+            val project = Project(item)
+            projects.add(project)
         }
         val adapter = findViewById<ListView>(R.id.listView).adapter as BaseAdapter
         adapter.notifyDataSetChanged()

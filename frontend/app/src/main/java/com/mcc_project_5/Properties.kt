@@ -16,4 +16,8 @@ class Properties(context: Context) {
     fun getProperty(key: String): String {
         return properties.getProperty(key)
     }
+
+    fun setProperty(key: String, value: String) {
+        properties.setProperty(key, value)
+    }
 }

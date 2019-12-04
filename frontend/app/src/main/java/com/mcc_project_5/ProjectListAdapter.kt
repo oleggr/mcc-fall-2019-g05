@@ -8,10 +8,17 @@ import android.widget.ArrayAdapter
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.mcc_project_5.DataModels.Project
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import androidx.recyclerview.widget.LinearLayoutManager
 
-class SimpleListAdapter: BaseAdapter() {
+
+
+class ProjectListAdapter: BaseAdapter() {
+    private val picasso = Picasso.get()
+
     private var items: ArrayList<Project> = ArrayList()
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val context = parent!!.context
@@ -23,6 +30,7 @@ class SimpleListAdapter: BaseAdapter() {
         val lastModTimeText = rowView.findViewById(R.id.lastModTimeText) as TextView
         val isFavorite = rowView.findViewById(R.id.isFavorite) as ImageView
         val isMediaAvailable = rowView.findViewById(R.id.isMediaAvailable) as ImageView
+        val membersList = rowView.findViewById(R.id.membersView) as RecyclerView
 
         if (!items[position].isMediaAvailable)
             isMediaAvailable.visibility = View.INVISIBLE
@@ -34,8 +42,24 @@ class SimpleListAdapter: BaseAdapter() {
             isFavorite.setImageResource(android.R.drawable.btn_star_big_off)
 
         titleText.text = items[position].title
-        //Picasso.get().load(items[position].imageUrl).into(imageView)
+        picasso.isLoggingEnabled = true
+        picasso.load(items[position].imageUrl).into(imageView, object : Callback {
+            override fun onSuccess() {
+                System.err.println("LOAD SUCCESSFUL")
+            }
+
+            override fun onError(e: Exception) {
+                System.err.println(e.message)
+            }
+        })
+
         lastModTimeText.text = items[position].lastModified
+
+        val layoutManager = LinearLayoutManager(rowView.context, LinearLayoutManager.HORIZONTAL, false)
+        membersList.layoutManager = layoutManager
+        val membersListAdapter = MemberListAdapter(items[position].membersArray)
+        membersList.adapter = membersListAdapter
+
 
         return rowView
     }

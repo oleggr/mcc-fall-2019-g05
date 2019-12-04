@@ -1,5 +1,6 @@
 package com.mcc_project_5.DataModels
 
+import android.util.Base64
 import org.json.JSONObject
 
 class Project {
@@ -16,15 +17,18 @@ class Project {
     }
 
     constructor(json: JSONObject) {
-        this.id = json.getInt("id")
-        this.title = json.getString("title")
-        this.imageUrl = json.getString("imageUrl")
-        this.lastModified = json.getString("lastModified")
-        this.isFavorite = json.getBoolean("isFavorite")
-        this.isMediaAvailable = json.getBoolean("isMediaAvailable")
+        id = json.getInt("id")
+        title = json.getString("title")
+        imageUrl = String(Base64.decode(json.getString("imageUrl"), Base64.DEFAULT))
+        lastModified = json.getString("lastModified")
+        isFavorite = json.getBoolean("isFavorite")
+        isMediaAvailable = json.getBoolean("isMediaAvailable")
+
         val tmpArray = json.getJSONArray("members")
+        membersArray.clear()
         for(i in 0 until tmpArray.length()) {
             val item = tmpArray.getJSONObject(i)
+            System.err.println(item)
             membersArray.add(ProjectMember(item))
         }
     }
