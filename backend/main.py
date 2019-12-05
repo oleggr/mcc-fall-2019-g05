@@ -1,5 +1,5 @@
-import basic_firebase_interaction as bfi
-import firebase_interaction as fi
+import firebase_interaction as bfi
+import FB_functions
 import flask
 from flask import request
 
@@ -13,7 +13,7 @@ def default_route():
 
 
 @app.route('/first_set_data', methods=['GET'])
-def first_set_data():
+defFB_frst_set_data():
     bfi.table_fill()
     return 'INFO::Table filling is done'
 
@@ -59,18 +59,28 @@ def post_test():
 @app.route('/create_project', methods=['POST'])
 def create_project():
 
-    project = request.args
+    data = request.args
 
-    return fi.create_project(
-            project['name'],
-            project['is_shared'],
-            project['key_word_1'],
-            project['key_word_2'],
-            project['key_word_3'],
-            project['author_id'],
-            project['deadline'],
-            project['description']
+    return FB_functions.create_project(
+            data['name'],
+            data['is_shared'],
+            data['key_word_1'],
+            data['key_word_2'],
+            data['key_word_3'],
+            data['author_id'],
+            data['deadline'],
+            data['description']
     )
+
+
+@app.route('/delete_project', methods=['POST'])
+def delete_project():
+    data = request.args
+
+    # TODO: Add user check (if user admin or not)
+    # if data.TOKEN is valid (check with firebase)
+    
+    return FB_functions.delete_project(data['project_id'])
 
 
 @app.route('/assign_member_to_project')
@@ -100,11 +110,6 @@ def convert_image_to_task():
 @app.route('/add_attachments_to_project')
 def add_attachments_to_project():
     return "This is add_attachments_to_project method. returns fails or not"
-
-
-@app.route('/delete_project')
-def delete_project():
-    return "This is delete_project method. returns fails or not"
 
 
 @app.route('/show_project_content')
