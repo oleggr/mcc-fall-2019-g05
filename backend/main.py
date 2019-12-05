@@ -129,19 +129,19 @@ def get_member_to_project():
 @app.route('/add_task_to_project', methods=['POST'])
 def set_task_to_project():
     data=request.args
-    task_id = fi.add_task_to_project(data["project_id"], data["creater_id"], data["description"], data["status"], data["taskname"])
+    task_id = FB_functions.add_task_to_project(data["project_id"], data["creater_id"], data["description"], data["status"], data["taskname"])
     return str(task_id)
 
 @app.route('/update_task_status', methods=['POST'])
 def update_task_status():
     data=request.args
-    fi.update_task(data["task_id"], data["new_task_status"])
+    FB_functions.update_task(data["task_id"], data["new_task_status"])
     return "OK"
 
 @app.route('/assign_task_to_users', methods=['POST'])
 def assign_task_to_users():
     data=request.args
-    fi.assign_task_to_users(data["task_id"], data["user_ids"])
+    FB_functions.assign_task_to_users(data["task_id"], data["user_ids"])
     return "OK"
 
 @app.route('/get_task_to_project')
