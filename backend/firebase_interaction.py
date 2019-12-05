@@ -1,27 +1,4 @@
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import storage
-from firebase_admin import db
-
-from google.cloud import storage
-
-import os
-import random
-import string
-import requests
-
-
-# Fetch the service account key JSON file contents
-cred = credentials.Certificate('cred.json')
-# Initialize the app with a service account, granting admin privileges
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://mcc-fall-2019-g5-258415.firebaseio.com/'
-})
-
-# Credentials for google cloud storage
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "cred.json"
-
-ref = db.reference('/')
+from basic_firebase_interaction import ref
 
 
 def create_project(

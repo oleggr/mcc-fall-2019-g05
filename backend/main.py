@@ -1,6 +1,7 @@
 import basic_firebase_interaction as bfi
 import firebase_interaction as fi
 import flask
+from flask import request
 
 
 app = flask.Flask(__name__)
@@ -11,7 +12,7 @@ def default_route():
     return 'Hello world!'
 
 
-@app.route('/first_set_data')
+@app.route('/first_set_data', methods=['GET'])
 def first_set_data():
     bfi.table_fill()
     return 'INFO::Table filling is done'
@@ -22,13 +23,13 @@ def update_data():
     pass
 
 
-@app.route('/upload_image/<filename>')
+@app.route('/upload_image/<filename>', methods=['GET', 'POST'])
 def upload_file(filename):
     bfi.file_upload('attachments/', filename)
     return 'INFO::Image uploaded'
 
 
-@app.route('/download_image/<path>/<filename>')
+@app.route('/download_image/<path>/<filename>', methods=['GET', 'POST'])
 def download_image(path, filename):
     bfi.file_download(path + '/', filename)
     return 'INFO::Image downloaded'
@@ -49,27 +50,26 @@ def set_profile_settings():
     return "This is set_profile_settings method. returns fails or not"
 
 
-@app.route('/create_project')
-def create_project(
-            name='default_project_name',
-            is_shared=True,
-            key_word_1=True,
-            key_word_2=True,
-            key_word_3=True,
-            author_id='default_author_id', 
-            deadline='01/01/1970',  
-            description='default_description'
-    ):
+@app.route('/post_test', methods=['POST'])
+def post_test():
+    data = request.args
+    return data['pizda']
+
+
+@app.route('/create_project', methods=['POST'])
+def create_project():
+
+    project = request.args
 
     return fi.create_project(
-            name,
-            is_shared,
-            key_word_1,
-            key_word_2,
-            key_word_3,
-            author_id,
-            deadline,
-            description
+            project['name'],
+            project['is_shared'],
+            project['key_word_1'],
+            project['key_word_2'],
+            project['key_word_3'],
+            project['author_id'],
+            project['deadline'],
+            project['description']
     )
 
 
