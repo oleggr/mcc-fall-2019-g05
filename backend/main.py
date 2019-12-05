@@ -1,6 +1,8 @@
-import firebase_interaction as fi
+import firebase_interaction as bfi
+import FB_functions
 import flask
 from flask import request
+
 
 app = flask.Flask(__name__)
 
@@ -10,9 +12,9 @@ def default_route():
     return 'Hello world!'
 
 
-@app.route('/first_set_data')
+@app.route('/first_set_data', methods=['GET'])
 def first_set_data():
-    ftf.table_fill()
+    bfi.table_fill()
     return 'INFO::Table filling is done'
 
 
@@ -21,15 +23,15 @@ def update_data():
     pass
 
 
-@app.route('/upload_image/<filename>')
+@app.route('/upload_image/<filename>', methods=['GET', 'POST'])
 def upload_file(filename):
-    fi.file_upload('attachments/', filename)
+    bfi.file_upload('attachments/', filename)
     return 'INFO::Image uploaded'
 
 
-@app.route('/download_image/<path>/<filename>')
+@app.route('/download_image/<path>/<filename>', methods=['GET', 'POST'])
 def download_image(path, filename):
-    fi.file_download(path + '/', filename)
+    bfi.file_download(path + '/', filename)
     return 'INFO::Image downloaded'
 
 
@@ -48,14 +50,50 @@ def set_profile_settings():
     return "This is set_profile_settings method. returns fails or not"
 
 
-@app.route('/create_project')
+@app.route('/post_test', methods=['POST'])
+def post_test():
+    data = request.args
+    return data['pizda']
+
+
+@app.route('/create_project', methods=['POST'])
 def create_project():
-    return "This is create_project method. returns fails or not"
+
+    data = request.args
+
+    return FB_functions.create_project(
+            data['name'],
+            data['is_shared'],
+            data['key_word_1'],
+            data['key_word_2'],
+            data['key_word_3'],
+            data['author_id'],
+            data['deadline'],
+            data['description']
+    )
 
 
-@app.route('/assign_member_to_project')
-def set_member_to_project():
-    return "This is set_member_to_project method. returns fails or not"
+@app.route('/delete_project', methods=['POST'])
+def delete_project():
+
+    data = request.args
+
+    # TODO: Add user check (if user admin or not)
+    # if data.TOKEN is valid (check with firebase)
+    if True:
+        return FB_functions.delete_project(data['project_id'])
+
+    return "ERROR: Wrong project id."
+
+
+@app.route('/add_members_to_project', methods=['POST'])
+def add_members_to_project():
+
+    data = request.args
+    users_id = data.getlist('user_id')
+    project_id = data['project_id']
+
+    return FB_functions.add_members_to_project(users_id, project_id)
 
 
 @app.route('/get_member_to_project')
@@ -94,11 +132,6 @@ def convert_image_to_task():
 @app.route('/add_attachments_to_project')
 def add_attachments_to_project():
     return "This is add_attachments_to_project method. returns fails or not"
-
-
-@app.route('/delete_project')
-def delete_project():
-    return "This is delete_project method. returns fails or not"
 
 
 @app.route('/show_project_content')
