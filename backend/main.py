@@ -75,6 +75,12 @@ def update_task_status():
     fi.update_task(data["task_id"], data["new_task_status"])
     return "OK"
 
+@app.route('/assign_task_to_users', methods=['POST'])
+def assign_task_to_users():
+    data=request.args
+    fi.assign_task_to_users(data["task_id"], data["user_ids"])
+    return "OK"
+
 @app.route('/get_task_to_project')
 def get_task_to_project():
     return "This is get_task_to_project method. returns list of projects"
