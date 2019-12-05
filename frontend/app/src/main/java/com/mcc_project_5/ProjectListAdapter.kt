@@ -4,10 +4,7 @@ import android.app.Activity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.BaseAdapter
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.mcc_project_5.DataModels.Project
 import com.squareup.picasso.Callback

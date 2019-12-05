@@ -95,7 +95,8 @@
             android:id="@+id/menuBtn"
             android:layout_width="24dp"
             android:layout_height="48dp"
-            android:onClick="showPopup"
+            android:background="#00FFFFFF"
+            android:onClick="showPopupMenu"
             android:src="@drawable/ic_more_vert_black_24dp" />
     </LinearLayout>
 </LinearLayout>
