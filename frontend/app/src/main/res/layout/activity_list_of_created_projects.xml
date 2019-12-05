@@ -21,7 +21,61 @@
             android:minHeight="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_menu_black_24dp"
             app:titleTextColor="@android:color/white"
-            tools:ignore="MissingConstraints" />
+            tools:ignore="MissingConstraints"/>
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/filterToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            app:titleTextColor="@android:color/white"
+            tools:ignore="MissingConstraints">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/byFavorite"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="#00000000"
+                    android:onClick="onSortByFavorite"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:src="@drawable/ic_star_black_24dp"
+                    android:title="byFavorite"
+                    app:showAsAction="always" />
+
+                <ImageButton
+                    android:id="@+id/byTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="#00000000"
+                    android:onClick="onSortByTime"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:src="@drawable/ic_radio_button_unchecked_black_24dp"
+                    android:title="byTime"
+                    app:showAsAction="always" />
+
+                <ImageButton
+                    android:id="@+id/byDeadline"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="#00000000"
+                    android:onClick="onSortByDeadline"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:src="@drawable/ic_timer_black_24dp"
+                    android:title="byDeadline"
+                    app:showAsAction="always" />
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
 
         <ListView
             android:id="@+id/listView"

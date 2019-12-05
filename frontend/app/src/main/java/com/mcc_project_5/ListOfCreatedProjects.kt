@@ -17,6 +17,9 @@ import org.json.JSONArray
 import java.io.IOException
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageButton
+import androidx.core.view.forEachIndexed
+import kotlinx.android.synthetic.main.activity_list_of_created_projects.*
 
 
 class ListOfCreatedProjects : AppCompatActivity() {
@@ -25,7 +28,42 @@ class ListOfCreatedProjects : AppCompatActivity() {
     private val projects = ArrayList<Project>()
     private var lastClicked = 0
     private var sortOrder = 0
+    private enum class Sort {
+        BY_FAVORITE, BY_TIME, BY_DEADLINE
+    }
+    private var sorting: Sort = Sort.BY_TIME
+
     // 0 UpDown; 1 DownUp
+
+    fun onSortByDeadline(v: View) {
+        if (sorting == Sort.BY_DEADLINE){
+            return
+        }
+        sorting = Sort.BY_DEADLINE
+        findViewById<ImageButton>(R.id.byDeadline).setImageResource(R.drawable.ic_timer_white_24dp)
+        findViewById<ImageButton>(R.id.byFavorite).setImageResource(R.drawable.ic_star_black_24dp)
+        findViewById<ImageButton>(R.id.byTime).setImageResource(R.drawable.ic_radio_button_unchecked_black_24dp)
+    }
+
+    fun onSortByTime(v: View) {
+        if (sorting == Sort.BY_TIME){
+            return
+        }
+        sorting = Sort.BY_TIME
+        findViewById<ImageButton>(R.id.byDeadline).setImageResource(R.drawable.ic_timer_black_24dp)
+        findViewById<ImageButton>(R.id.byFavorite).setImageResource(R.drawable.ic_star_black_24dp)
+        findViewById<ImageButton>(R.id.byTime).setImageResource(R.drawable.ic_radio_button_unchecked_white_24dp)
+    }
+
+    fun onSortByFavorite(v: View) {
+        if (sorting == Sort.BY_FAVORITE){
+            return
+        }
+        sorting = Sort.BY_FAVORITE
+        findViewById<ImageButton>(R.id.byDeadline).setImageResource(R.drawable.ic_timer_black_24dp)
+        findViewById<ImageButton>(R.id.byFavorite).setImageResource(R.drawable.ic_star_white_24dp)
+        findViewById<ImageButton>(R.id.byTime).setImageResource(R.drawable.ic_radio_button_unchecked_black_24dp)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +95,10 @@ class ListOfCreatedProjects : AppCompatActivity() {
     //android:onClick="loadTemplate"
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        super.onCreateOptionsMenu(menu)
         val inflater = menuInflater
         inflater.inflate(R.menu.general, menu)
+        //inflater.inflate(R.menu.filter, menu)
         return true
     }
 
