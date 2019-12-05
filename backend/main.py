@@ -50,8 +50,27 @@ def set_profile_settings():
 
 
 @app.route('/create_project')
-def create_project():
-    return "This is create_project method. returns fails or not"
+def create_project(
+            name='default_project_name',
+            is_shared=True,
+            key_word_1=True,
+            key_word_2=True,
+            key_word_3=True,
+            author_id='default_author_id', 
+            deadline='01/01/1970',  
+            description='default_description'
+    ):
+
+    return fi.create_project(
+            name,
+            is_shared,
+            key_word_1,
+            key_word_2,
+            key_word_3,
+            author_id,
+            deadline,
+            description
+    )
 
 
 @app.route('/assign_member_to_project')
