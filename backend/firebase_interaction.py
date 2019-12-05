@@ -1,25 +1,6 @@
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import storage
-from firebase_admin import db
-
-from google.cloud import storage
-
-import os
+from main import ref
 import random
 import string
-import requests
-
-
-# Fetch the service account key JSON file contents
-cred = credentials.Certificate('cred.json')
-# Initialize the app with a service account, granting admin privileges
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://mcc-fall-2019-g5-258415.firebaseio.com/'
-})
-
-# Credentials for google cloud storage
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "cred.json"
 
 
 def file_upload(path_to_file='attachments/', filename='default_name'):
@@ -45,8 +26,6 @@ def file_download(path_to_file='attachments/', filename='default_name'):
     tmpBlob = bucket.blob(path_to_file + filename)
     tmpBlob.download_to_filename(filename)
 
-
-ref = db.reference('/')
 
 # Checking if object already exist required for
 # not rewriting object every time when we need to
@@ -172,6 +151,7 @@ def add_tasks():
                     'status': status
         })
 
+
 def add_task_to_user_link():
 
     tasks_to_user_ref = ref.child('task_to_user')
@@ -207,41 +187,6 @@ def add_attachments():
                     'creation_time': creation_time
         })
 
-
-def add_task_to_project(project_id, creater_id, description, status, taskname):
-#Create a task, given the project ID and the task attributes. It returns the task ID after creation.
-    tasks_to_project_ref = ref.child('tasks')
-
-    id_ref  = tasks_to_project_ref.push({
-                'taskname': taskname,
-                'project_id': project_id,
-                'creater_id': creater_id,
-                'description': description,
-                'status': status
-    })
-
-    task_id = id_ref.key
-    return  task_id
-
-def update_task(task_id, new_task_status):
-#Update a task, which updates the task status given a task ID.
-    tasks_ref = ref.child('tasks')
-
-    path = task_id + '/status'
-    tasks_ref.update({
-        path : new_task_status
-    })
-
-def assign_task_to_users(task_id, *user_ids):
-#Assign a task to a user(s), given the project ID and the task ID
-# In reality create a row in table task_to_user with task_id and user_id
-    task_to_user_ref = ref.child('task_to_user')
-
-    for user_id in user_ids:
-        task_to_user_ref.push({
-            'task_id' : task_id,
-            'user_id' : user_id
-        })
 
 def table_fill():
     add_users()

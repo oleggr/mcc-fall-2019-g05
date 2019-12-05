@@ -1,7 +1,32 @@
-import firebase_interaction as bfi
-import FB_functions
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import storage
+from firebase_admin import db
+from google.cloud import storage
+
 import flask
 from flask import request
+
+import os
+
+
+# Check if db activating first time
+
+if not len(firebase_admin._apps):
+    # Fetch the service account key JSON file contents
+    cred = credentials.Certificate('cred.json')
+    # Initialize the app with a service account, granting admin privileges
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': 'https://mcc-fall-2019-g5-258415.firebaseio.com/'
+    })
+
+    # Credentials for google cloud storage
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "cred.json"
+
+ref = db.reference('/')
+
+import firebase_interaction as bfi
+import FB_functions
 
 
 app = flask.Flask(__name__)
@@ -165,4 +190,5 @@ def send_notification():
 
 
 if __name__ == "__main__":
+
     app.run(debug = True, port = 8080)

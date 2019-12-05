@@ -1,4 +1,4 @@
-from firebase_interaction import ref
+from main import ref
 
 
 def create_project(
@@ -51,3 +51,41 @@ def add_members_to_project(users_id, project_id):
         
     except:
         return 'ERROR: Members were not added.'
+
+
+def add_task_to_project(project_id, creater_id, description, status, taskname):
+#Create a task, given the project ID and the task attributes. It returns the task ID after creation.
+    tasks_to_project_ref = ref.child('tasks')
+
+    id_ref  = tasks_to_project_ref.push({
+                'taskname': taskname,
+                'project_id': project_id,
+                'creater_id': creater_id,
+                'description': description,
+                'status': status
+    })
+
+    task_id = id_ref.key
+    return  task_id
+
+
+def update_task(task_id, new_task_status):
+#Update a task, which updates the task status given a task ID.
+    tasks_ref = ref.child('tasks')
+
+    path = task_id + '/status'
+    tasks_ref.update({
+        path : new_task_status
+    })
+
+
+def assign_task_to_users(task_id, *user_ids):
+#Assign a task to a user(s), given the project ID and the task ID
+# In reality create a row in table task_to_user with task_id and user_id
+    task_to_user_ref = ref.child('task_to_user')
+
+    for user_id in user_ids:
+        task_to_user_ref.push({
+            'task_id' : task_id,
+            'user_id' : user_id
+        })
