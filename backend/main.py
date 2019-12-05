@@ -1,3 +1,4 @@
+import basic_firebase_interaction as bfi
 import firebase_interaction as fi
 import flask
 
@@ -12,7 +13,7 @@ def default_route():
 
 @app.route('/first_set_data')
 def first_set_data():
-    ftf.table_fill()
+    bfi.table_fill()
     return 'INFO::Table filling is done'
 
 
@@ -23,13 +24,13 @@ def update_data():
 
 @app.route('/upload_image/<filename>')
 def upload_file(filename):
-    fi.file_upload('attachments/', filename)
+    bfi.file_upload('attachments/', filename)
     return 'INFO::Image uploaded'
 
 
 @app.route('/download_image/<path>/<filename>')
 def download_image(path, filename):
-    fi.file_download(path + '/', filename)
+    bfi.file_download(path + '/', filename)
     return 'INFO::Image downloaded'
 
 
