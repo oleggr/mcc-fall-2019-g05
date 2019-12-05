@@ -31,7 +31,23 @@ def create_project(
 def delete_project(project_id):
 
     project_ref = ref.child('projects')
+    project_ref.child(project_id).delete()
 
+    return 'INFO: project {} deleted'.format(project_id)
+
+
+def add_members_to_project(users_id, project_id):
     
+    member_ref = ref.child('members')
 
-    return project_key.key
+    try:
+        for user_id in users_id:
+            member_ref.push({
+                        'user_id': user_id,
+                        'project_id': project_id,
+                        'role_id': 'standart user'
+            })
+        return 'INFO: Members added.'
+        
+    except:
+        return 'ERROR: Members were not added.'

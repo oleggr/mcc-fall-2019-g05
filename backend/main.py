@@ -13,7 +13,7 @@ def default_route():
 
 
 @app.route('/first_set_data', methods=['GET'])
-defFB_frst_set_data():
+def first_set_data():
     bfi.table_fill()
     return 'INFO::Table filling is done'
 
@@ -75,17 +75,25 @@ def create_project():
 
 @app.route('/delete_project', methods=['POST'])
 def delete_project():
+
     data = request.args
 
     # TODO: Add user check (if user admin or not)
     # if data.TOKEN is valid (check with firebase)
+    if True:
+        return FB_functions.delete_project(data['project_id'])
     
-    return FB_functions.delete_project(data['project_id'])
+    return "ERROR: Wrong project id."
 
 
-@app.route('/assign_member_to_project')
-def set_member_to_project():
-    return "This is set_member_to_project method. returns fails or not"
+@app.route('/add_members_to_project', methods=['POST'])
+def add_members_to_project():
+
+    data = request.args
+    users_id = data.getlist('user_id')
+    project_id = data['project_id']
+
+    return FB_functions.add_members_to_project(users_id, project_id)
 
 
 @app.route('/get_member_to_project')
