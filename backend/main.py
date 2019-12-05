@@ -1,6 +1,6 @@
 import firebase_interaction as fi
 import flask
-
+from flask import request
 
 app = flask.Flask(__name__)
 
@@ -63,9 +63,11 @@ def get_member_to_project():
     return "This is get_member_to_project method. returns a list of members"
 
 
-@app.route('/add_task_to_project')
+@app.route('/add_task_to_project', methods=['POST'])
 def set_task_to_project():
-    return "This is set_task_to_project method. returns fails or not"
+    data=request.args
+    task_id = fi.add_task_to_project(data["project_id"], data["creater_id"], data["description"], data["status"], data["taskname"])
+    return str(task_id)
 
 @app.route('/get_task_to_project')
 def get_task_to_project():
