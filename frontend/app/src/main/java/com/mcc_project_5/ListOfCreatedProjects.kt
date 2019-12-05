@@ -2,27 +2,38 @@ package com.mcc_project_5
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.LayoutDirection
 import android.util.Log
 import android.view.MenuInflater
 import android.view.View
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.PopupMenu
+import androidx.appcompat.widget.Toolbar
+
 import com.mcc_project_5.DataModels.Project
-import kotlinx.android.synthetic.main.list_of_projects_list_layout.view.*
 import okhttp3.*
 import org.json.JSONArray
 import java.io.IOException
+import android.view.Menu
+import android.view.MenuItem
+
 
 class ListOfCreatedProjects : AppCompatActivity() {
 
     private val client = OkHttpClient()
     private val projects = ArrayList<Project>()
-    private var lastClicked = 0;
+    private var lastClicked = 0
+    private var sortOrder = 0
+    // 0 UpDown; 1 DownUp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list_of_created_projects)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toolbar.inflateMenu(R.menu.general)
+        toolbar.setTitle("Projects")
+        setSupportActionBar(toolbar)
 
         /*findViewById<ListView>(R.id.listView).setOnItemClickListener{ _, _, position, _ ->
             val intent = Intent(this@ListOfCreatedProjects, Main2Activity::class.java)
@@ -41,6 +52,32 @@ class ListOfCreatedProjects : AppCompatActivity() {
             lastClicked = position
         }
 
+    }
+
+    //android:onClick="loadTemplate"
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.general, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.title == "refresh") {
+            loadTemplate()
+        } else if (item.title == "sort") {
+            if (sortOrder == 0) {
+                item.setIcon(R.drawable.ic_sort_reversed_black_24dp)
+                item.icon.layoutDirection = View.LAYOUT_DIRECTION_RTL
+                sortOrder = 1
+            } else {
+                item.setIcon(R.drawable.ic_sort_black_24dp)
+                item.icon.layoutDirection = View.LAYOUT_DIRECTION_LTR
+                sortOrder = 0
+            }
+        }
+
+        return true
     }
 
     fun httpGet(url: String, callBack: Callback): Call {
@@ -70,7 +107,7 @@ class ListOfCreatedProjects : AppCompatActivity() {
     }
 
 
-    fun loadTemplate(view: View) {
+    fun loadTemplate() {
         val testJson = "[{\"id\":1,\"title\":\"xxx\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"01.01.01\",\"isFavorite\":true,\"isMediaAvailable\":false,\"members\":[{\"id\":1,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}, {\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}]}, {\"id\":2,\"title\":\"yyy\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"02.02.02\",\"isFavorite\":false,\"isMediaAvailable\":true,\"members\":[{\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9pLnBpbmltZy5jb20vb3JpZ2luYWxzL2YzL2UxL2I4L2YzZTFiODAxOWYxNjBmODg1MzFkOGFmNzkyNzE2YjRmLnBuZw==\"}]}]"
         val json = JSONArray(testJson)
         projects.clear()
