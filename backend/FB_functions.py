@@ -7,8 +7,8 @@ def create_project(
             key_word_1=True,
             key_word_2=True,
             key_word_3=True,
-            author_id='default_author_id', 
-            deadline='01/01/1970',  
+            author_id='default_author_id',
+            deadline='01/01/1970',
             description='default_description'
     ):
 
@@ -37,7 +37,7 @@ def delete_project(project_id):
 
 
 def add_members_to_project(users_id, project_id):
-    
+
     member_ref = ref.child('members')
 
     try:
@@ -48,7 +48,7 @@ def add_members_to_project(users_id, project_id):
                         'role_id': 'standart user'
             })
         return 'INFO: Members added.'
-        
+
     except:
         return 'ERROR: Members were not added.'
 
@@ -89,3 +89,18 @@ def assign_task_to_users(task_id, *user_ids):
             'task_id' : task_id,
             'user_id' : user_id
         })
+
+def get_list_of_projects_implementation(user_id):
+    task_to_user_ref = ref.child('task_to_user').get()#get list of users and add_projects
+    user_tasks = []
+    response_list = []
+    for task_to_user in task_to_user_ref:
+        if(task_to_user_ref[task_to_user]["user_id"] == user_id):
+            user_tasks.append(task_to_user_ref[task_to_user]["task_id"]) #get a list of users tasks
+    if(len(user_tasks) > 0):
+        tasks_ref = ref.child('tasks').get()
+        for i in tasks_ref:
+            if i in user_tasks:
+                path_str = "tasks/" + i
+                response_list.append({i : ref.child(path_str).get()})
+    return response_list
