@@ -10,6 +10,7 @@ from flask import send_file
 
 import json
 import os
+import json
 
 
 # Check if db activating first time
@@ -164,7 +165,7 @@ def assign_task_to_users(task_id):
 @app.route('/project/<project_id>/tasks')
 def get_tasks_of_project(project_id):
     '''
-    Get_tasks_of_project method. 
+    Get_tasks_of_project method.
     Returns list of tasks.
     '''
 
@@ -202,15 +203,15 @@ def generate_project_report(project_id):
 
 
 # Get all projects as json
-@app.route('/get_projects')
+@app.route('/get_projects', methods=['GET'])
 def get_list_of_projects():
-    return "This is get_list_of_projects method. returns list of created projects"
+    return json.dumps(FB_functions.get_list_of_projects_implementation(request.args["user_id"]))
 
 
-# Get single project as json 
-@app.route('/project/<project_id>/search') 
-def search_for_project():
-    return "This is search_for_project method. returns null or a project"
+# Get single project as json
+@app.route('/project/<project_id>/search', methods=['GET'])
+def search_for_project(project_id):
+    return json.dumps(FB_functions.search_for_project_implementation(project_id))
 
 
 @app.route('/get_image_resolution')
