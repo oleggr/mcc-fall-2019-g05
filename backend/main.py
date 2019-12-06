@@ -200,7 +200,7 @@ def get_list_of_projects():
 
 
 # Get single project as json
-@app.route('/project/<project_id>/search')
+@app.route('/project/<project_id>/search', methods=['GET'])
 def search_for_project(project_id):
     return json.dumps(FB_functions.search_for_project_implementation(project_id))
 
