@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="10dp">
-
-    <ListView
-        android:id="@+id/attachmentList"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
-
-    </ListView>
-
-</LinearLayout>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="300dp"
+    android:layout_width="300dp">
+    <item
+        android:id="@+id/action_photo"
+        android:title="@string/action_photo"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_gallery"
+        android:title="@string/action_gallery"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_document"
+        android:title="@string/action_document"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_cancel"
+        android:title="@string/action_cancel"
+        app:showAsAction="never"/>
+</menu>
