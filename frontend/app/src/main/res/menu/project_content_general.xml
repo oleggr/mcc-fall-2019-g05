@@ -7,6 +7,11 @@
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="always"/>
 
+    <item android:id="@+id/action_sort"
+        android:title="sort"
+        android:icon="@drawable/ic_sort_black_24dp"
+        app:showAsAction="always"/>
+
     <item android:id="@+id/action_refresh"
         android:title="refresh"
         android:icon="@drawable/ic_refresh_black_24dp"

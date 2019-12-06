@@ -18,6 +18,8 @@ import com.mcc_project_5.DataModels.File
 import com.mcc_project_5.DataModels.Picture
 import com.mcc_project_5.DataModels.Task
 import org.json.JSONArray
+import java.util.*
+import kotlin.Comparator
 
 class ProjectContentActivity : AppCompatActivity() {
     private val tasks  =  arrayListOf<Task>()
@@ -28,6 +30,46 @@ class ProjectContentActivity : AppCompatActivity() {
 
     private val files  =  arrayListOf<File>()
     private val visibleFiles = arrayListOf<File>()
+
+    private enum class Sort {
+        BY_FILE, BY_PICTURE, BY_TASK, NONE
+    }
+
+    private var sorting: Sort = Sort.NONE
+
+    private enum class SortOrder {
+        ASC, DESC
+    }
+
+    private var sortOrder: SortOrder = SortOrder.DESC
+
+
+    class ComparatorByTimeFile: Comparator<File>{
+        override fun compare(o1: File?, o2: File?): Int {
+            if(o1 == null || o2 == null){
+                return 0;
+            }
+            return o1.createdAt.compareTo(o2.createdAt)
+        }
+    }
+
+    class ComparatorByTimePicture: Comparator<Picture>{
+        override fun compare(o1: Picture?, o2: Picture?): Int {
+            if(o1 == null || o2 == null){
+                return 0;
+            }
+            return o1.createdAt.compareTo(o2.createdAt)
+        }
+    }
+
+    class ComparatorByTimeTask: Comparator<Task>{
+        override fun compare(o1: Task?, o2: Task?): Int {
+            if(o1 == null || o2 == null){
+                return 0;
+            }
+            return o1.createdAt.compareTo(o2.createdAt)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,7 +141,7 @@ class ProjectContentActivity : AppCompatActivity() {
     }
 
     fun loadTasksTemplate() {
-        val testJson = "[{\"id\":1, \"title\":\"Title1\", \"done\":false}, {\"id\":2, \"title\":\"Title2\", \"done\":true}, {\"id\":3, \"title\":\"Title1\", \"done\":false}]"
+        val testJson = "[{\"id\":1, \"title\":\"Title1\", \"createdAt\":\"01.01.01\", \"done\":false}, {\"id\":2, \"createdAt\":\"01.01.01\", \"title\":\"Title2\", \"done\":true}, {\"id\":3, \"createdAt\":\"01.01.01\", \"title\":\"Title1\", \"done\":false}]"
         val json = JSONArray(testJson)
         tasks.clear()
         for(i in 0 until json.length()) {
@@ -149,12 +191,49 @@ class ProjectContentActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.title == "refresh") {
             loadTemplate()
+        } else if (item.title == "sort") {
+            if (sortOrder == SortOrder.DESC) {
+                item.setIcon(R.drawable.ic_sort_reversed_black_24dp)
+                item.icon.layoutDirection = View.LAYOUT_DIRECTION_RTL
+                sortOrder = SortOrder.ASC
+                performSorting()
+            } else {
+                item.setIcon(R.drawable.ic_sort_black_24dp)
+                item.icon.layoutDirection = View.LAYOUT_DIRECTION_LTR
+                sortOrder = SortOrder.DESC
+                performSorting()
+            }
         }
 
         return true
     }
 
+    fun performSorting() {
+        when(sorting) {
+            Sort.BY_TASK -> {
+                Collections.sort(visibleTasks, ComparatorByTimeTask())
+                if (sortOrder == SortOrder.DESC)
+                    visibleTasks.reverse()
+                refreshTaskList()
+            }
+            Sort.BY_FILE -> {
+                Collections.sort(visibleFiles, ComparatorByTimeFile())
+                if (sortOrder == SortOrder.DESC)
+                    visibleFiles.reverse()
+                refreshFileList()
+            }
+            Sort.BY_PICTURE -> {
+                Collections.sort(visiblePictures, ComparatorByTimePicture())
+                if (sortOrder == SortOrder.DESC)
+                    visiblePictures.reverse()
+                refreshPictureList()
+            }
+        }
+    }
+
     fun onTasksButtonClick(v: View) {
+        sorting = Sort.BY_TASK
+        performSorting()
         findViewById<ListView>(R.id.taskListView).visibility = View.VISIBLE
         findViewById<ListView>(R.id.picturesListView).visibility = View.GONE
         findViewById<ListView>(R.id.filesListView).visibility = View.GONE
@@ -164,6 +243,8 @@ class ProjectContentActivity : AppCompatActivity() {
     }
 
     fun onPicturesButtonClick(v: View) {
+        sorting = Sort.BY_PICTURE
+        performSorting()
         findViewById<ListView>(R.id.taskListView).visibility = View.GONE
         findViewById<ListView>(R.id.picturesListView).visibility = View.VISIBLE
         findViewById<ListView>(R.id.filesListView).visibility = View.GONE
@@ -173,6 +254,8 @@ class ProjectContentActivity : AppCompatActivity() {
     }
 
     fun onFilesButtonClick(v: View) {
+        sorting = Sort.BY_FILE
+        performSorting()
         findViewById<ListView>(R.id.taskListView).visibility = View.GONE
         findViewById<ListView>(R.id.picturesListView).visibility = View.GONE
         findViewById<ListView>(R.id.filesListView).visibility = View.VISIBLE
