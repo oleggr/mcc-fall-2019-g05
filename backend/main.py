@@ -173,7 +173,7 @@ def get_tasks_of_project(project_id):
     tasks = FB_functions.get_tasks_of_project(project_id)
     # String is not correct way. TODO: Fix it
     tasks = str(tasks)
-    
+
     return tasks
 
 
@@ -187,21 +187,18 @@ def add_attachments_to_project(project_id):
     return "This is add_attachments_to_project method. returns fails or not"
 
 
-@app.route('/project/<project_id>/show_content') 
-def show_project_content():
-    return "This is show_project_content method. Returns project content"
-
-
 @app.route('/project/<project_id>/generate_report') 
 def generate_project_report():
     return "This is generate_project_report method. returns fails or not or may be returns a report"
 
 
+# Get all projects as json
 @app.route('/get_projects')
 def get_list_of_projects():
     return "This is get_list_of_projects method. returns list of created projects"
 
 
+# Get single project as json 
 @app.route('/project/<project_id>/search') 
 def search_for_project():
     return "This is search_for_project method. returns null or a project"
