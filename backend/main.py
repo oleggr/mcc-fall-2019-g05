@@ -98,6 +98,7 @@ def create_project():
     return new_project_id
 
 
+#@app.route('/project/<project_id>/delete', methods=['DELETE'])
 @app.route('/delete_project', methods=['POST'])
 def delete_project():
 
@@ -111,6 +112,7 @@ def delete_project():
     return "ERROR: Wrong project id."
 
 
+#@app.route('/project/<project_id>/add_members', methods=['POST'])
 @app.route('/add_members_to_project', methods=['POST'])
 def add_members_to_project():
 
@@ -129,6 +131,7 @@ def get_members_of_project(project_id):
     return members
 
 
+#@app.route('/project/<project_id>/add_task', methods=['POST'])
 @app.route('/add_task_to_project', methods=['POST'])
 def set_task_to_project():
 
@@ -144,6 +147,7 @@ def set_task_to_project():
     return str(task_id)
 
 
+#@app.route('/task/<task_id>/status_update', methods=['POST'])
 @app.route('/update_task_status', methods=['POST'])
 def update_task_status():
     data=request.args
@@ -151,15 +155,16 @@ def update_task_status():
     return "OK"
 
 
+#@app.route('/task/<task_id>/assign_to_user', methods=['POST'])
 @app.route('/assign_task_to_users', methods=['POST'])
 def assign_task_to_users():
     data=request.args
     FB_functions.assign_task_to_users(data["task_id"], data["user_ids"])
     return "OK"
 
-@app.route('/get_task_to_project')
-def get_task_to_project():
-    return "This is get_task_to_project method. returns list of projects"
+@app.route('/project/<project_id>/tasks')
+def get_tasks_of_project(project_id):
+    return "This is get_tasks_of_project method. returns list of projects"
 
 
 @app.route('/convert_image_to_task')
@@ -167,27 +172,27 @@ def convert_image_to_task():
     return "This is convert_image_to_task method. returns fails or not"
 
 
-@app.route('/add_attachments_to_project')
-def add_attachments_to_project():
+@app.route('/project/<project_id>/add_attachments', methods=['POST'])
+def add_attachments_to_project(project_id):
     return "This is add_attachments_to_project method. returns fails or not"
 
 
-@app.route('/show_project_content')
+@app.route('/project/<project_id>/show_content') 
 def show_project_content():
     return "This is show_project_content method. returns project contennt"
 
 
-@app.route('/generate_project_report')
+@app.route('/project/<project_id>/generate_report') 
 def generate_project_report():
     return "This is generate_project_report method. returns fails or not or may be returns a report"
 
 
-@app.route('/get_list_of_projects')
+@app.route('/get_projects')
 def get_list_of_projects():
     return "This is get_list_of_projects method. returns list of created projects"
 
 
-@app.route('/search_for_project')
+@app.route('/project/<project_id>/search') 
 def search_for_project():
     return "This is search_for_project method. returns null or a project"
 
