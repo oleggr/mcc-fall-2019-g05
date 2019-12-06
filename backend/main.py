@@ -162,9 +162,19 @@ def assign_task_to_users():
     FB_functions.assign_task_to_users(data["task_id"], data["user_ids"])
     return "OK"
 
+
 @app.route('/project/<project_id>/tasks')
 def get_tasks_of_project(project_id):
-    return "This is get_tasks_of_project method. returns list of projects"
+    '''
+    Get_tasks_of_project method. 
+    Returns list of tasks.
+    '''
+
+    tasks = FB_functions.get_tasks_of_project(project_id)
+    # String is not correct way. TODO: Fix it
+    tasks = str(tasks)
+    
+    return tasks
 
 
 @app.route('/convert_image_to_task')
@@ -179,7 +189,7 @@ def add_attachments_to_project(project_id):
 
 @app.route('/project/<project_id>/show_content') 
 def show_project_content():
-    return "This is show_project_content method. returns project contennt"
+    return "This is show_project_content method. Returns project content"
 
 
 @app.route('/project/<project_id>/generate_report') 

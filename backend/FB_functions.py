@@ -58,7 +58,7 @@ def add_task_to_project(project_id, creater_id, description, status, taskname):
     Create task the task attributes and assign it to project by project ID. 
     Returns the task ID after creation.
     '''
-    
+
     tasks_to_project_ref = ref.child('tasks')
 
     id_ref  = tasks_to_project_ref.push({
@@ -113,3 +113,18 @@ def get_members_of_project(project_id):
             members.append(member_record['user_id'])
 
     return members
+
+
+def get_tasks_of_project(project_id):
+
+    tasks = []
+    tasks_ref = ref.child('tasks')
+    tasks_dict = tasks_ref.get()
+
+    for tasks_record_id in tasks_dict:
+        task_record = tasks_dict[tasks_record_id]
+        if task_record['project_id'] == project_id:
+            tasks.append(tasks_record_id)
+
+    return tasks
+
