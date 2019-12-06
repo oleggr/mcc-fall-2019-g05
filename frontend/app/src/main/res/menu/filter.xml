@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/byFavorite"
+        android:title="byFavorite"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_star_black_24dp"/>
+
+    <item
+        android:id="@+id/byTime"
+        android:title="byTime"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_radio_button_unchecked_black_24dp"/>
+
+    <item
+        android:id="@+id/byDeadline"
+        android:title="byDeadline"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_timer_black_24dp"/>
+</menu>
