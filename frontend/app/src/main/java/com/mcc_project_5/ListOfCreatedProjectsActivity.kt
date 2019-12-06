@@ -27,7 +27,6 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
     private val client = OkHttpClient()
     private val projects = ArrayList<Project>()
     private val visibleProjects = ArrayList<Project>()
-    private var lastClicked = 0
     private var sortOrder = SortOrder.DESC
 
     private enum class Sort {
@@ -136,9 +135,6 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         listAdapter.setItems(visibleProjects)
         val listView = findViewById<ListView>(R.id.listView)
         listView.adapter = listAdapter
-        listView.setOnItemClickListener { _, _, position, _ ->
-            lastClicked = position
-        }
 
     }
 
@@ -205,7 +201,6 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
     fun showPopupMenu(v: View) {
         val popup = PopupMenu(this, v)
-        System.err.println(visibleProjects[lastClicked])
         val inflater: MenuInflater = popup.menuInflater
         inflater.inflate(R.menu.list_of_projects_popup, popup.menu)
         popup.setOnMenuItemClickListener {
