@@ -155,6 +155,6 @@ def get_attachments_of_project(project_id):
         attachments_record = attachments_dict[attachments_record_id]
         if attachments_record['project_id'] == project_id:
             attachments_record['attachments_id'] = attachments_record_id
-            attachments.append(task_record)
+            attachments.append(attachments_record)
 
     return attachments

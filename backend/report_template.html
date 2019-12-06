@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>{{ title }} </title>
+    </head>
+
+    <body>
+
+        <div class="container">
+            <h1>Report of project {{ project_name }}</h1>
+            Project report have all known data about project.<br>
+            Don't share this file with unauthorized users.
+        </div>
+
+        <div class="container">
+            <br>
+            <h2>Common information about project</h2>
+
+            Project name: {{ project_info.name }} <br>
+            Project id: {{ project_info.project_id }} <br>
+            Project description: {{ project_info.description }} <br>
+            Author id: {{ project_info.author_id }} <br>
+            <--! fix keywords--> <br>
+            Key words: {{ project_info.key_word_1 }} <br>
+            Deadline: {{ project_info.deadline }} <br>
+            Is shared: {{ project_info.is_shared }} <br>
+        </div>
+
+        <div class="container">
+            <br>
+            <h2>Information about users in project</h2>
+
+            {% for user in users %}
+
+            Name: {{ user.name }} <br>
+            E-mail: {{ user.email }} <br>
+            Photo URL: {{ user.photo }} <br>
+            Role name: {{ user.role_name }} <br>
+            Role level: {{ user.role_level }} <br>
+            User ID: {{ user.user_id }} <br>
+            <br>
+            {% endfor %}
+
+        </div>
+
+        <div class="container">
+            <h2>Tasks information</h2>
+
+            {% for task in tasks %}
+
+            Task name: {{ task.taskname }} <br>
+            Task ID: {{ task.task_id }} <br>
+            Status: {{ task.status }} <br>
+            Description: {{ task.description }} <br>
+            Creater id: {{ task.creater_id }} <br>
+            Project ID: {{ task.project_id }} <br>
+            Task members:
+            {% for member in task.members %}
+            <br>
+                &nbsp;&nbsp;&nbsp;User name: {{ member.name }} <br>
+                &nbsp;&nbsp;&nbsp;User ID: {{ member.user_id }}
+            {% endfor %}
+            <br>
+            {% endfor %}
+        </div>
+
+        <div class="container">
+            <h2>Attachments information</h2>
+
+            {% for attachment in attachments %}
+
+            Name of attachment: {{ attachment.name }} <br>
+            Attachment ID: {{ attachment.attachments_id }} <br>
+            Attachment type: {{ attachment.attachment_type }} <br>
+            Attachment URL: {{ attachment.attachment_url }} <br>
+            Creation time: {{ attachment.creation_time }} <br>
+            Project ID: {{ attachment.project_id }} <br>
+            <br>
+            {% endfor %}
+        </div>
+
+    </body>
+
+</html>

@@ -13,7 +13,6 @@ import os
 
 
 # Check if db activating first time
-
 if not len(firebase_admin._apps):
 
     # Fetch the service account key JSON file contents
@@ -102,27 +101,22 @@ def create_project():
     return new_project_id
 
 
-#@app.route('/project/<project_id>/delete', methods=['DELETE'])
-@app.route('/delete_project', methods=['POST'])
-def delete_project():
-
-    data = request.args
+@app.route('/project/<project_id>/delete', methods=['DELETE'])
+def delete_project(project_id):
 
     # TODO: Add user check (if user admin or not)
     # if data.TOKEN is valid (check with firebase)
     if True:
-        return FB_functions.delete_project(data['project_id'])
+        return FB_functions.delete_project(project_id)
 
     return "ERROR: Wrong project id."
 
 
-#@app.route('/project/<project_id>/add_members', methods=['POST'])
-@app.route('/add_members_to_project', methods=['POST'])
-def add_members_to_project():
+@app.route('/project/<project_id>/add_members', methods=['POST'])
+def add_members_to_project(project_id):
 
     data = request.args
     users_id = data.getlist('user_id')
-    project_id = data['project_id']
 
     return FB_functions.add_members_to_project(users_id, project_id)
 
@@ -138,13 +132,12 @@ def get_members_of_project(project_id):
     return json.dumps(members)
 
 
-#@app.route('/project/<project_id>/add_task', methods=['POST'])
-@app.route('/add_task_to_project', methods=['POST'])
-def set_task_to_project():
+@app.route('/project/<project_id>/add_task', methods=['POST'])
+def set_task_to_project(project_id):
 
     data=request.args
     task_id = FB_functions.add_task_to_project(
-            data["project_id"], 
+            project_id, 
             data["creater_id"], 
             data["description"], 
             data["status"], 
@@ -154,19 +147,17 @@ def set_task_to_project():
     return json.dumps(task_id)
 
 
-#@app.route('/task/<task_id>/status_update', methods=['POST'])
-@app.route('/update_task_status', methods=['POST'])
-def update_task_status():
+@app.route('/task/<task_id>/status_update', methods=['PUT'])
+def update_task_status(task_id):
     data=request.args
-    FB_functions.update_task(data["task_id"], data["new_task_status"])
+    FB_functions.update_task(task_id, data["task_status"])
     return "OK"
 
 
-#@app.route('/task/<task_id>/assign_to_user', methods=['POST'])
-@app.route('/assign_task_to_users', methods=['POST'])
-def assign_task_to_users():
+@app.route('/task/<task_id>/assign_to_user', methods=['POST'])
+def assign_task_to_users(task_id):
     data=request.args
-    FB_functions.assign_task_to_users(data["task_id"], data["user_ids"])
+    FB_functions.assign_task_to_users(task_id, data["user_ids"])
     return "OK"
 
 
@@ -202,10 +193,11 @@ def generate_project_report(project_id):
 
     report_name = report_generate.generate_project_report(project_id)
 
-    if not report_name:
-        return 'ERROR: Project not exist'
+    # print(report_name)
+    # if not report_name:
+    #     return 'ERROR: Project not exist'
 
-    return 'ok'
+    return report_name
     # return send_file('/pdf/{}'.format(report_name))
 
 
