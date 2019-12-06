@@ -5,9 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuInflater
 import android.view.View
-import android.widget.BaseAdapter
-import android.widget.ListView
-import android.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 
 import com.mcc_project_5.DataModels.Project
@@ -16,7 +13,7 @@ import org.json.JSONArray
 import java.io.IOException
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageButton
+import android.widget.*
 import com.mcc_project_5.Adapters.ProjectListAdapter
 import com.mcc_project_5.Tools.Properties
 import kotlinx.android.synthetic.main.activity_list_of_created_projects.*
@@ -29,6 +26,7 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
     private val client = OkHttpClient()
     private val projects = ArrayList<Project>()
+    private val visibleProjects = ArrayList<Project>()
     private var lastClicked = 0
     private var sortOrder = SortOrder.DESC
 
@@ -75,12 +73,12 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
     fun performSorting() {
         when(sorting) {
-            Sort.BY_FAVORITE -> Collections.sort(projects, ComparatorByFavorite())
-            Sort.BY_TIME -> Collections.sort(projects, ComparatorByTime())
-            Sort.BY_DEADLINE -> Collections.sort(projects, ComparatorByDeadline())
+            Sort.BY_FAVORITE -> Collections.sort(visibleProjects, ComparatorByFavorite())
+            Sort.BY_TIME -> Collections.sort(visibleProjects, ComparatorByTime())
+            Sort.BY_DEADLINE -> Collections.sort(visibleProjects, ComparatorByDeadline())
         }
         if (sortOrder == SortOrder.DESC)
-            projects.reverse()
+            visibleProjects.reverse()
         refreshList()
     }
 
@@ -135,7 +133,7 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         }*/
 
         val listAdapter = ProjectListAdapter()
-        listAdapter.setItems(projects)
+        listAdapter.setItems(visibleProjects)
         val listView = findViewById<ListView>(R.id.listView)
         listView.adapter = listAdapter
         listView.setOnItemClickListener { _, _, position, _ ->
@@ -144,13 +142,31 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
     }
 
-    //android:onClick="loadTemplate"
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         super.onCreateOptionsMenu(menu)
         val inflater = menuInflater
         inflater.inflate(R.menu.general, menu)
         //inflater.inflate(R.menu.filter, menu)
+
+        val searchView = menu.findItem(R.id.action_search).actionView as SearchView
+        searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                visibleProjects.clear()
+                projects.forEach {
+                    if (it.title.contains(newText!!, true)) {
+                        visibleProjects.add(it)
+                    }
+                }
+                refreshList()
+                return true
+            }
+
+        })
         return true
     }
 
@@ -162,13 +178,13 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
                 item.setIcon(R.drawable.ic_sort_reversed_black_24dp)
                 item.icon.layoutDirection = View.LAYOUT_DIRECTION_RTL
                 sortOrder = SortOrder.ASC
-                projects.reverse()
+                visibleProjects.reverse()
                 refreshList()
             } else {
                 item.setIcon(R.drawable.ic_sort_black_24dp)
                 item.icon.layoutDirection = View.LAYOUT_DIRECTION_LTR
                 sortOrder = SortOrder.DESC
-                projects.reverse()
+                visibleProjects.reverse()
                 refreshList()
             }
         }
@@ -189,7 +205,7 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
     fun showPopupMenu(v: View) {
         val popup = PopupMenu(this, v)
-        System.err.println(projects[lastClicked])
+        System.err.println(visibleProjects[lastClicked])
         val inflater: MenuInflater = popup.menuInflater
         inflater.inflate(R.menu.list_of_projects_popup, popup.menu)
         popup.setOnMenuItemClickListener {
@@ -212,6 +228,8 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
             val project = Project(item)
             projects.add(project)
         }
+        visibleProjects.clear()
+        visibleProjects.addAll(projects)
         refreshList()
         this.byTime.performClick()
         Log.d("DDD", projects.toString())
