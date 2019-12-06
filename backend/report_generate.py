@@ -1,8 +1,16 @@
 from main import ref
 from FB_functions import get_members_of_project, get_tasks_of_project, get_users_on_task, get_attachments_of_project
 
-from fpdf import FPDF
+from datetime import datetime
+from jinja2 import Environment, FileSystemLoader
+# import pdfkit
+# from weasyprint import HTML
+# from fpdf import FPDF
 
+
+# path_wkhtmltopdf = r'C:\Users\olegg\Documents\GitHub\Aalto\wkhtmltox'
+# config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+# pdfkit.from_url("http://google.com", "out.pdf", configuration=config)
 
 def get_data(project_id):
 
@@ -30,7 +38,9 @@ def get_data(project_id):
 
         user['user_id'] = member['user_id']
 
-        user_role = roles_ref.get(member['role_id'])
+        user_role = roles_ref.get()
+        user_role = user_role[member['role_id']]
+
         user['role_name'] = user_role['name']
         user['role_level'] = user_role['level']
 
@@ -61,20 +71,54 @@ def get_data(project_id):
 
     data['project_info'] = project  
     data['users_info'] = users  
-    data['tasks_info'] = tasks  
+    data['tasks_info'] = result_tasks  
     data['attachments_info'] = attachments  
 
     return data
 
 
 def generate_pdf(data):
+
+    project = data['project_info'] 
+    users = data['users_info']  
+    tasks = data['tasks_info']  
+    attachments = data['attachments_info']
+
+    env = Environment(loader=FileSystemLoader('.'))
+
+    template = env.get_template("report_template.html")
+
+    template_vars = {
+                    "title" : 'Report of project {}'.format(project['project_id']),
+                    "project_name" : project['name'],
+                    "project_info" : project,
+                    "users" : users,
+                    "tasks" : tasks,
+                    "attachments" : attachments
+                    }
+
+    html_out = template.render(template_vars)
+
+    # Filename consist of date to make it unique
+    now = datetime.now()
+    dt_string = now.strftime("%d-%m-%Y_%H-%M-%S")
+
+    html_file = open(dt_string + '.html', 'w')
+    html_file.write(html_out)
+    html_file.close()
+
+    # pdfkit.from_file(dt_string + '.html', dt_string + '.pdf')
+
+    # HTML(string=html_out).write_pdf(args.outfile.name)
+
     # pdf = FPDF()
     # pdf.add_page()
     # pdf.set_font("Arial", size=12)
-    # pdf.cell(200, 10, txt="Welcome to Python!", ln=1, align="C")
-    # pdf.output("simple_demo.pdf")
+    # pdf.cell(200, 10, txt='Report of project {}'.format(project['project_id']), ln=1, align="C")
+    # pdf.output("pdf/simple_demo.pdf")
 
-    print(data)
+    return dt_string + '.pdf'
+    
 
 
 def generate_project_report(project_id):
