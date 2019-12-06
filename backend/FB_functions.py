@@ -54,7 +54,11 @@ def add_members_to_project(users_id, project_id):
 
 
 def add_task_to_project(project_id, creater_id, description, status, taskname):
-#Create a task, given the project ID and the task attributes. It returns the task ID after creation.
+    '''
+    Create task the task attributes and assign it to project by project ID. 
+    Returns the task ID after creation.
+    '''
+    
     tasks_to_project_ref = ref.child('tasks')
 
     id_ref  = tasks_to_project_ref.push({
@@ -70,7 +74,10 @@ def add_task_to_project(project_id, creater_id, description, status, taskname):
 
 
 def update_task(task_id, new_task_status):
-#Update a task, which updates the task status given a task ID.
+    '''
+    Updates the task status by given task ID.
+    ''' 
+
     tasks_ref = ref.child('tasks')
 
     path = task_id + '/status'
@@ -80,8 +87,11 @@ def update_task(task_id, new_task_status):
 
 
 def assign_task_to_users(task_id, *user_ids):
-#Assign a task to a user(s), given the project ID and the task ID
-# In reality create a row in table task_to_user with task_id and user_id
+    '''
+    Assign a task to a user(s) by given project ID and task ID.
+    Create a row in table task_to_user with task_id and user_id.
+    '''
+
     task_to_user_ref = ref.child('task_to_user')
 
     for user_id in user_ids:
