@@ -3,7 +3,6 @@ package com.mcc_project_5
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 
@@ -16,7 +15,7 @@ import android.view.MenuItem
 import android.widget.*
 import com.mcc_project_5.Adapters.ProjectListAdapter
 import com.mcc_project_5.Tools.Properties
-import kotlinx.android.synthetic.main.activity_list_of_created_projects.*
+import kotlinx.android.synthetic.main.list_of_created_projects_activity.*
 import java.util.*
 import kotlin.Comparator
 import kotlin.collections.ArrayList
@@ -27,7 +26,6 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
     private val client = OkHttpClient()
     private val projects = ArrayList<Project>()
     private val visibleProjects = ArrayList<Project>()
-    private var lastClicked = 0
     private var sortOrder = SortOrder.DESC
 
     private enum class Sort {
@@ -117,7 +115,7 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_list_of_created_projects)
+        setContentView(R.layout.list_of_created_projects_activity)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.inflateMenu(R.menu.general)
         toolbar.setTitle("Projects")
@@ -136,10 +134,8 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         listAdapter.setItems(visibleProjects)
         val listView = findViewById<ListView>(R.id.listView)
         listView.adapter = listAdapter
-        listView.setOnItemClickListener { _, _, position, _ ->
-            lastClicked = position
-        }
 
+        this.byTime.performClick()
     }
 
 
@@ -203,22 +199,6 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         return call
     }
 
-    fun showPopupMenu(v: View) {
-        val popup = PopupMenu(this, v)
-        System.err.println(visibleProjects[lastClicked])
-        val inflater: MenuInflater = popup.menuInflater
-        inflater.inflate(R.menu.list_of_projects_popup, popup.menu)
-        popup.setOnMenuItemClickListener {
-            if (it.itemId != -1) {
-                System.err.println(it.title)
-                true
-            }
-            false
-        }
-        popup.show()
-    }
-
-
     fun loadTemplate() {
         val testJson = "[{\"id\":1,\"title\":\"xxx\",\"deadline\":\"02.02.02\",\"imageUrl\":\"\",\"lastModified\":\"01.01.01\",\"isFavorite\":true,\"isMediaAvailable\":false,\"members\":[{\"id\":1,\"imageUrl\":\"\"}, {\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}]}, {\"id\":2,\"title\":\"yyy\",\"deadline\":\"01.01.01\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"02.02.02\",\"isFavorite\":false,\"isMediaAvailable\":true,\"members\":[{\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9pLnBpbmltZy5jb20vb3JpZ2luYWxzL2YzL2UxL2I4L2YzZTFiODAxOWYxNjBmODg1MzFkOGFmNzkyNzE2YjRmLnBuZw==\"}]}]"
         val json = JSONArray(testJson)
@@ -231,8 +211,6 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         visibleProjects.clear()
         visibleProjects.addAll(projects)
         refreshList()
-        this.byTime.performClick()
-        Log.d("DDD", projects.toString())
     }
 
     fun onLoadBtnClick(view: View) {
