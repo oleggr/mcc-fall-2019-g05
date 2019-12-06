@@ -6,6 +6,7 @@ from google.cloud import storage
 
 import flask
 from flask import request
+from flask import send_file
 
 import os
 
@@ -30,6 +31,7 @@ ref = db.reference('/')
 
 import firebase_interaction as bfi
 import FB_functions
+import report_generate
 
 
 app = flask.Flask(__name__)
@@ -70,7 +72,8 @@ def user_authentication():
     return "This is user_authentication method. returns fails or not"
 
 
-@app.route('/get_profile_settings')
+#?? what about settings of profile and what profile is
+@app.route('/users/<user_id>/get_profile_settings')
 def get_profile_settings():
     return "This is get_profile_settings method. returns profile info"
 
@@ -125,9 +128,12 @@ def add_members_to_project():
 
 @app.route('/project/<project_id>/members')
 def get_members_of_project(project_id):
+    '''
+    Returns dict of members which consist of user_id, project_id and role_id
+    '''
+
     members = FB_functions.get_members_of_project(project_id)
     # String is not correct way. TODO: Fix it
-    members = str(members)
     return members
 
 
@@ -188,8 +194,18 @@ def add_attachments_to_project(project_id):
 
 
 @app.route('/project/<project_id>/generate_report') 
-def generate_project_report():
-    return "This is generate_project_report method. returns fails or not or may be returns a report"
+def generate_project_report(project_id):
+    '''
+    This is generate_project_report method. 
+    Returns fails or not or may be returns a report
+    '''
+
+    report_name = report_generate.generate_project_report(project_id)
+
+    if !report_name:
+        return 'ERROR: Project not exist'
+
+    return send_file('/pdf/{}'.format(report_name))
 
 
 # Get all projects as json
