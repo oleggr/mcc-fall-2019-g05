@@ -75,9 +75,10 @@ class ProjectContentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.project_content_activity)
 
+        val projectId = this.intent.getStringExtra("projectId")
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.inflateMenu(R.menu.project_content_general)
-        toolbar.setTitle("Project123")
+        toolbar.setTitle(projectId)
         setSupportActionBar(toolbar)
 
         val taskListAdapter = TaskListAdapter()
