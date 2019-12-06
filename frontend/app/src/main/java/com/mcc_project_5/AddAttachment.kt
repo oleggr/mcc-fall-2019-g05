@@ -15,15 +15,13 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toFile
-import com.squareup.okhttp.*
 
 import kotlinx.android.synthetic.main.activity_add_attachment.*
 import java.io.File
 import org.json.JSONObject
-import com.squareup.okhttp.MultipartBuilder
-import com.squareup.okhttp.OkHttpClient
-import com.squareup.okhttp.RequestBody
 import androidx.fragment.app.FragmentActivity
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
 import java.io.UnsupportedEncodingException
 import java.net.UnknownHostException
 
@@ -135,9 +133,9 @@ class AddAttachment : AppCompatActivity() {
 
         try {
 
-            val MEDIA_TYPE = MediaType.parse("jpg/pdf/txt/mp3")
+            val MEDIA_TYPE = ("jpg/pdf/txt/mp3").toMediaType()
 
-            val req = MultipartBuilder().type(MultipartBuilder.FORM)
+            val req = MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("userid", "8457851245")
                 .addFormDataPart(
                     "userfile",
@@ -153,9 +151,9 @@ class AddAttachment : AppCompatActivity() {
             val client = OkHttpClient()
             val response = client.newCall(request).execute()
 
-            Log.d("response", "uploadImage:" + response.body().string())
+            Log.d("response", "uploadImage:" + response.body!!.string())
 
-            return JSONObject(response.body().string())
+            return JSONObject(response.body!!.string())
 
         } catch (e: UnknownHostException) {
             System.err.println( "Error: " + e.getLocalizedMessage())
