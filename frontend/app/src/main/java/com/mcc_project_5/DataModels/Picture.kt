@@ -7,10 +7,12 @@ class Picture {
     var imageUrl: String = ""
     var createdAt: String = ""
     var id: Int
+    var description: String = ""
     constructor(json: JSONObject) {
         this.id = json.getInt("id")
         imageUrl = String(Base64.decode(json.getString("imageUrl"), Base64.DEFAULT))
         createdAt = json.getString("createdAt")
+        description = json.getString("description")
     }
 
     override fun equals(other: Any?): Boolean {
@@ -22,6 +24,7 @@ class Picture {
         if (imageUrl != other.imageUrl) return false
         if (createdAt != other.createdAt) return false
         if (id != other.id) return false
+        if (description != other.description) return false
 
         return true
     }
@@ -30,11 +33,12 @@ class Picture {
         var result = imageUrl.hashCode()
         result = 31 * result + createdAt.hashCode()
         result = 31 * result + id
+        result = 31 * result + description.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "Picture(imageUrl='$imageUrl', createdAt='$createdAt', id=$id)"
+        return "Picture(imageUrl='$imageUrl', createdAt='$createdAt', id=$id, description='$description')"
     }
 
 

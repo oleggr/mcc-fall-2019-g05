@@ -113,7 +113,7 @@ class ProjectContentActivity : AppCompatActivity() {
     }
 
     fun loadPicturesTemplate() {
-        val testJson = "[{\"id\":1, \"createdAt\":\"01.01.01\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}, {\"id\":2, \"createdAt\":\"01.01.02\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}, {\"id\":3, \"createdAt\":\"01.01.03\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}]"
+        val testJson = "[{\"id\":1, \"createdAt\":\"01.01.01\", \"description\":\"random random random\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}, {\"id\":2, \"createdAt\":\"01.01.02\", \"description\":\"random random random\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}, {\"id\":3, \"createdAt\":\"01.01.03\", \"description\":\"random random random\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}]"
         val json = JSONArray(testJson)
         pictures.clear()
         for(i in 0 until json.length()) {
