@@ -10,6 +10,7 @@ class Project {
     val lastModified: String
     val isFavorite: Boolean
     val isMediaAvailable: Boolean
+    val deadline: String
     val membersArray: ArrayList<ProjectMember> = arrayListOf()
 
     init {
@@ -23,6 +24,7 @@ class Project {
         lastModified = json.getString("lastModified")
         isFavorite = json.getBoolean("isFavorite")
         isMediaAvailable = json.getBoolean("isMediaAvailable")
+        deadline = json.getString("deadline")
 
         val tmpArray = json.getJSONArray("members")
         membersArray.clear()
@@ -46,6 +48,7 @@ class Project {
         if (lastModified != other.lastModified) return false
         if (isFavorite != other.isFavorite) return false
         if (membersArray != other.membersArray) return false
+        if (deadline != other.deadline) return false
 
         return true
     }
@@ -57,11 +60,12 @@ class Project {
         result = 31 * result + lastModified.hashCode()
         result = 31 * result + isFavorite.hashCode()
         result = 31 * result + membersArray.hashCode()
+        result = 31 * result + deadline.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "Project(id=$id, title='$title', imageUrl='$imageUrl', lastModified='$lastModified', isFavorite=$isFavorite, membersArray=$membersArray)"
+        return "Project(id=$id, title='$title', imageUrl='$imageUrl', lastModified='$lastModified', isFavorite=$isFavorite, membersArray=$membersArray), deadline=$deadline"
     }
 
 

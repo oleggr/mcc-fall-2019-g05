@@ -20,6 +20,9 @@ import android.view.MenuItem
 import android.widget.ImageButton
 import androidx.core.view.forEachIndexed
 import kotlinx.android.synthetic.main.activity_list_of_created_projects.*
+import java.util.*
+import kotlin.Comparator
+import kotlin.collections.ArrayList
 
 
 class ListOfCreatedProjects : AppCompatActivity() {
@@ -27,13 +30,59 @@ class ListOfCreatedProjects : AppCompatActivity() {
     private val client = OkHttpClient()
     private val projects = ArrayList<Project>()
     private var lastClicked = 0
-    private var sortOrder = 0
-    private enum class Sort {
-        BY_FAVORITE, BY_TIME, BY_DEADLINE
-    }
-    private var sorting: Sort = Sort.BY_TIME
+    private var sortOrder = SortOrder.DESC
 
-    // 0 UpDown; 1 DownUp
+    private enum class Sort {
+        BY_FAVORITE, BY_TIME, BY_DEADLINE, NONE
+    }
+
+    private enum class SortOrder {
+        ASC, DESC
+    }
+    private var sorting: Sort = Sort.NONE
+
+    class ComparatorByFavorite: Comparator<Project>{
+        override fun compare(o1: Project?, o2: Project?): Int {
+            if(o1 == null || o2 == null){
+                return 0;
+            }
+            return o1.isFavorite.compareTo(o2.isFavorite)
+        }
+    }
+
+    class ComparatorByTime: Comparator<Project>{
+        override fun compare(o1: Project?, o2: Project?): Int {
+            if(o1 == null || o2 == null){
+                return 0;
+            }
+            return o1.lastModified.compareTo(o2.lastModified)
+        }
+    }
+
+    class ComparatorByDeadline: Comparator<Project>{
+        override fun compare(o1: Project?, o2: Project?): Int {
+            if(o1 == null || o2 == null){
+                return 0;
+            }
+            return o1.deadline.compareTo(o2.deadline)
+        }
+    }
+
+    fun refreshList() {
+        val adapter = findViewById<ListView>(R.id.listView).adapter as BaseAdapter
+        adapter.notifyDataSetChanged()
+    }
+
+    fun performSorting() {
+        when(sorting) {
+            Sort.BY_FAVORITE -> Collections.sort(projects, ComparatorByFavorite())
+            Sort.BY_TIME -> Collections.sort(projects, ComparatorByTime())
+            Sort.BY_DEADLINE -> Collections.sort(projects, ComparatorByDeadline())
+        }
+        if (sortOrder == SortOrder.DESC)
+            projects.reverse()
+        refreshList()
+    }
 
     fun onSortByDeadline(v: View) {
         if (sorting == Sort.BY_DEADLINE){
@@ -43,6 +92,7 @@ class ListOfCreatedProjects : AppCompatActivity() {
         findViewById<ImageButton>(R.id.byDeadline).setImageResource(R.drawable.ic_timer_white_24dp)
         findViewById<ImageButton>(R.id.byFavorite).setImageResource(R.drawable.ic_star_black_24dp)
         findViewById<ImageButton>(R.id.byTime).setImageResource(R.drawable.ic_radio_button_unchecked_black_24dp)
+        performSorting()
     }
 
     fun onSortByTime(v: View) {
@@ -53,6 +103,7 @@ class ListOfCreatedProjects : AppCompatActivity() {
         findViewById<ImageButton>(R.id.byDeadline).setImageResource(R.drawable.ic_timer_black_24dp)
         findViewById<ImageButton>(R.id.byFavorite).setImageResource(R.drawable.ic_star_black_24dp)
         findViewById<ImageButton>(R.id.byTime).setImageResource(R.drawable.ic_radio_button_unchecked_white_24dp)
+        performSorting()
     }
 
     fun onSortByFavorite(v: View) {
@@ -63,6 +114,7 @@ class ListOfCreatedProjects : AppCompatActivity() {
         findViewById<ImageButton>(R.id.byDeadline).setImageResource(R.drawable.ic_timer_black_24dp)
         findViewById<ImageButton>(R.id.byFavorite).setImageResource(R.drawable.ic_star_white_24dp)
         findViewById<ImageButton>(R.id.byTime).setImageResource(R.drawable.ic_radio_button_unchecked_black_24dp)
+        performSorting()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,14 +158,18 @@ class ListOfCreatedProjects : AppCompatActivity() {
         if (item.title == "refresh") {
             loadTemplate()
         } else if (item.title == "sort") {
-            if (sortOrder == 0) {
+            if (sortOrder == SortOrder.DESC) {
                 item.setIcon(R.drawable.ic_sort_reversed_black_24dp)
                 item.icon.layoutDirection = View.LAYOUT_DIRECTION_RTL
-                sortOrder = 1
+                sortOrder = SortOrder.ASC
+                projects.reverse()
+                refreshList()
             } else {
                 item.setIcon(R.drawable.ic_sort_black_24dp)
                 item.icon.layoutDirection = View.LAYOUT_DIRECTION_LTR
-                sortOrder = 0
+                sortOrder = SortOrder.DESC
+                projects.reverse()
+                refreshList()
             }
         }
 
@@ -148,7 +204,7 @@ class ListOfCreatedProjects : AppCompatActivity() {
 
 
     fun loadTemplate() {
-        val testJson = "[{\"id\":1,\"title\":\"xxx\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"01.01.01\",\"isFavorite\":true,\"isMediaAvailable\":false,\"members\":[{\"id\":1,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}, {\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}]}, {\"id\":2,\"title\":\"yyy\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"02.02.02\",\"isFavorite\":false,\"isMediaAvailable\":true,\"members\":[{\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9pLnBpbmltZy5jb20vb3JpZ2luYWxzL2YzL2UxL2I4L2YzZTFiODAxOWYxNjBmODg1MzFkOGFmNzkyNzE2YjRmLnBuZw==\"}]}]"
+        val testJson = "[{\"id\":1,\"title\":\"xxx\",\"deadline\":\"02.02.02\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"01.01.01\",\"isFavorite\":true,\"isMediaAvailable\":false,\"members\":[{\"id\":1,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}, {\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}]}, {\"id\":2,\"title\":\"yyy\",\"deadline\":\"01.01.01\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"02.02.02\",\"isFavorite\":false,\"isMediaAvailable\":true,\"members\":[{\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9pLnBpbmltZy5jb20vb3JpZ2luYWxzL2YzL2UxL2I4L2YzZTFiODAxOWYxNjBmODg1MzFkOGFmNzkyNzE2YjRmLnBuZw==\"}]}]"
         val json = JSONArray(testJson)
         projects.clear()
         for(i in 0 until json.length()) {
@@ -156,8 +212,8 @@ class ListOfCreatedProjects : AppCompatActivity() {
             val project = Project(item)
             projects.add(project)
         }
-        val adapter = findViewById<ListView>(R.id.listView).adapter as BaseAdapter
-        adapter.notifyDataSetChanged()
+        refreshList()
+        this.byTime.performClick()
         Log.d("DDD", projects.toString())
     }
 
@@ -179,8 +235,7 @@ class ListOfCreatedProjects : AppCompatActivity() {
                         projects.add(Project(item))
                         //Dirty hack here, b careful vvv
                         runOnUiThread {
-                            val adapter = findViewById<ListView>(R.id.listView).adapter as BaseAdapter
-                            adapter.notifyDataSetChanged()
+                            refreshList()
                         }
                     }
                 } else {
