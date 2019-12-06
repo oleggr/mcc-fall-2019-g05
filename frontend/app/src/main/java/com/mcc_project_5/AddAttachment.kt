@@ -2,7 +2,6 @@ package com.mcc_project_5
 
 import android.Manifest
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -10,16 +9,23 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.LayoutInflater
-import android.widget.ArrayAdapter
-import android.widget.ListView
+import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.attachment.*
+import androidx.core.net.toFile
+import com.squareup.okhttp.*
 
 import kotlinx.android.synthetic.main.activity_add_attachment.*
-
+import java.io.File
+import org.json.JSONObject
+import com.squareup.okhttp.MultipartBuilder
+import com.squareup.okhttp.OkHttpClient
+import com.squareup.okhttp.RequestBody
+import androidx.fragment.app.FragmentActivity
+import java.io.UnsupportedEncodingException
+import java.net.UnknownHostException
 
 
 class AddAttachment : AppCompatActivity() {
@@ -27,7 +33,10 @@ class AddAttachment : AppCompatActivity() {
     private val PERMISSION_CODE = 1000
     private val IMAGE_CAPTURE_CODE = 1001
     private val IMAGE_PICK_CODE = 1001
-    var image_uri: Uri? = null
+    private val FILE_UPLOAD_CODE = 1001
+    var file_uri: Uri? = null
+    val client : OkHttpClient = OkHttpClient()
+    private val fileUrl = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,9 +50,7 @@ class AddAttachment : AppCompatActivity() {
             popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
                 when(item.itemId) {
                     R.id.action_photo ->
-                    {
                         openCamera()
-                    }
                     R.id.action_gallery ->
                         pickImageFromGallery()
                     R.id.action_document ->
@@ -61,10 +68,10 @@ class AddAttachment : AppCompatActivity() {
         val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE, "New Picture")
         values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
-        image_uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        file_uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
         //camera intent
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, file_uri)
         startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
     }
 
@@ -73,7 +80,7 @@ class AddAttachment : AppCompatActivity() {
             .setType("*/*")
             .setAction(Intent.ACTION_GET_CONTENT)
 
-        startActivityForResult(Intent.createChooser(intent, "Select a file"), 111)
+        startActivityForResult(Intent.createChooser(intent, "Select a file"), FILE_UPLOAD_CODE)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -124,17 +131,57 @@ class AddAttachment : AppCompatActivity() {
         startActivityForResult(intent, IMAGE_PICK_CODE)
     }
 
+    private fun uploadImage(file: File, ext: String): JSONObject? {
+
+        try {
+
+            val MEDIA_TYPE = MediaType.parse("jpg/pdf/txt/mp3")
+
+            val req = MultipartBuilder().type(MultipartBuilder.FORM)
+                .addFormDataPart("userid", "8457851245")
+                .addFormDataPart(
+                    "userfile",
+                    "profile." + ext,
+                    RequestBody.create(MEDIA_TYPE, file)
+                ).build()
+
+            val request = Request.Builder()
+                .url(fileUrl)
+                .post(req)
+                .build()
+
+            val client = OkHttpClient()
+            val response = client.newCall(request).execute()
+
+            Log.d("response", "uploadImage:" + response.body().string())
+
+            return JSONObject(response.body().string())
+
+        } catch (e: UnknownHostException) {
+            System.err.println( "Error: " + e.getLocalizedMessage())
+        } catch (e: UnsupportedEncodingException) {
+            System.err.println( "Error: " + e.getLocalizedMessage())
+        } catch (e: Exception) {
+            System.err.println( "Error: " + e.localizedMessage!!)
+        }
+
+        return null
+    }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == 111 && resultCode == RESULT_OK) {
-            val selectedFile = data?.data //The uri with the location of the file
-        }
-
-        if (resultCode == Activity.RESULT_OK){
-            Toast.makeText(this@AddAttachment, " " + image_uri , Toast.LENGTH_SHORT).show()
+        if ((requestCode == FILE_UPLOAD_CODE && resultCode == RESULT_OK) || (resultCode == Activity.RESULT_OK)) {
+            if(data == null || data.data == null){
+                return
+            }
+            file_uri = data?.data //The uri with the location of the file
+            val extension = MimeTypeMap.getFileExtensionFromUrl(file_uri.toString())
+            if (extension != null) {
+                val ext = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+                uploadImage(file_uri!!.toFile(), ext.toString())
+            }
         }
     }
 
