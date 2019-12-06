@@ -97,7 +97,7 @@
             android:layout_width="24dp"
             android:layout_height="48dp"
             android:background="#00FFFFFF"
-            android:onClick="showPopupMenu"
-            android:src="@drawable/ic_more_vert_black_24dp" />
+            android:src="@drawable/ic_more_vert_black_24dp"
+            android:focusable="false"/>
     </LinearLayout>
 </LinearLayout>
