@@ -201,8 +201,8 @@ def get_list_of_projects():
 
 # Get single project as json
 @app.route('/project/<project_id>/search')
-def search_for_project():
-    return "This is search_for_project method. returns null or a project"
+def search_for_project(project_id):
+    return json.dumps(FB_functions.search_for_project_implementation(project_id))
 
 
 @app.route('/get_image_resolution')

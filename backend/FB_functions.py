@@ -115,6 +115,12 @@ def get_list_of_projects_implementation(user_id):
                 response_list.append({i : ref.child(path_str).get()})
     return response_list
 
+def search_for_project_implementation(project_id):
+    project = ref.child('projects/' + project_id).get()
+    response_list = []
+    response_list.append({project_id : project})
+    return response_list
+
 def get_members_of_project(project_id):
 
     members = []
