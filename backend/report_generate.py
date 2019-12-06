@@ -111,14 +111,7 @@ def generate_pdf(data):
 
     # HTML(string=html_out).write_pdf(args.outfile.name)
 
-    # pdf = FPDF()
-    # pdf.add_page()
-    # pdf.set_font("Arial", size=12)
-    # pdf.cell(200, 10, txt='Report of project {}'.format(project['project_id']), ln=1, align="C")
-    # pdf.output("pdf/simple_demo.pdf")
-
     return dt_string + '.pdf'
-    
 
 
 def generate_project_report(project_id):
