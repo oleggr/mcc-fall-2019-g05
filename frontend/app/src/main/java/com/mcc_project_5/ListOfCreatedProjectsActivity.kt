@@ -2,7 +2,6 @@ package com.mcc_project_5
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.LayoutDirection
 import android.util.Log
 import android.view.MenuInflater
 import android.view.View
@@ -18,14 +17,15 @@ import java.io.IOException
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageButton
-import androidx.core.view.forEachIndexed
+import com.mcc_project_5.Adapters.ProjectListAdapter
+import com.mcc_project_5.Tools.Properties
 import kotlinx.android.synthetic.main.activity_list_of_created_projects.*
 import java.util.*
 import kotlin.Comparator
 import kotlin.collections.ArrayList
 
 
-class ListOfCreatedProjects : AppCompatActivity() {
+class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
     private val client = OkHttpClient()
     private val projects = ArrayList<Project>()
@@ -126,7 +126,7 @@ class ListOfCreatedProjects : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         /*findViewById<ListView>(R.id.listView).setOnItemClickListener{ _, _, position, _ ->
-            val intent = Intent(this@ListOfCreatedProjects, Main2Activity::class.java)
+            val intent = Intent(this@ListOfCreatedProjectsActivity, Main2Activity::class.java)
             val item = photoList[position]
             intent.putExtra("author", item.author)
             // low preformance, better way - get from cache
@@ -204,7 +204,7 @@ class ListOfCreatedProjects : AppCompatActivity() {
 
 
     fun loadTemplate() {
-        val testJson = "[{\"id\":1,\"title\":\"xxx\",\"deadline\":\"02.02.02\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"01.01.01\",\"isFavorite\":true,\"isMediaAvailable\":false,\"members\":[{\"id\":1,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}, {\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}]}, {\"id\":2,\"title\":\"yyy\",\"deadline\":\"01.01.01\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"02.02.02\",\"isFavorite\":false,\"isMediaAvailable\":true,\"members\":[{\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9pLnBpbmltZy5jb20vb3JpZ2luYWxzL2YzL2UxL2I4L2YzZTFiODAxOWYxNjBmODg1MzFkOGFmNzkyNzE2YjRmLnBuZw==\"}]}]"
+        val testJson = "[{\"id\":1,\"title\":\"xxx\",\"deadline\":\"02.02.02\",\"imageUrl\":\"\",\"lastModified\":\"01.01.01\",\"isFavorite\":true,\"isMediaAvailable\":false,\"members\":[{\"id\":1,\"imageUrl\":\"\"}, {\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9tZWRpYWxlYWtzLnJ1L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzExL1NhaS0tdC1BcnRlLS1tLTI3My5qcGc=\"}]}, {\"id\":2,\"title\":\"yyy\",\"deadline\":\"01.01.01\",\"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\",\"lastModified\":\"02.02.02\",\"isFavorite\":false,\"isMediaAvailable\":true,\"members\":[{\"id\":2,\"imageUrl\":\"aHR0cHM6Ly9pLnBpbmltZy5jb20vb3JpZ2luYWxzL2YzL2UxL2I4L2YzZTFiODAxOWYxNjBmODg1MzFkOGFmNzkyNzE2YjRmLnBuZw==\"}]}]"
         val json = JSONArray(testJson)
         projects.clear()
         for(i in 0 until json.length()) {

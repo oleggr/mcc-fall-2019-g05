@@ -1,14 +1,15 @@
-package com.mcc_project_5
+package com.mcc_project_5.Adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.mcc_project_5.DataModels.ProjectMember
+import com.mcc_project_5.R
 import com.squareup.picasso.Picasso
-import jp.wasabeef.picasso.transformations.BlurTransformation
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.list_of_projects_members_list_layout.view.*
+import kotlin.collections.ArrayList
 
 class MemberListAdapter(val items: ArrayList<ProjectMember>): RecyclerView.Adapter<MemberListAdapter.MemberViewHolder>() {
     private val picasso = Picasso.get()
@@ -21,8 +22,13 @@ class MemberListAdapter(val items: ArrayList<ProjectMember>): RecyclerView.Adapt
     override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: MemberViewHolder, position: Int) {
-        holder.linearLayout.x -= 15 * position
-        picasso.load(items[position].imageUrl).transform(CropCircleTransformation()).into(holder.linearLayout.memberImageView)
+        holder.linearLayout.x += 15 * position
+        if (items[position].imageUrl != "") {
+            picasso.load(items[position].imageUrl).transform(CropCircleTransformation()).fit().into(holder.linearLayout.memberImageView)
+        } else {
+            holder.linearLayout.memberImageView.setImageResource(R.drawable.ic_account_circle_black_24dp)
+        }
+
     }
 
     class MemberViewHolder(val linearLayout: LinearLayout): RecyclerView.ViewHolder(linearLayout)
