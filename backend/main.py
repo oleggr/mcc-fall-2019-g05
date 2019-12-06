@@ -209,6 +209,7 @@ def generate_project_report(project_id):
     return send_file('/pdf/{}'.format(report_name))
 
 
+
 # Get all projects as json
 @app.route('/get_projects', methods=['GET'])
 def get_list_of_projects():
