@@ -8,6 +8,7 @@ import flask
 from flask import request
 
 import os
+import json
 
 
 # Check if db activating first time
@@ -137,10 +138,10 @@ def set_task_to_project():
 
     data=request.args
     task_id = FB_functions.add_task_to_project(
-            data["project_id"], 
-            data["creater_id"], 
-            data["description"], 
-            data["status"], 
+            data["project_id"],
+            data["creater_id"],
+            data["description"],
+            data["status"],
             data["taskname"]
     )
 
@@ -166,7 +167,7 @@ def assign_task_to_users():
 @app.route('/project/<project_id>/tasks')
 def get_tasks_of_project(project_id):
     '''
-    Get_tasks_of_project method. 
+    Get_tasks_of_project method.
     Returns list of tasks.
     '''
 
@@ -187,19 +188,19 @@ def add_attachments_to_project(project_id):
     return "This is add_attachments_to_project method. returns fails or not"
 
 
-@app.route('/project/<project_id>/generate_report') 
+@app.route('/project/<project_id>/generate_report')
 def generate_project_report():
     return "This is generate_project_report method. returns fails or not or may be returns a report"
 
 
 # Get all projects as json
-@app.route('/get_projects')
+@app.route('/get_projects', methods=['GET'])
 def get_list_of_projects():
-    return "This is get_list_of_projects method. returns list of created projects"
+    return json.dumps(FB_functions.get_list_of_projects_implementation(request.args["user_id"]))
 
 
-# Get single project as json 
-@app.route('/project/<project_id>/search') 
+# Get single project as json
+@app.route('/project/<project_id>/search')
 def search_for_project():
     return "This is search_for_project method. returns null or a project"
 
