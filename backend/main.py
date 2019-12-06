@@ -8,6 +8,7 @@ import flask
 from flask import request
 from flask import send_file
 
+import json
 import os
 import json
 
@@ -135,7 +136,7 @@ def get_members_of_project(project_id):
 
     members = FB_functions.get_members_of_project(project_id)
     # String is not correct way. TODO: Fix it
-    return members
+    return json.dumps(members)
 
 
 #@app.route('/project/<project_id>/add_task', methods=['POST'])
@@ -151,7 +152,7 @@ def set_task_to_project():
             data["taskname"]
     )
 
-    return str(task_id)
+    return json.dumps(task_id)
 
 
 #@app.route('/task/<task_id>/status_update', methods=['POST'])
@@ -179,9 +180,8 @@ def get_tasks_of_project(project_id):
 
     tasks = FB_functions.get_tasks_of_project(project_id)
     # String is not correct way. TODO: Fix it
-    tasks = str(tasks)
 
-    return tasks
+    return json.dumps(tasks)
 
 
 @app.route('/convert_image_to_task')
@@ -203,10 +203,11 @@ def generate_project_report(project_id):
 
     report_name = report_generate.generate_project_report(project_id)
 
-    if !report_name:
+    if not report_name:
         return 'ERROR: Project not exist'
 
-    return send_file('/pdf/{}'.format(report_name))
+    return 'ok'
+    # return send_file('/pdf/{}'.format(report_name))
 
 
 

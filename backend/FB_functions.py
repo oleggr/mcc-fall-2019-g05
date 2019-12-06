@@ -130,6 +130,7 @@ def get_members_of_project(project_id):
     for member_record_id in members_dict:
         member_record = members_dict[member_record_id]
         if member_record['project_id'] == project_id:
+            member_record['member_id'] = member_record_id
             members.append(member_record)
 
     return members
@@ -141,9 +142,39 @@ def get_tasks_of_project(project_id):
     tasks_ref = ref.child('tasks')
     tasks_dict = tasks_ref.get()
 
-    for tasks_record_id in tasks_dict:
-        task_record = tasks_dict[tasks_record_id]
+    for task_record_id in tasks_dict:
+        task_record = tasks_dict[task_record_id]
         if task_record['project_id'] == project_id:
-            tasks.append(tasks_record_id)
+            task_record['task_id'] = task_record_id
+            tasks.append(task_record)
 
     return tasks
+
+
+def get_users_on_task(task_id):
+
+    users_on_task = []
+    tasks_to_user_ref = ref.child('task_to_user')
+    records_dict = tasks_to_user_ref.get()
+
+    for record_id in records_dict:
+        record = records_dict[record_id]
+        if record['task_id'] == task_id:
+            users_on_task.append(record['user_id'])
+
+    return users_on_task
+
+
+def get_attachments_of_project(project_id):
+
+    attachments = []
+    attachments_ref = ref.child('attachments')
+    attachments_dict = attachments_ref.get()
+
+    for attachments_record_id in attachments_dict:
+        attachments_record = attachments_dict[attachments_record_id]
+        if attachments_record['project_id'] == project_id:
+            attachments_record['attachments_id'] = attachments_record_id
+            attachments.append(task_record)
+
+    return attachments
