@@ -43,9 +43,9 @@ def add_members_to_project(users_id, project_id):
     try:
         for user_id in users_id:
             member_ref.push({
-                        'user_id': user_id,
-                        'project_id': project_id,
-                        'role_id': 'standart user'
+                    'user_id': user_id,
+                    'project_id': project_id,
+                    'role_id': 'standart user'
             })
         return 'INFO: Members added.'
         
@@ -58,11 +58,11 @@ def add_task_to_project(project_id, creater_id, description, status, taskname):
     tasks_to_project_ref = ref.child('tasks')
 
     id_ref  = tasks_to_project_ref.push({
-                'taskname': taskname,
-                'project_id': project_id,
-                'creater_id': creater_id,
-                'description': description,
-                'status': status
+            'taskname': taskname,
+            'project_id': project_id,
+            'creater_id': creater_id,
+            'description': description,
+            'status': status
     })
 
     task_id = id_ref.key
@@ -89,3 +89,17 @@ def assign_task_to_users(task_id, *user_ids):
             'task_id' : task_id,
             'user_id' : user_id
         })
+
+
+def get_members_of_project(project_id):
+
+    members = []
+    members_ref = ref.child('members')
+    members_dict = members_ref.get()
+
+    for member_record_id in members_dict:
+        member_record = members_dict[member_record_id]
+        if member_record['project_id'] == project_id:
+            members.append(member_record['user_id'])
+
+    return members
