@@ -16,16 +16,20 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
 
 import kotlinx.android.synthetic.main.activity_convert_image.*
+import android.graphics.Bitmap
+import android.R.attr.data
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 class Convert_image : AppCompatActivity() {
 
-    lateinit var imageView: ImageView
     lateinit var editText: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_convert_image)
-
-        imageView = findViewById(R.id.imageView)
         editText = findViewById(R.id.showText)
     }
 
@@ -39,26 +43,23 @@ class Convert_image : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            imageView.setImageURI(data!!.data)
+            val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, data!!.data)
 
+            startRecognizing(bitmap)
         }
     }
 
-    fun startRecognizing(v: View) {
-        if (imageView.drawable != null) {
+    fun startRecognizing(bitmap: Bitmap) {
+        if (bitmap != null) {
             editText.setText("")
-            v.isEnabled = false
-            val bitmap = (imageView.drawable as BitmapDrawable).bitmap
             val image = FirebaseVisionImage.fromBitmap(bitmap)
             val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
 
             detector.processImage(image)
                 .addOnSuccessListener { firebaseVisionText ->
-                    v.isEnabled = true
                     processResultText(firebaseVisionText)
                 }
                 .addOnFailureListener {
-                    v.isEnabled = true
                     editText.setText("Failed")
                 }
         } else {
