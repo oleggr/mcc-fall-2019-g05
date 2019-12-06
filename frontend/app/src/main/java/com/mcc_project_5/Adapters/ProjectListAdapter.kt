@@ -55,6 +55,7 @@ class ProjectListAdapter: BaseAdapter() {
         membersList.adapter = membersListAdapter
 
 
+
         return rowView
     }
 

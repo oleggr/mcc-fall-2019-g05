@@ -3,6 +3,7 @@ package com.mcc_project_5
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.system.Os.remove
 import android.util.Log
 import android.view.MenuInflater
 import android.view.View
@@ -21,13 +22,17 @@ import com.mcc_project_5.Tools.Properties
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import kotlinx.android.synthetic.main.activity_list_of_created_projects.*
+import kotlinx.android.synthetic.main.list_of_projects_list_layout.*
 import okio.Okio
+import org.json.JSONObject
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.Comparator
 import kotlin.collections.ArrayList
+
+
 
 
 class ListOfCreatedProjectsActivity : AppCompatActivity() {
@@ -212,19 +217,33 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         return call
     }
 
+    fun httpDelete(url: String, callBack: Callback): Call {
+        val request = Request.Builder()
+            .url(url)
+            .delete()
+            .build()
+
+        val call = client.newCall(request)
+        call.enqueue(callBack)
+        return call
+    }
+
+
     fun showPopupMenu(v: View) {
         val popup = PopupMenu(this, v)
+        //temporary
+        val listItemPosition = 0;
         System.err.println(visibleProjects[lastClicked])
         val inflater: MenuInflater = popup.menuInflater
         inflater.inflate(R.menu.list_of_projects_popup, popup.menu)
         popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
             when(item.itemId) {
                 R.id.deleteItem ->
-                    deleteItem()
+                    deleteItem(listItemPosition)
                 R.id.contentItem ->
                     Toast.makeText(this, "Content", Toast.LENGTH_SHORT).show()
                 R.id.reportItem ->
-                    reportItem()
+                    reportItem(listItemPosition)
             }
             true
         })
@@ -232,11 +251,29 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         popup.show()
     }
 
-    fun deleteItem() {
 
+    fun deleteItem(id: Int) {
+        val baseUrl = Properties(baseContext).getProperty("baseUrl")
+        httpDelete(baseUrl + "/project/delete?prjctid=" + id, object:Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("DDD", "FAIL")
+                return
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    visibleProjects.removeAt(id)
+                    val listView = findViewById<ListView>(R.id.listView)
+                    val adapter = listView.adapter as ProjectListAdapter
+                    adapter.notifyDataSetChanged()
+                } else {
+                    return
+                }
+            }
+        })
     }
 
-    fun reportItem() {
+    fun reportItem(id: Int) {
         try {
             val path = File(Environment.getExternalStorageDirectory() , "/projectID")
             downloadFile(reportUrl, path, null, null)
