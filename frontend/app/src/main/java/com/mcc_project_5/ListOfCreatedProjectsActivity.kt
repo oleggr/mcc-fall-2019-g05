@@ -2,6 +2,7 @@ package com.mcc_project_5
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.MenuInflater
 import android.view.View
@@ -13,10 +14,17 @@ import org.json.JSONArray
 import java.io.IOException
 import android.view.Menu
 import android.view.MenuItem
+import android.webkit.MimeTypeMap
 import android.widget.*
 import com.mcc_project_5.Adapters.ProjectListAdapter
 import com.mcc_project_5.Tools.Properties
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import kotlinx.android.synthetic.main.activity_list_of_created_projects.*
+import okio.Okio
+import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.Comparator
 import kotlin.collections.ArrayList
@@ -29,6 +37,7 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
     private val visibleProjects = ArrayList<Project>()
     private var lastClicked = 0
     private var sortOrder = SortOrder.DESC
+    private val reportUrl = ""
 
     private enum class Sort {
         BY_FAVORITE, BY_TIME, BY_DEADLINE, NONE
@@ -208,14 +217,66 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         System.err.println(visibleProjects[lastClicked])
         val inflater: MenuInflater = popup.menuInflater
         inflater.inflate(R.menu.list_of_projects_popup, popup.menu)
-        popup.setOnMenuItemClickListener {
-            if (it.itemId != -1) {
-                System.err.println(it.title)
-                true
+        popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+            when(item.itemId) {
+                R.id.deleteItem ->
+                    deleteItem()
+                R.id.contentItem ->
+                    Toast.makeText(this, "Content", Toast.LENGTH_SHORT).show()
+                R.id.reportItem ->
+                    reportItem()
             }
-            false
-        }
+            true
+        })
+
         popup.show()
+    }
+
+    fun deleteItem() {
+
+    }
+
+    fun reportItem() {
+        try {
+            val path = File(Environment.getExternalStorageDirectory() , "/projectID")
+            downloadFile(reportUrl, path, null, null)
+        }
+        catch (e: IOException) {
+
+        }
+    }
+
+    fun downloadFile(url: String, dir: File, name: String?, fileExt: String?) {
+        val client = OkHttpClient()
+        val request = Request.Builder().url(url).build()
+
+        val response = client.newCall(request).execute()
+        val contentType = response.header("content-type", null)
+        var ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType)
+        ext = if (ext == null) {
+            fileExt
+        } else {
+            ".$ext"
+        }
+
+        // use provided name or generate a temp file
+        var file: File? = null
+        file = if (name != null) {
+            val filename = String.format("%s%s", name, ext)
+            File(dir.absolutePath, filename)
+        } else {
+            val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-kkmmss"))
+            File.createTempFile(timestamp, ext, dir)
+        }
+
+        /*val body = response.body
+        val sink = Okio.buffer(Okio.sink(file))
+
+        body?.source().use { input ->
+            sink.use { output ->
+                output.writeAll(input)
+            }
+        }*/
     }
 
 
