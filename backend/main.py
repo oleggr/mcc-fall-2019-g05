@@ -61,6 +61,7 @@ def user_validate(uid):
 
 @app.route('/')
 def default_route():
+    FB_functions.delete_members("prjct_id1")
     return 'Hello world!'
 
 

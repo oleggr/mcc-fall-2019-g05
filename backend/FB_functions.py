@@ -41,12 +41,54 @@ def create_user(uid, name, email, image_url):
     })
 
 def delete_project(project_id):
-
+    #delete project
     project_ref = ref.child('projects')
     project_ref.child(project_id).delete()
 
+    #delete members
+    members_ref = ref.child('members')
+    members_dict = ref.child('members').get()
+    for member_id in members_dict:
+        if(members_dict[member_id]["project_id"] == project_id):
+            members_ref.child(member_id).delete()
+
+    #delete tasks
+    tasks_ref = ref.child('tasks')
+    tasks_dict = ref.child('tasks').get()
+    list_of_tasks = []
+    for tasks_id in tasks_dict:
+        if(tasks_dict[tasks_id]["project_id"] == project_id):
+            tasks_ref.child(tasks_id).delete()
+            list_of_tasks.append(tasks_id)
+
+    #delete task_to_user
+    task_to_user_ref = ref.child('task_to_user')
+    task_to_user_dict = ref.child('task_to_user').get()
+    for task_to_user_id in task_to_user_dict:
+        if(task_to_user_dict[task_to_user_id]["task_id"] in list_of_tasks):
+            task_to_user_ref.child(task_to_user_id).delete()
+
     return 'INFO: project {} deleted'.format(project_id)
 
+def delete_members(project_id):
+    #delete tasks
+    tasks_ref = ref.child('tasks')
+    tasks_dict = ref.child('tasks').get()
+    list_of_tasks = []
+    for tasks_id in tasks_dict:
+        if(tasks_dict[tasks_id]["project_id"] == project_id):
+            #tasks_ref.child(tasks_id).delete()
+            list_of_tasks.append(tasks_id)
+    print(list_of_tasks)
+
+    #delete task_to_user
+    task_to_user_ref = ref.child('task_to_user')
+    task_to_user_dict = ref.child('task_to_user').get()
+    for task_to_user_id in task_to_user_dict:
+        if(task_to_user_dict[task_to_user_id]["task_id"] in list_of_tasks):
+            #task_to_user_ref.child(task_to_user_id).delete()
+            print(task_to_user_id)
+    return "ok"
 
 def add_members_to_project(users_id, project_id):
 
