@@ -32,7 +32,7 @@
             android:minHeight="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_menu_black_24dp"
             app:titleTextColor="@android:color/white"
-            tools:ignore="MissingConstraints"/>
+            tools:ignore="MissingConstraints" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/filterToolbar"

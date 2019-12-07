@@ -74,15 +74,6 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
     }
 
-
-    //Later delete this and make normal Logout
-
-    fun temporarylogout(v: View) {
-        auth.signOut()
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-    }
-
     fun performSorting() {
         when(sorting) {
             Sort.BY_FAVORITE -> Collections.sort(visibleProjects, ComparatorByFavorite())
@@ -156,6 +147,31 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         }
 
         this.byTime.performClick()
+
+        toolbar.setOnClickListener{
+            /*val requester = Requester(baseContext)
+            requester.httpGet("", object:Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Log.d("DDD", "FAIL")
+                    return
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.isSuccessful) {
+                        val resultJson = response.body!!.string()
+                        //val json = JSONArray(resultJson)
+                        Log.d("DDD",resultJson.toString())
+                    } else {
+                        return
+                    }
+                }
+            })
+*/
+            auth.signOut()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+
+        }
     }
 
 

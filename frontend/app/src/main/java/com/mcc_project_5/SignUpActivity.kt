@@ -8,6 +8,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_sign_up.*
+import com.google.firebase.database.FirebaseDatabase
+
+
+
+
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -52,7 +57,7 @@ class SignUpActivity : AppCompatActivity() {
                     user?.sendEmailVerification()
                         ?.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                startActivity(Intent(this, MainActivity::class.java))
+                                startActivity(Intent(this, ListOfCreatedProjectsActivity::class.java))
                                 finish()
                             }
                         }
