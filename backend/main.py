@@ -49,7 +49,7 @@ def get_uid_from(id_token):
         decoded_token = auth.verify_id_token(id_token)
         uid = decoded_token['uid']
 
-        return decoded_token
+        return uid
 
     except:
         return 'ERROR: Authenfication failed.'
@@ -101,6 +101,14 @@ def get_image(path, filename):
 def get_profile_settings():
     return "This is get_profile_settings method. returns profile info"
 
+@app.route('/users/create_user')
+def create_user():
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    FB_functions.create_user(uid_response,request.args["name"],request.args["email"],request.args["image_url"])
+    return "OK"
 
 @app.route('/set_profile_settings')
 def set_profile_settings():
