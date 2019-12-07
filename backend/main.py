@@ -10,6 +10,7 @@ from flask import request
 from flask import send_file
 from flask import jsonify
 
+from datetime import datetime
 import traceback
 import os
 import json
@@ -258,17 +259,20 @@ def create_project():
     if(not(FB_functions.verify_user(uid_response))):
         return "ERROR: Not such user."
 
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
     data = request.args
     project_id = FB_functions.create_project(
             data['title'],
             data['is_shared'],
             data['key_words'],
-            data['creator_id'],
+            uid_response,
             data['deadline'],
             data['description'],
             data['image_url'],
-            data['last_modified'],
-            data['is_media_available']
+            dt_string,
+            False
     )
 
     return project_id

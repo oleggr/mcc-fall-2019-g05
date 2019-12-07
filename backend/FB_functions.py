@@ -165,6 +165,8 @@ def add_attachment(
                     'creation_time': dt_string
         })
 
+        update_project(project_id, 'is_media_available', True)
+
         return 'INFO: Attachment added.'
 
     except:
