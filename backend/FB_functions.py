@@ -1,5 +1,7 @@
 from main import ref
 
+from datetime import datetime
+
 
 def create_project(
             title='default_project_title',
@@ -66,6 +68,47 @@ def add_members_to_project(users_id, project_id):
 
     except:
         return 'ERROR: Members were not added.'
+
+
+def update_project(project_id, param_name, param_value):
+
+    try:
+        project_ref = ref.child('projects')
+        project = project_ref.child(project_id)
+
+        project.update({param_name: param_value})
+
+        return True
+
+    except:
+        return False
+
+
+def add_attachment(
+            project_id, 
+            name='default_attachment_name',
+            attachment_url = '/attachments',
+            attachment_type='image'):
+
+    attachments_ref = ref.child('attachments')
+
+    try:
+
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
+        attachments_ref.push({
+                    'name': name,
+                    'project_id': project_id,
+                    'attachment_type': attachment_type,
+                    'attachment_url': attachment_url,
+                    'creation_time': dt_string
+        })
+
+        return 'INFO: Attachment added.'
+
+    except:
+        return 'ERROR: Attachment was not added.'
 
 
 def add_task_to_project(project_id, creator_id, description, status, taskname):
