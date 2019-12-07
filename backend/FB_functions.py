@@ -1,4 +1,5 @@
 from main import ref
+from dev_functions import randomString
 
 from datetime import datetime
 
@@ -304,23 +305,34 @@ def get_attachments_of_project(project_id):
 
     return attachments
 
+
 def verify_user(uid):
+
     users_ref = ref.child('users').get()
+
     for user in users_ref:
         if (user==uid):
             return True
+
     return False
 
+
 def does_user_in_project(user_id, project_id):
+
     members_ref = ref.child("members").get()
+
     for member_id in members_ref:
         member = members_ref[member_id]
         if(member["project_id"] == project_id and member["user_id"] == user_id):
             return True
+
     return False
 
+
 def does_user_admin_of_project(user_id, project_id):
+
     members_ref = ref.child("members").get()
+
     for member_id in members_ref:
         member = members_ref[member_id]
         if(member["project_id"] == project_id and member["user_id"] == user_id):
@@ -330,4 +342,32 @@ def does_user_admin_of_project(user_id, project_id):
                 if (role == member_role):
                     if(roles_ref[role]["level"] == "admin"):
                         return True
+
     return False
+
+
+def user_is_unique(username):
+
+    users = ref.child('users').get()
+
+    for user_id in users:
+        user = users[user_id] 
+        if user['name'] == username:
+            return False
+
+    return True
+
+
+def unique_names(username):
+
+    username_options = []
+
+    while len(username_options) != 3:
+        
+        tmp = username
+        tmp += randomString(3)
+
+        if user_is_unique(tmp):
+            username_options.append(tmp)
+
+    return username_options

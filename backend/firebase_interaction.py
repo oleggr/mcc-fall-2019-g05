@@ -1,6 +1,6 @@
 from main import ref, storage
-import random
-import string
+from dev_functions import randomString
+
 from PIL import Image
 
 
@@ -67,10 +67,6 @@ def object_exists(object_type='default_object', object_value="dafault_name",  ob
     return False
 
 
-def randomString(stringLength=10):
-    """Generate a random string of fixed length """
-    letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for i in range(stringLength))
 
 
 def add_users():

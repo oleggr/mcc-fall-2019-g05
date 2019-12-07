@@ -1,6 +1,6 @@
 from main import ref, storage
-import string
-import random
+from dev_functions import randomString
+
 from PIL import Image
 
 

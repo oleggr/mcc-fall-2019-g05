@@ -8,6 +8,7 @@ from google.cloud import storage
 import flask
 from flask import request
 from flask import send_file
+from flask import jsonify
 
 import traceback
 import os
@@ -190,31 +191,7 @@ def upload_user_icon():
         return 'ERROR: Project icon was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
 
 
-@app.route('/upload_image', methods=['POST'])
-def upload_image():
-
-    try:
-        data = request.args
-        image = request.files["image"]
-
-        user_id = get_uid_from(data['id_token']) # add user checking
-        project_id = data['project_id']
-        filename = image.filename
-
-        # Save image locally
-        image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-        images_names = img_func.image_resize(filename, 'img/')
-
-        save_to_fb_dir = 'attachments/' + project_id + '/'
-
-        attachment_id = img_func.image_upload('img/', save_to_fb_dir, images_names)
-
-        return 'INFO: Image uploaded.'
-
-    except:
-        'ERROR: Image was not uploaded.'
-
-
+# TODO: Fix this function
 @app.route('/get_image/<path>/<filename>', methods=['GET'])
 def get_image(path, filename):
 
@@ -226,31 +203,43 @@ def get_image(path, filename):
     return 'INFO::Image downloaded'
 
 
-@app.route('/users/<user_id>/get_profile_settings')
+@app.route('/user', methods=['GET'])
 def get_profile_settings():
     return "This is get_profile_settings method. returns profile info"
 
 
-@app.route('/set_profile_settings')
+@app.route('/user/update', methods=['PUT'])
 def set_profile_settings():
     return "This is set_profile_settings method. returns fails or not"
 
 
-@app.route('/users/create_user')
+@app.route('/user/create', methods=['POST'])
 def create_user():
-    
+
+    data = request.get_json()
     id_token = request.headers["id_token"]
     uid_response = get_uid_from(id_token)
     
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
     
-    FB_functions.create_user(uid_response,request.args["name"],request.args["email"],request.args["image_url"])
+    FB_functions.create_user(uid_response, data["name"], data["email"])
     
     return 'OK'
 
 
-@app.route('/create_project', methods=['POST'])
+@app.route('/user/unique/<username>', methods=['GET'])
+def is_user_unique(username):
+
+    if FB_functions.user_is_unique(username):
+        return str(True)
+
+    else:
+        username_options = FB_functions.unique_names(username)
+        return str(username_options)
+
+
+@app.route('/project/create', methods=['POST'])
 def create_project():
 
     id_token = request.headers["id_token"]
@@ -308,7 +297,8 @@ def delete_project(project_id):
     return "ERROR: Wrong project id."
 
 
-@app.route('/project/<project_id>/add_members', methods=['POST'])
+# TODO: Set members functionality
+@app.route('/project/<project_id>/members/set', methods=['POST'])
 def add_members_to_project(project_id):
 
     #check for valid token
@@ -327,11 +317,12 @@ def add_members_to_project(project_id):
     return FB_functions.add_members_to_project(users_id, project_id)
 
 
-@app.route('/project/<project_id>/members')
+@app.route('/project/<project_id>/members', methods=['GET'])
 def get_members_of_project(project_id):
     '''
     Returns dict of members which consist of user_id, project_id and role_id
     '''
+
     #check for valid token
     id_token = request.headers["id_token"]
     uid_response = get_uid_from(id_token)
@@ -350,7 +341,7 @@ def get_members_of_project(project_id):
     return json.dumps(members)
 
 
-@app.route('/project/<project_id>/add_task', methods=['POST'])
+@app.route('/project/<project_id>/tasks/add', methods=['POST'])
 def set_task_to_project(project_id):
 
     #check for valid token
@@ -378,7 +369,9 @@ def set_task_to_project(project_id):
     return json.dumps(task_id)
 
 
-@app.route('/project/<project_id>/update', methods=['POST'])
+# Add to this function checking if field exists
+# Remove old values. Add new.
+@app.route('/project/<project_id>/update', methods=['PUT'])
 def project_update(project_id):
 
     data=request.args
@@ -391,7 +384,8 @@ def project_update(project_id):
     return str(res)
 
 
-@app.route('/task/<task_id>/status_update', methods=['PUT'])
+# Add task assign functionality
+@app.route('/task/<task_id>/update', methods=['PUT'])
 def update_task_status(task_id):
     
     data=request.args
@@ -409,7 +403,7 @@ def assign_task_to_users(task_id):
     return "OK"
 
 
-@app.route('/project/<project_id>/tasks')
+@app.route('/project/<project_id>/tasks', methods=['GET'])
 def get_tasks_of_project(project_id):
     '''
     Get_tasks_of_project method.
@@ -417,16 +411,10 @@ def get_tasks_of_project(project_id):
     '''
 
     tasks = FB_functions.get_tasks_of_project(project_id)
-
     return json.dumps(tasks)
 
 
-# @app.route('/convert_image_to_task')
-# def convert_image_to_task():
-#     return "This is convert_image_to_task method. returns fails or not"
-
-
-@app.route('/project/<project_id>/add_attachments', methods=['POST'])
+@app.route('/project/<project_id>/attachments/add', methods=['POST'])
 def add_attachments_to_project(project_id):
     return "This is add_attachments_to_project method. returns fails or not"
 
@@ -448,7 +436,7 @@ def generate_project_report(project_id):
     return 'OK'
 
 
-@app.route('/get_projects', methods=['GET'])
+@app.route('/projects', methods=['GET'])
 def get_list_of_projects():
     '''
     Get_list_of_projects method.
@@ -460,7 +448,7 @@ def get_list_of_projects():
     return json.dumps(list_of_projects)
 
 
-@app.route('/project/<project_id>/search', methods=['GET'])
+@app.route('/project/<project_id>', methods=['GET'])
 def search_for_project(project_id):
     '''
     Search_for_project method. Searching for single project.
@@ -468,13 +456,7 @@ def search_for_project(project_id):
     '''
 
     project = FB_functions.search_for_project_implementation(project_id)
-
     return json.dumps(project)
-
-
-@app.route('/get_image_resolution')
-def get_image_resolution():
-    return "This is get_image_resolution method. returns a new image"
 
 
 @app.route('/send_notification')
