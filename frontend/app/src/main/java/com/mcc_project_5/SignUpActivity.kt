@@ -71,13 +71,16 @@ class SignUpActivity : AppCompatActivity() {
                     val resultJson = response.body!!.string()
                     val json = JSONArray(resultJson)
                     if (json.length() == 0){
+                        Log.d("DDD","OK")
                         register(requester)
                     } else {
+                        Log.d("DDD","Not valid")
                         for(i in 0 until json.length()) {
                             val item = json.getJSONObject(i)
                             names.add(item.toString())
                         }
                     }
+                    return
                 } else {
                     Log.d("DDD","NOT OK")
                     return

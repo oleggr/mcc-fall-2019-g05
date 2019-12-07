@@ -231,6 +231,11 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         Log.d("DDD", projects.toString())
     }
 
+    fun createProject(v: View) {
+        val intent = Intent(this, CreateAProjectActivity::class.java)
+        startActivity(intent)
+    }
+
     fun onLoadBtnClick(view: View) {
         val requester = Requester(baseContext)
         requester.httpGet("/getAvailableProjects?userid=%", object:Callback {

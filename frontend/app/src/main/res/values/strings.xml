@@ -20,5 +20,8 @@
     <string name="password">Password</string>
     <string name="current_password">Current Password</string>
     <string name="change_password">Change Password</string>
+    <string name="project_name">Name</string>
+    <string name="project_description">Description</string>
+    <string name="add_keywords">Add keywords</string>
+    <string name="deadline">Deadline</string>
 </resources>
-

@@ -15,8 +15,7 @@ import androidx.annotation.NonNull
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseUser
-
-
+import java.io.File
 
 
 class Requester(context: Context) {
@@ -97,6 +96,40 @@ class Requester(context: Context) {
                             .header(X_FIREBASE_TOKEN, idToken!!)
                             .url(baseUrl + url)
                             .post(body)
+                            .build()
+
+                        val call = client.newCall(request)
+                        call.enqueue(callBack)
+                    } else {
+                        Log.d("token", "NO")
+                    }
+                }
+            })
+
+    }
+
+    fun httpPostWithFile(url: String, json: JSONObject, file: File, ext: String, callBack: Callback) {
+        val mUser = FirebaseAuth.getInstance().currentUser
+        mUser!!.getIdToken(true)
+            .addOnCompleteListener(object : OnCompleteListener<GetTokenResult> {
+                override fun onComplete(task: Task<GetTokenResult>) {
+                    if (task.isSuccessful()) {
+                        val idToken = task.getResult()?.getToken()
+                        Log.d("token", idToken)
+                        val MEDIA_TYPE = ("jpg/pdf/txt/mp3").toMediaType()
+
+                        val req = MultipartBody.Builder().setType(MultipartBody.FORM)
+                            .addFormDataPart(X_FIREBASE_TOKEN, idToken!!)
+                            .addFormDataPart("body", json.toString())
+                            .addFormDataPart(
+                                "file",
+                                "file." + ext,
+                                RequestBody.create(MEDIA_TYPE, file)
+                            ).build()
+
+                        val request = Request.Builder()
+                            .url(baseUrl + url)
+                            .post(req)
                             .build()
 
                         val call = client.newCall(request)
