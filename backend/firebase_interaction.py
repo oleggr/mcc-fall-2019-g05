@@ -1,6 +1,52 @@
-from main import ref
+from main import ref, storage
 import random
 import string
+from PIL import Image
+
+
+def image_upload(path_to_file='attachments/', filename='default_name'):
+    # Enable Storage
+    client = storage.Client()
+
+    # Reference an existing bucket.
+    bucket = client.get_bucket('mcc-fall-2019-g5-258415.appspot.com')
+    
+    im = Image.open('img/{}'.format(filename))
+    low_q = Image.new('RGB', im.size, (255,255,255))
+    low_q.paste(im, (0,0), im)
+    low_q.save('img/low_quality.png', quality=40)
+
+    mid_q = Image.new('RGB', im.size, (255,255,255))
+    mid_q.paste(im, (0,0), im)
+    mid_q.save('img/middle_quality.png', quality=70)
+
+    tmpBlob = bucket.blob(path_to_file + filename + '/best_quality')
+    tmpBlob.upload_from_filename(filename='img/{}'.format(filename))
+
+    tmpBlob = bucket.blob(path_to_file + filename + '/middle_quality')
+    tmpBlob.upload_from_filename(filename='img/middle_quality.png')
+
+    tmpBlob = bucket.blob(path_to_file + filename + '/low_quality')
+    tmpBlob.upload_from_filename(filename='img/low_quality.png')
+
+
+def image_download(path_to_file='attachments/', filename='default_name', quality='best_quality'):
+    # Enable Storage
+    client = storage.Client()
+
+    # Reference an existing bucket.
+    bucket = client.get_bucket('mcc-fall-2019-g5-258415.appspot.com')
+
+    if quality == 'middle_quality':
+        tmpBlob = bucket.blob(path_to_file + filename + 'middle_quality')
+
+    elif quality == 'low_quality':
+        tmpBlob = bucket.blob(path_to_file + filename + 'low_quality')
+
+    else:
+        tmpBlob = bucket.blob(path_to_file + filename + 'best_quality')
+ 
+    tmpBlob.download_to_filename(filename)
 
 
 def file_upload(path_to_file='attachments/', filename='default_name'):

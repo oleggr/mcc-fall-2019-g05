@@ -39,6 +39,26 @@ import report_generate
 app = flask.Flask(__name__)
 
 
+def get_uid_from(id_token):
+    '''
+    Function verifying token from client.
+    Returns uid which can be used for user identifying.
+    '''
+
+    try:
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token['uid']
+
+        return decoded_token
+
+    except:
+        return 'ERROR: Authenfication failed.'
+
+
+def user_validate(uid):
+    return True
+
+
 @app.route('/')
 def default_route():
     return 'Hello world!'
@@ -57,37 +77,23 @@ def update_data():
 
 # TODO: Fix this function to post according to new requirements
 @app.route('/upload_image/<filename>', methods=['GET', 'POST'])
-def upload_file(filename):
-    bfi.file_upload('attachments/', filename)
+def upload_image(filename):
+
+    bfi.image_upload('attachments/', filename)
+
     return 'INFO::Image uploaded'
 
 
 # TODO: Fix this function to post according to new requirements
-@app.route('/download_image/<path>/<filename>', methods=['GET', 'POST'])
-def download_image(path, filename):
-    bfi.file_download(path + '/', filename)
+@app.route('/get_image/<path>/<filename>', methods=['GET'])
+def get_image(path, filename):
+
+    data = request.args
+    quality = data['quality']
+
+    bfi.image_download(path + '/', filename, quality)
+
     return 'INFO::Image downloaded'
-
-
-@app.route('/user_authentication', methods=['POST'])
-def user_authentication():
-    '''
-    This is user_authentication method. 
-    Returns fails or not
-    '''
-
-    try:
-
-        data = request.args
-        id_token = data['id_token']
-
-        decoded_token = auth.verify_id_token(id_token)
-        uid = decoded_token['uid']
-
-        return decoded_token#'INFO: Authenfication successful.'
-    
-    except:
-        return 'ERROR: Authenfication failed.'
 
 
 #?? what about settings of profile and what profile is
@@ -105,19 +111,25 @@ def set_profile_settings():
 def create_project():
 
     data = request.args
-    project_id = FB_functions.create_project(
-            data['title'],
-            data['is_shared'],
-            data['key_words'],
-            data['creator_id'],
-            data['deadline'],
-            data['description'],
-            data['image_url'],
-            data['last_modified'],
-            data['is_media_available']
-    )
 
-    return project_id
+    if user_validate(get_uid_from(data['id_token'])):
+
+        project_id = FB_functions.create_project(
+                data['title'],
+                data['is_shared'],
+                data['key_words'],
+                data['creator_id'],
+                data['deadline'],
+                data['description'],
+                data['image_url'],
+                data['last_modified'],
+                data['is_media_available']
+        )
+
+        return project_id
+
+    else:
+        return 'ERROR: Unauthorized user'
 
 
 @app.route('/project/<project_id>/delete', methods=['DELETE'])
@@ -147,7 +159,7 @@ def get_members_of_project(project_id):
     '''
 
     members = FB_functions.get_members_of_project(project_id)
-    # String is not correct way. TODO: Fix it
+
     return json.dumps(members)
 
 
@@ -188,14 +200,13 @@ def get_tasks_of_project(project_id):
     '''
 
     tasks = FB_functions.get_tasks_of_project(project_id)
-    # String is not correct way. TODO: Fix it
 
     return json.dumps(tasks)
 
 
-@app.route('/convert_image_to_task')
-def convert_image_to_task():
-    return "This is convert_image_to_task method. returns fails or not"
+# @app.route('/convert_image_to_task')
+# def convert_image_to_task():
+#     return "This is convert_image_to_task method. returns fails or not"
 
 
 @app.route('/project/<project_id>/add_attachments', methods=['POST'])
@@ -207,7 +218,7 @@ def add_attachments_to_project(project_id):
 def generate_project_report(project_id):
     '''
     This is generate_project_report method.
-    Returns fails or not or may be returns a report
+    Returns report file.
     '''
 
     report_name = report_generate.generate_project_report(project_id)
@@ -220,17 +231,28 @@ def generate_project_report(project_id):
     # return send_file('/pdf/{}'.format(report_name))
 
 
-
-# Get all projects as json
 @app.route('/get_projects', methods=['GET'])
 def get_list_of_projects():
-    return json.dumps(FB_functions.get_list_of_projects_implementation(request.args["user_id"]))
+    '''
+    Get_list_of_projects method.
+    Returns list of projects with all provided information.
+    '''
+
+    list_of_projects = FB_functions.get_list_of_projects_implementation(request.args["user_id"])
+
+    return json.dumps(list_of_projects)
 
 
-# Get single project as json
 @app.route('/project/<project_id>/search', methods=['GET'])
 def search_for_project(project_id):
-    return json.dumps(FB_functions.search_for_project_implementation(project_id))
+    '''
+    Search_for_project method. Searching for single project.
+    Returns json with all information about project.
+    '''
+
+    project = FB_functions.search_for_project_implementation(project_id)
+
+    return json.dumps(project)
 
 
 @app.route('/get_image_resolution')
