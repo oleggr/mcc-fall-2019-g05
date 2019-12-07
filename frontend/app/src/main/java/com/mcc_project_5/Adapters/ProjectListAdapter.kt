@@ -2,10 +2,13 @@ package com.mcc_project_5.Adapters
 
 import android.content.Context
 import android.content.Intent
+import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.mcc_project_5.DataModels.Project
@@ -13,38 +16,121 @@ import com.squareup.picasso.Picasso
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mcc_project_5.ProjectContentActivity
 import com.mcc_project_5.R
+import com.mcc_project_5.Tools.Properties
 import kotlinx.android.synthetic.main.list_of_projects_list_layout.view.*
+import okhttp3.*
+import java.io.IOException
 import kotlin.collections.ArrayList
+import com.mcc_project_5.Tools.Requester
+import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class ProjectListAdapter: BaseAdapter() {
     private val picasso = Picasso.get()
 
-    fun showPopupMenu(context: Context, v: View, projectId: Int) {
+    fun showPopupMenu(context: Context, v: View, projectId: Int, requester: Requester) {
         val popup = PopupMenu(context, v)
         val inflater: MenuInflater = popup.menuInflater
         inflater.inflate(R.menu.list_of_projects_popup, popup.menu)
 
-        popup.setOnMenuItemClickListener {
-            if (it.itemId != -1) {
-                if (it.title == "content") {
+        popup.setOnMenuItemClickListener (PopupMenu.OnMenuItemClickListener { item ->
+            when(item.itemId) {
+                R.id.deleteItem ->
+                    deleteItem(projectId, requester)
+                R.id.contentItem ->
+                {
                     val intent =
                         Intent(context, ProjectContentActivity::class.java)
                     intent.putExtra("projectId", projectId.toString())
                     context.startActivity(intent)
                 }
-                System.err.println(it.title)
-                true
+                R.id.reportItem ->
+                    reportItem(projectId, requester)
             }
-            false
-        }
+            true
+        })
 
         popup.show()
+    }
+
+
+    fun deleteItem(id: Int, requester: Requester) {
+        requester.httpDelete("/project/delete?prjctid=$id", object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("DDD", "FAIL")
+                return
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    items.removeAt(id)
+                } else {
+                    return
+                }
+            }
+        })
+    }
+
+    fun reportItem(id: Int, requester: Requester) {
+        try {
+            val reportUrl = "/project/report?projctid=$id"
+            val path = File(Environment.getExternalStorageDirectory() , "/projectID")
+            downloadFile(reportUrl, path, null, null, requester)
+        }
+        catch (e: IOException) {
+
+        }
+    }
+
+    fun downloadFile(url: String, dir: File, name: String?, fileExt: String?, requester: Requester) {
+
+        requester.httpDownload(url, object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("DDD", "FAIL")
+                return
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val contentType = response.header("content-type", null)
+                    var ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType)
+                    ext = if (ext == null) {
+                        fileExt
+                    } else {
+                        ".$ext"
+                    }
+
+                    // use provided name or generate a temp file
+                    var file: File? = null
+                    file = if (name != null) {
+                        val filename = String.format("%s%s", name, ext)
+                        File(dir.absolutePath, filename)
+                    } else {
+                        val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-kkmmss"))
+                        File.createTempFile(timestamp, ext, dir)
+                    }
+                    /*val body = response.body
+                    val sink = Okio.buffer(Okio.sink(file))
+
+                    body?.source().use { input ->
+                        sink.use { output ->
+                            output.writeAll(input)
+                        }
+                    }*/
+                } else {
+                    return
+                }
+            }
+        })
+
     }
 
     private var items: ArrayList<Project> = ArrayList()
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val context = parent!!.context
+        val requester = Requester(context)
         val inflater = LayoutInflater.from(context)
         val rowView = inflater.inflate(R.layout.list_of_projects_list_layout, parent, false)
 
@@ -56,7 +142,7 @@ class ProjectListAdapter: BaseAdapter() {
         val membersList = rowView.findViewById(R.id.membersView) as RecyclerView
 
         rowView.menuBtn.setOnClickListener {
-            showPopupMenu(context, it, items[position].id)
+            showPopupMenu(context, it, items[position].id, requester)
         }
 
         if (!items[position].isMediaAvailable)

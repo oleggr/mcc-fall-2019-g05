@@ -2,10 +2,7 @@ package com.mcc_project_5
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
-import android.system.Os.remove
 import android.util.Log
-import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 
@@ -15,15 +12,9 @@ import org.json.JSONArray
 import java.io.IOException
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.MimeTypeMap
 import android.widget.*
 import com.mcc_project_5.Adapters.ProjectListAdapter
-import com.mcc_project_5.Tools.Properties
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import com.mcc_project_5.Tools.Requester
 import kotlinx.android.synthetic.main.list_of_created_projects_activity.*
 import java.util.*
 import kotlin.Comparator
@@ -32,12 +23,10 @@ import kotlin.collections.ArrayList
 
 class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
-    private val client = OkHttpClient()
     private val projects = ArrayList<Project>()
     private val visibleProjects = ArrayList<Project>()
     private var lastClicked = 0
     private var sortOrder = SortOrder.DESC
-    private val reportUrl = ""
 
     private enum class Sort {
         BY_FAVORITE, BY_TIME, BY_DEADLINE, NONE
@@ -202,115 +191,6 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         return true
     }
 
-    fun httpGet(url: String, callBack: Callback): Call {
-        val request = Request.Builder()
-            .url(url)
-            .get()
-            .build()
-
-        val call = client.newCall(request)
-        call.enqueue(callBack)
-        return call
-    }
-
-    fun httpDelete(url: String, callBack: Callback): Call {
-        val request = Request.Builder()
-            .url(url)
-            .delete()
-            .build()
-
-        val call = client.newCall(request)
-        call.enqueue(callBack)
-        return call
-    }
-
-
-    fun showPopupMenu(v: View) {
-        val popup = PopupMenu(this, v)
-        //temporary
-        val listItemPosition = 0;
-        System.err.println(visibleProjects[lastClicked])
-        val inflater: MenuInflater = popup.menuInflater
-        inflater.inflate(R.menu.list_of_projects_popup, popup.menu)
-        popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
-            when(item.itemId) {
-                R.id.deleteItem ->
-                    deleteItem(listItemPosition)
-                R.id.contentItem ->
-                    Toast.makeText(this, "Content", Toast.LENGTH_SHORT).show()
-                R.id.reportItem ->
-                    reportItem(listItemPosition)
-            }
-            true
-        })
-
-        popup.show()
-    }
-
-
-    fun deleteItem(id: Int) {
-        val baseUrl = Properties(baseContext).getProperty("baseUrl")
-        httpDelete(baseUrl + "/project/delete?prjctid=" + id, object:Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d("DDD", "FAIL")
-                return
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    visibleProjects.removeAt(id)
-                    val listView = findViewById<ListView>(R.id.listView)
-                    val adapter = listView.adapter as ProjectListAdapter
-                    adapter.notifyDataSetChanged()
-                } else {
-                    return
-                }
-            }
-        })
-    }
-
-    fun reportItem(id: Int) {
-        try {
-            val path = File(Environment.getExternalStorageDirectory() , "/projectID")
-            downloadFile(reportUrl, path, null, null)
-        }
-        catch (e: IOException) {
-
-        }
-    }
-
-    fun downloadFile(url: String, dir: File, name: String?, fileExt: String?) {
-        val client = OkHttpClient()
-        val request = Request.Builder().url(url).build()
-
-        val response = client.newCall(request).execute()
-        val contentType = response.header("content-type", null)
-        var ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType)
-        ext = if (ext == null) {
-            fileExt
-        } else {
-            ".$ext"
-        }
-
-        // use provided name or generate a temp file
-        var file: File? = null
-        file = if (name != null) {
-            val filename = String.format("%s%s", name, ext)
-            File(dir.absolutePath, filename)
-        } else {
-            val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-kkmmss"))
-            File.createTempFile(timestamp, ext, dir)
-        }
-
-        /*val body = response.body
-        val sink = Okio.buffer(Okio.sink(file))
-
-        body?.source().use { input ->
-            sink.use { output ->
-                output.writeAll(input)
-            }
-        }*/
-    }
 
 
     fun loadTemplate() {
@@ -330,8 +210,8 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
     }
 
     fun onLoadBtnClick(view: View) {
-        val baseUrl = Properties(baseContext).getProperty("baseUrl")
-        httpGet(baseUrl + "/getAvailableProjects?userid=%", object:Callback {
+        val requester = Requester(baseContext)
+        requester.httpGet("/getAvailableProjects?userid=%", object:Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
                 return

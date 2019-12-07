@@ -1,23 +1,42 @@
 package com.mcc_project_5
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ContentValues
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.opengl.Visibility
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.ListView
-import android.widget.SearchView
+import android.webkit.MimeTypeMap
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.net.toFile
 import com.mcc_project_5.Adapters.FileListAdapter
 import com.mcc_project_5.Adapters.PictureListAdapter
 import com.mcc_project_5.Adapters.TaskListAdapter
 import com.mcc_project_5.DataModels.File
 import com.mcc_project_5.DataModels.Picture
 import com.mcc_project_5.DataModels.Task
+import kotlinx.android.synthetic.main.project_content_activity.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import org.json.JSONArray
+import org.json.JSONObject
+import java.io.UnsupportedEncodingException
+import java.net.UnknownHostException
 import java.util.*
 import kotlin.Comparator
 
@@ -42,6 +61,13 @@ class ProjectContentActivity : AppCompatActivity() {
     }
 
     private var sortOrder: SortOrder = SortOrder.DESC
+
+    private val PERMISSION_CODE = 1000
+    private val IMAGE_CAPTURE_CODE = 1001
+    private val IMAGE_PICK_CODE = 1001
+    private val FILE_UPLOAD_CODE = 1001
+    var file_uri: Uri? = null
+    private val fileUrl = ""
 
 
     class ComparatorByTimeFile: Comparator<File>{
@@ -71,6 +97,7 @@ class ProjectContentActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.project_content_activity)
@@ -97,6 +124,26 @@ class ProjectContentActivity : AppCompatActivity() {
         fileListView.adapter = fileListAdapter
 
         findViewById<Button>(R.id.tasks).performClick()
+
+    }
+
+    fun attachment(v: View) {
+        val popupMenu: PopupMenu = PopupMenu(this,fab)
+        popupMenu.menuInflater.inflate(R.layout.attachment, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
+            when(item.itemId) {
+                R.id.action_photo ->
+                    openCamera()
+                R.id.action_gallery ->
+                    pickImageFromGallery()
+                R.id.action_document ->
+                    openFile()
+                R.id.action_cancel ->
+                    Toast.makeText(this@ProjectContentActivity, "Canceled", Toast.LENGTH_SHORT).show()
+            }
+            true
+        })
+        popupMenu.show()
     }
 
     fun refreshTaskList() {
@@ -263,5 +310,126 @@ class ProjectContentActivity : AppCompatActivity() {
         findViewById<Button>(R.id.tasks).setTextColor(getColor(R.color.textColorPrimary))
         findViewById<Button>(R.id.files).setTextColor(getColor(R.color.textColorSelected))
         findViewById<Button>(R.id.pictures).setTextColor(getColor(R.color.textColorPrimary))
+    }
+
+    private fun openCamera() {
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.TITLE, "New Picture")
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
+        file_uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        //camera intent
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, file_uri)
+        startActivityForResult(cameraIntent, IMAGE_CAPTURE_CODE)
+    }
+
+    private fun openFile() {
+        val intent = Intent()
+            .setType("*/*")
+            .setAction(Intent.ACTION_GET_CONTENT)
+
+        startActivityForResult(Intent.createChooser(intent, "Select a file"), FILE_UPLOAD_CODE)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        //called when user presses ALLOW or DENY from Permission Request Popup
+        when(requestCode){
+            PERMISSION_CODE -> {
+                if (grantResults.size > 0 && grantResults[0] ==
+                    PackageManager.PERMISSION_GRANTED){
+                    //permission from popup was granted
+                    openCamera()
+                }
+                else{
+                    //permission from popup was denied
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun takePhoto()
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (checkSelfPermission(Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_DENIED ||
+                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_DENIED){
+                //permission was not enabled
+                val permission = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                //show popup to request permission
+                requestPermissions(permission, PERMISSION_CODE)
+            }
+            else{
+                //permission already granted
+                openCamera()
+            }
+        }
+        else{
+            //system os is < marshmallow
+            openCamera()
+        }
+    }
+
+
+    private fun pickImageFromGallery() {
+        //Intent to pick image
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, IMAGE_PICK_CODE)
+    }
+
+    private fun uploadImage(file: java.io.File, ext: String): JSONObject? {
+
+        try {
+
+            val MEDIA_TYPE = ("jpg/pdf/txt/mp3").toMediaType()
+
+            val req = MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("userid", "8457851245")
+                .addFormDataPart(
+                    "userfile",
+                    "profile." + ext,
+                    RequestBody.create(MEDIA_TYPE, file)
+                ).build()
+
+            val request = Request.Builder()
+                .url(fileUrl)
+                .post(req)
+                .build()
+
+            val client = OkHttpClient()
+            val response = client.newCall(request).execute()
+
+            Log.d("response", "uploadImage:" + response.body!!.string())
+
+            return JSONObject(response.body!!.string())
+
+        } catch (e: UnknownHostException) {
+            System.err.println( "Error: " + e.getLocalizedMessage())
+        } catch (e: UnsupportedEncodingException) {
+            System.err.println( "Error: " + e.getLocalizedMessage())
+        } catch (e: Exception) {
+            System.err.println( "Error: " + e.localizedMessage!!)
+        }
+
+        return null
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if ((requestCode == FILE_UPLOAD_CODE && resultCode == RESULT_OK) || (resultCode == Activity.RESULT_OK)) {
+            if(data == null || data.data == null){
+                return
+            }
+            file_uri = data?.data //The uri with the location of the file
+            val extension = MimeTypeMap.getFileExtensionFromUrl(file_uri.toString())
+            if (extension != null) {
+                val ext = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+                uploadImage(file_uri!!.toFile(), ext.toString())
+            }
+        }
     }
 }

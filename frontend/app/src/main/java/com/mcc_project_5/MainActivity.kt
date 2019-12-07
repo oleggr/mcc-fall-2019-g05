@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
 
 
     fun change(v: View) {
-        val intent = Intent(this, AddAttachment::class.java)
+        val intent = Intent(this, ListOfCreatedProjectsActivity::class.java)
         startActivity(intent)
     }
 
