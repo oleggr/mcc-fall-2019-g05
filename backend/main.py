@@ -88,18 +88,19 @@ def set_profile_settings():
 def create_project():
 
     data = request.args
-    new_project_id = FB_functions.create_project(
-            data['name'],
+    project_id = FB_functions.create_project(
+            data['title'],
             data['is_shared'],
-            data['key_word_1'],
-            data['key_word_2'],
-            data['key_word_3'],
-            data['author_id'],
+            data['key_words'],
+            data['creator_id'],
             data['deadline'],
-            data['description']
+            data['description'],
+            data['image_url'],
+            data['last_modified'],
+            data['is_media_available']
     )
 
-    return new_project_id
+    return project_id
 
 
 @app.route('/project/<project_id>/delete', methods=['DELETE'])
