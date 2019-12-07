@@ -147,14 +147,14 @@ def add_tasks():
 
         taskname = 'taskname' + str(i)
         project_id = 'prjct_id'
-        creater_id = 'creater_id'
+        creator_id = 'creator_id'
         description = 'description' + str(i)
         status = 'status' + str(i)
 
         tasks_ref.push().set({
                     'taskname': taskname,
                     'project_id': project_id,
-                    'creater_id': creater_id,
+                    'creator_id': creator_id,
                     'description': description,
                     'status': status
         })

@@ -41,7 +41,7 @@ def get_data(project_id):
         user_role = roles_ref.get()
         user_role = user_role[member['role_id']]
 
-        user['role_name'] = user_role['name']
+        user['role_name'] = user_role['rolename']
         user['role_level'] = user_role['level']
 
         users.append(user)
@@ -84,13 +84,16 @@ def generate_pdf(data):
     tasks = data['tasks_info']  
     attachments = data['attachments_info']
 
+    # Filename consist of date to make it unique
+    now = datetime.now()
+    dt_string = now.strftime("%d-%m-%Y_%H-%M-%S")
+
     env = Environment(loader=FileSystemLoader('.'))
-
     template = env.get_template("report_template.html")
-
     template_vars = {
                     "title" : 'Report of project {}'.format(project['project_id']),
                     "project_name" : project['name'],
+                    "datetime" : dt_string,
                     "project_info" : project,
                     "users" : users,
                     "tasks" : tasks,
@@ -98,10 +101,6 @@ def generate_pdf(data):
                     }
 
     html_out = template.render(template_vars)
-
-    # Filename consist of date to make it unique
-    now = datetime.now()
-    dt_string = now.strftime("%d-%m-%Y_%H-%M-%S")
 
     html_file = open(dt_string + '.html', 'w')
     html_file.write(html_out)

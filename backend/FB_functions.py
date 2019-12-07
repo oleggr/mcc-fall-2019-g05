@@ -68,7 +68,7 @@ def add_members_to_project(users_id, project_id):
         return 'ERROR: Members were not added.'
 
 
-def add_task_to_project(project_id, creater_id, description, status, taskname):
+def add_task_to_project(project_id, creator_id, description, status, taskname):
     '''
     Create task the task attributes and assign it to project by project ID.
     Returns the task ID after creation.
@@ -79,7 +79,7 @@ def add_task_to_project(project_id, creater_id, description, status, taskname):
     id_ref  = tasks_to_project_ref.push({
             'taskname': taskname,
             'project_id': project_id,
-            'creater_id': creater_id,
+            'creator_id': creator_id,
             'description': description,
             'status': status
     })
