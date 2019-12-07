@@ -77,15 +77,18 @@ def get_uid_from(id_token):
         return 'ERROR: Authenfication failed.'
 
 
-def user_validate(uid):
-    return True
-
-
 @app.route('/')
 def default_route():
-    print(request)
-    print(request.headers)
-    return str(request) + str(request.headers)
+
+    return str({ 
+        'request.data' : request.data, 
+        'request.args' : request.args, 
+        'request.form' : request.form, 
+        'request.files': request.files,
+        'request.values' : request.values, 
+        'request.json' : request.json 
+
+    })
 
 
 @app.route('/first_set_data', methods=['GET'])
