@@ -99,7 +99,7 @@ def upload_image_to_project(project_id):
     image = request.files["image"]
 
     try:
-        
+
         user_id = get_uid_from(data['id_token']) # add user checking
         filename = image.filename
 
@@ -205,12 +205,30 @@ def get_image(path, filename):
 
 @app.route('/user', methods=['GET'])
 def get_user():
-    return "This is get_profile_settings method. returns profile info"
+    #check for valid token
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+        
+    return json.dumps(FB_functions.return_certain_user(uid_response))
 
 
 @app.route('/users', methods=['GET'])
 def get_all_users():
-    return "This is get_profile_settings method. returns profile info"
+    #check for valid token
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+
+    return json.dumps(FB_functions.return_all_users())
 
 
 @app.route('/user/update', methods=['PUT'])
@@ -224,12 +242,12 @@ def create_user():
     data = request.get_json()
     id_token = request.headers["id_token"]
     uid_response = get_uid_from(id_token)
-    
+
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
-    
+
     FB_functions.create_user(uid_response, data["name"], data["email"])
-    
+
     return 'OK'
 
 
@@ -249,10 +267,10 @@ def create_project():
 
     id_token = request.headers["id_token"]
     uid_response = get_uid_from(id_token)
-    
+
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
-    
+
     if(not(FB_functions.verify_user(uid_response))):
         return "ERROR: Not such user."
 
@@ -280,19 +298,19 @@ def delete_project(project_id):
     #check for valid token
     id_token = request.headers["id_token"]
     uid_response = get_uid_from(id_token)
-    
+
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
-    
+
     #check that user exists
     if(not(FB_functions.verify_user(uid_response))):
         return "ERROR: Not such user."
-    
+
     #check that user in the project
     user_id = uid_response
     if(not(FB_functions.does_user_in_project(user_id, project_id))):
         return "Error: User not in project"
-    
+
     #check if user admin
     if (FB_functions.does_user_admin_of_project(user_id, project_id)):
         return FB_functions.delete_project(project_id)
@@ -392,16 +410,16 @@ def project_update(project_id):
 # Add task assign functionality
 @app.route('/task/<task_id>/update', methods=['PUT'])
 def update_task_status(task_id):
-    
+
     data=request.args
     FB_functions.update_task(task_id, data["task_status"])
-    
+
     return "OK"
 
 
 @app.route('/task/<task_id>/assign_to_user', methods=['POST'])
 def assign_task_to_users(task_id):
-    
+
     data=request.args
     FB_functions.assign_task_to_users(task_id, data["user_ids"])
 

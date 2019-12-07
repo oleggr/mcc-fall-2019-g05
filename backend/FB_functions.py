@@ -9,7 +9,7 @@ def create_project(
             is_shared=True,
             key_words = [
                 {'key_word_1': True},
-                {'key_word_2': True}, 
+                {'key_word_2': True},
                 {'key_word_3': True}],
             creator_id='default_author_id',
             deadline='01/01/1970',
@@ -145,7 +145,7 @@ def update_project(project_id, param_name, param_value):
 
 
 def add_attachment(
-            project_id, 
+            project_id,
             name='default_attachment_name',
             attachment_url = '/attachments',
             attachment_type='image'):
@@ -353,7 +353,7 @@ def user_is_unique(username):
     users = ref.child('users').get()
 
     for user_id in users:
-        user = users[user_id] 
+        user = users[user_id]
         if user['name'] == username:
             return False
 
@@ -365,7 +365,7 @@ def unique_names(username):
     username_options = []
 
     while len(username_options) != 3:
-        
+
         tmp = username
         tmp += randomString(3)
 
@@ -373,3 +373,14 @@ def unique_names(username):
             username_options.append(tmp)
 
     return username_options
+
+
+def return_all_users():
+    users = ref.child('users').get()
+    response_list = list(users)
+    return response_list
+
+
+def return_certain_user(user_id):
+    user = ref.child('users/' + user_id).get()
+    return {user_id : user}
