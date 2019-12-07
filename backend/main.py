@@ -92,16 +92,14 @@ def update_data():
     pass
 
 
-# TODO: Fix this function to post according to new requirements
 @app.route('/project/<project_id>/upload_image', methods=['POST'])
 def upload_image_to_project(project_id):
 
     image = request.files["image"]
 
     try:
-
-        # user_id = get_uid_from(data['id_token']) # add user checking
-        user_id = 'uid'
+        
+        user_id = get_uid_from(data['id_token']) # add user checking
         filename = image.filename
 
         # Save image locally
@@ -165,7 +163,6 @@ def upload_project_icon(project_id):
         return 'ERROR: Project icon was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
 
 
-# TODO: Fix this function to post according to new requirements
 @app.route('/user/set_icon', methods=['POST'])
 def upload_user_icon():
 
@@ -196,7 +193,6 @@ def upload_user_icon():
         return 'ERROR: Project icon was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
 
 
-# TODO: Fix this function to post according to new requirements
 @app.route('/upload_image', methods=['POST'])
 def upload_image():
 
@@ -222,7 +218,6 @@ def upload_image():
         'ERROR: Image was not uploaded.'
 
 
-# TODO: Fix this function to post according to new requirements
 @app.route('/get_image/<path>/<filename>', methods=['GET'])
 def get_image(path, filename):
 
@@ -234,10 +229,15 @@ def get_image(path, filename):
     return 'INFO::Image downloaded'
 
 
-#?? what about settings of profile and what profile is
 @app.route('/users/<user_id>/get_profile_settings')
 def get_profile_settings():
     return "This is get_profile_settings method. returns profile info"
+
+
+@app.route('/set_profile_settings')
+def set_profile_settings():
+    return "This is set_profile_settings method. returns fails or not"
+
 
 @app.route('/users/create_user')
 def create_user():
@@ -247,10 +247,6 @@ def create_user():
         return "ERROR: Authenfication failed."
     FB_functions.create_user(uid_response,request.args["name"],request.args["email"],request.args["image_url"])
     return "OK"
-
-@app.route('/set_profile_settings')
-def set_profile_settings():
-    return "This is set_profile_settings method. returns fails or not"
 
 
 @app.route('/create_project', methods=['POST'])

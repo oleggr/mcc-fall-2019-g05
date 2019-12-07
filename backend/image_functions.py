@@ -5,7 +5,9 @@ from PIL import Image
 
 
 def randomString(stringLength=10):
-    """Generate a random string of fixed length """
+    '''
+    Generate a random string of fixed length.
+    '''
     letters = string.ascii_lzowercase
     return ''.join(random.choice(letters) for i in range(stringLength))
 
@@ -23,15 +25,6 @@ def image_resize(path='img/', filename='def_name'):
     low_quality_name = new_filename + '.low.' + file_format
     mid_quality_name = new_filename + '.mid.' + file_format
     def_quality_name = new_filename + '.def.' + file_format
-
-    # card = Image.new("RGBA", (220, 220), (255, 255, 255))
-    # im = Image.open(path + filename).convert("RGBA")
-    # x, y = im.size
-    # card.paste(im, (0, 0, x, y), im)
-    # # card.save("test.png", format="png")
-    # card.save(path + low_quality_name, quality=1)
-    # card.save(path + mid_quality_name, quality=40)
-    # card.save(path + def_quakity_name, quality=95)
 
     im = Image.open(path + filename)
     im.putalpha(255)

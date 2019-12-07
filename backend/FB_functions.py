@@ -34,13 +34,18 @@ def create_project(
 
     return project_key.key
 
+
 def create_user(uid, name, email, image_url):
+
     users_ref = ref.child('users')
-    user_ref = users_ref.child(uid).set({
+    user_ref = users_ref.child(uid).push({
         "email" : email,
         "image_url" : image_url,
         "name" : name
     })
+
+    return True
+
 
 def delete_project(project_id):
     #delete project
@@ -72,6 +77,7 @@ def delete_project(project_id):
 
     return 'INFO: project {} deleted'.format(project_id)
 
+
 def delete_members(project_id):
     #delete tasks
     tasks_ref = ref.child('tasks')
@@ -90,7 +96,9 @@ def delete_members(project_id):
         if(task_to_user_dict[task_to_user_id]["task_id"] in list_of_tasks):
             #task_to_user_ref.child(task_to_user_id).delete()
             print(task_to_user_id)
-    return "ok"
+
+    return True
+
 
 def add_members_to_project(users_id, project_id):
 
