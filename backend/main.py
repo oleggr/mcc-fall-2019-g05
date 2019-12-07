@@ -122,7 +122,6 @@ def upload_image_to_project(project_id):
         return 'INFO: Image uploaded.'
 
     except Exception as e:
-        print(traceback.format_exc())
         return 'ERROR: Image was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
 
 
@@ -159,7 +158,6 @@ def upload_project_icon(project_id):
         return 'INFO: Image uploaded.'
 
     except Exception as e:
-        print(traceback.format_exc())
         return 'ERROR: Project icon was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
 
 
@@ -189,7 +187,6 @@ def upload_user_icon():
         return 'INFO: User icon uploaded.'
 
     except Exception as e:
-        print(traceback.format_exc())
         return 'ERROR: Project icon was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
 
 
@@ -241,12 +238,16 @@ def set_profile_settings():
 
 @app.route('/users/create_user')
 def create_user():
+    
     id_token = request.headers["id_token"]
     uid_response = get_uid_from(id_token)
+    
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
+    
     FB_functions.create_user(uid_response,request.args["name"],request.args["email"],request.args["image_url"])
-    return "OK"
+    
+    return 'OK'
 
 
 @app.route('/create_project', methods=['POST'])
@@ -254,8 +255,10 @@ def create_project():
 
     id_token = request.headers["id_token"]
     uid_response = get_uid_from(id_token)
+    
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
+    
     if(not(FB_functions.verify_user(uid_response))):
         return "ERROR: Not such user."
 
@@ -271,6 +274,7 @@ def create_project():
             data['last_modified'],
             data['is_media_available']
     )
+
     return project_id
 
 
@@ -282,15 +286,19 @@ def delete_project(project_id):
     #check for valid token
     id_token = request.headers["id_token"]
     uid_response = get_uid_from(id_token)
+    
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
+    
     #check that user exists
     if(not(FB_functions.verify_user(uid_response))):
         return "ERROR: Not such user."
+    
     #check that user in the project
     user_id = uid_response
     if(not(FB_functions.does_user_in_project(user_id, project_id))):
         return "Error: User not in project"
+    
     #check if user admin
     if (FB_functions.does_user_admin_of_project(user_id, project_id)):
         return FB_functions.delete_project(project_id)
@@ -385,15 +393,19 @@ def project_update(project_id):
 
 @app.route('/task/<task_id>/status_update', methods=['PUT'])
 def update_task_status(task_id):
+    
     data=request.args
     FB_functions.update_task(task_id, data["task_status"])
+    
     return "OK"
 
 
 @app.route('/task/<task_id>/assign_to_user', methods=['POST'])
 def assign_task_to_users(task_id):
+    
     data=request.args
     FB_functions.assign_task_to_users(task_id, data["user_ids"])
+
     return "OK"
 
 
@@ -428,12 +440,12 @@ def generate_project_report(project_id):
 
     report_name = report_generate.generate_project_report(project_id)
 
-    # print(report_name)
-    # if not report_name:
-    #     return 'ERROR: Project not exist'
+    send_file(report_name)
 
-    # return report_name
-    return send_file(report_name)
+    os.remove('img/{}'.format(report_name + '.html'))
+    os.remove('img/{}'.format(report_name + '.pdf'))
+
+    return 'OK'
 
 
 @app.route('/get_projects', methods=['GET'])

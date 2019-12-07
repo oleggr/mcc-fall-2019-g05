@@ -102,7 +102,7 @@ def generate_pdf(data):
 
     HTML(string=html_out).write_pdf(args.outfile.name)
 
-    return dt_string + '.pdf'
+    return dt_string
 
 
 def generate_project_report(project_id):
