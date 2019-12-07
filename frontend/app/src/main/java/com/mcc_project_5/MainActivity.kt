@@ -11,11 +11,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
     }
 
+
     fun change(v: View) {
-        val intent = Intent(this, Convert_image::class.java)
+        val intent = Intent(this, AddAttachment::class.java)
         startActivity(intent)
     }
 
