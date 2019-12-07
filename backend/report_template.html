@@ -11,22 +11,28 @@
 
         <div class="container">
             <h1>Report of project {{ project_name }}</h1>
-            Project report have all known data about project.<br>
-            Don't share this file with unauthorized users.
+            Content of this report contain all known data about project.<br>
+            Don't share this file with unauthorized users.<br>
+            <br>
+            Generated at <b>{{ datetime }}</b>
         </div>
+        <hr>
 
         <div class="container">
             <br>
             <h2>Common information about project</h2>
 
-            Project name: {{ project_info.name }} <br>
+            Project title: {{ project_info.title }} <br>
             Project id: {{ project_info.project_id }} <br>
             Project description: {{ project_info.description }} <br>
-            Author id: {{ project_info.author_id }} <br>
-            <--! fix keywords--> <br>
-            Key words: {{ project_info.key_word_1 }} <br>
+            Creator id: {{ project_info.creator_id }} <br>
+            ????<br>
+            Key words: {{ project_info.key_words }} <br>
             Deadline: {{ project_info.deadline }} <br>
             Is shared: {{ project_info.is_shared }} <br>
+            Image URL: {{ project_info.image_url }} <br>
+            Last modified: {{ project_info.last_modified }} <br>
+            Is media available: {{ project_info.is_media_available }} <br>
         </div>
 
         <div class="container">
@@ -36,12 +42,13 @@
             {% for user in users %}
 
             Name: {{ user.name }} <br>
+            User ID: {{ user.user_id }} <br>
             E-mail: {{ user.email }} <br>
-            Photo URL: {{ user.photo }} <br>
+            Photo URL: {{ user.image_url }} <br>
             Role name: {{ user.role_name }} <br>
             Role level: {{ user.role_level }} <br>
-            User ID: {{ user.user_id }} <br>
             <br>
+
             {% endfor %}
 
         </div>
@@ -55,15 +62,17 @@
             Task ID: {{ task.task_id }} <br>
             Status: {{ task.status }} <br>
             Description: {{ task.description }} <br>
-            Creater id: {{ task.creater_id }} <br>
+            Creator id: {{ task.creator_id }} <br>
             Project ID: {{ task.project_id }} <br>
             Task members:
+
             {% for member in task.members %}
             <br>
-                &nbsp;&nbsp;&nbsp;User name: {{ member.name }} <br>
-                &nbsp;&nbsp;&nbsp;User ID: {{ member.user_id }}
+                &nbsp;&nbsp;&nbsp;&nbsp;User name: {{ member.name }} <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;User ID: {{ member.user_id }}
             {% endfor %}
             <br>
+
             {% endfor %}
         </div>
 
