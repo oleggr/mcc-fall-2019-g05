@@ -49,30 +49,6 @@ def image_download(path_to_file='attachments/', filename='default_name', quality
     tmpBlob.download_to_filename(filename)
 
 
-def file_upload(path_to_file='attachments/', filename='default_name'):
-    # Enable Storage
-    client = storage.Client()
-
-    # Reference an existing bucket.
-    bucket = client.get_bucket('mcc-fall-2019-g5-258415.appspot.com')
-
-    # Upload a local file to a new file to be created in your bucket.
-    tmpBlob = bucket.blob(path_to_file + filename)
-    tmpBlob.upload_from_filename(filename='img/{}'.format(filename))
-
-
-def file_download(path_to_file='attachments/', filename='default_name'):
-    # Enable Storage
-    client = storage.Client()
-
-    # Reference an existing bucket.
-    bucket = client.get_bucket('mcc-fall-2019-g5-258415.appspot.com')
-
-    # Download a file from your bucket.
-    tmpBlob = bucket.blob(path_to_file + filename)
-    tmpBlob.download_to_filename(filename)
-
-
 # Checking if object already exist required for
 # not rewriting object every time when we need to
 # run this functions

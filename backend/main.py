@@ -9,6 +9,7 @@ import flask
 from flask import request
 from flask import send_file
 
+import traceback
 import json
 import os
 import json
@@ -34,9 +35,31 @@ ref = db.reference('/')
 import firebase_interaction as bfi
 import FB_functions
 import report_generate
+import image_functions as img_func
 
 
 app = flask.Flask(__name__)
+app.config["IMAGE_UPLOADS"] = "img/uploads"
+
+
+def get_uid_from(id_token):
+    '''
+    Function verifying token from client.
+    Returns uid which can be used for user identifying.
+    '''
+
+    try:
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token['uid']
+
+        return decoded_token
+
+    except:
+        return 'ERROR: Authenfication failed.'
+
+
+def user_validate(uid):
+    return True
 
 
 def get_uid_from(id_token):
@@ -77,12 +100,133 @@ def update_data():
 
 
 # TODO: Fix this function to post according to new requirements
-@app.route('/upload_image/<filename>', methods=['GET', 'POST'])
-def upload_image(filename):
+@app.route('/project/<project_id>/upload_image', methods=['POST'])
+def upload_image_to_project(project_id):
 
-    bfi.image_upload('attachments/', filename)
+    image = request.files["image"]
 
-    return 'INFO::Image uploaded'
+    try:
+
+        # user_id = get_uid_from(data['id_token']) # add user checking
+        user_id = 'uid'
+        filename = image.filename
+
+        # Save image locally
+        # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
+        image.save('img/' + filename)
+        images_names = img_func.image_resize('img/', filename)
+
+        save_to_fb_dir = 'attachments/' + project_id + '/'
+
+        img_func.image_upload('img/', save_to_fb_dir, images_names)
+
+        for element in images_names:
+            FB_functions.add_attachment(
+                    project_id,
+                    filename,
+                    save_to_fb_dir + element,
+                    'image')
+            os.remove('img/{}'.format(element))
+
+        return 'INFO: Image uploaded.'
+
+    except Exception as e:
+        print(traceback.format_exc())
+        return 'ERROR: Image was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
+
+
+# TODO: Fix this function to post according to new requirements
+@app.route('/project/<project_id>/set_icon', methods=['POST'])
+def upload_project_icon(project_id):
+
+    image = request.files["image"]
+
+    try:
+        # user_id = get_uid_from(data['id_token']) # add user checking
+        user_id = 'uid'
+        filename = image.filename
+
+        # Save image locally
+        # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
+        image.save('img/' + filename)
+        images_names = img_func.image_resize('img/', filename)
+
+        save_to_fb_dir = 'attachments/' + project_id + '/icon/'
+
+        img_func.image_upload('img/', save_to_fb_dir, images_names)
+
+        FB_functions.update_project(project_id, 'image_url', save_to_fb_dir)
+
+        for element in images_names:
+            FB_functions.add_attachment(
+                    project_id,
+                    filename,
+                    save_to_fb_dir + element,
+                    'project_icon')
+            os.remove('img/{}'.format(element))
+
+        return 'INFO: Image uploaded.'
+
+    except Exception as e:
+        print(traceback.format_exc())
+        return 'ERROR: Project icon was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
+
+
+# TODO: Fix this function to post according to new requirements
+@app.route('/user/set_icon', methods=['POST'])
+def upload_user_icon():
+
+    data = request.args
+    image = request.files["image"]
+
+    try:
+        # user_id = get_uid_from(data['id_token']) # add user checking
+        user_id = 'uid'
+        filename = image.filename
+
+        # Save image locally
+        # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
+        image.save('img/' + filename)
+        images_names = img_func.image_resize('img/', filename)
+
+        save_to_fb_dir = 'attachments/' + user_id + '/'
+
+        img_func.image_upload('img/', save_to_fb_dir, images_names)
+
+        for element in images_names:
+            os.remove('img/{}'.format(element))
+
+        return 'INFO: User icon uploaded.'
+
+    except Exception as e:
+        print(traceback.format_exc())
+        return 'ERROR: Project icon was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
+
+
+# TODO: Fix this function to post according to new requirements
+@app.route('/upload_image', methods=['POST'])
+def upload_image():
+
+    try:
+        data = request.args
+        image = request.files["image"]
+
+        user_id = get_uid_from(data['id_token']) # add user checking
+        project_id = data['project_id']
+        filename = image.filename
+
+        # Save image locally
+        image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
+        images_names = img_func.image_resize(filename, 'img/')
+
+        save_to_fb_dir = 'attachments/' + project_id + '/'
+
+        attachment_id = img_func.image_upload('img/', save_to_fb_dir, images_names)
+
+        return 'INFO: Image uploaded.'
+
+    except:
+        'ERROR: Image was not uploaded.'
 
 
 # TODO: Fix this function to post according to new requirements
@@ -92,7 +236,7 @@ def get_image(path, filename):
     data = request.args
     quality = data['quality']
 
-    bfi.image_download(path + '/', filename, quality)
+    img_func.image_download(path + '/', filename, quality)
 
     return 'INFO::Image downloaded'
 
@@ -235,6 +379,19 @@ def set_task_to_project(project_id):
     )
 
     return json.dumps(task_id)
+
+
+@app.route('/project/<project_id>/update', methods=['POST'])
+def project_update(project_id):
+
+    data=request.args
+
+    param_name = data['parameter']
+    param_value = data['value']
+
+    res = FB_functions.update_project(project_id, param_name, param_value)
+
+    return str(res)
 
 
 @app.route('/task/<task_id>/status_update', methods=['PUT'])
