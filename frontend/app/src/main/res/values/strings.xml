@@ -6,4 +6,5 @@
     <string name="action_photo">Take photo</string>
     <string name="action_gallery">From Gallery</string>
     <string name="action_document">Attach file</string>
+    <string name="title_activity_convert_image">Convert_image</string>
 </resources>
