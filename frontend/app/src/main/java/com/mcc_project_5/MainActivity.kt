@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
 
 
     fun change(v: View) {
-        val intent = Intent(this, AddAttachment::class.java)
+        val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }
 

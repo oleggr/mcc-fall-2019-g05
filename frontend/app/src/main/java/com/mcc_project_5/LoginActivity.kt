@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
 import android.util.Patterns
+import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import com.google.firebase.auth.FirebaseAuth
@@ -57,7 +58,6 @@ class LoginActivity : AppCompatActivity() {
                     val user = auth.currentUser
                     updateUI(user)
                 } else {
-
                     updateUI(null)
                 }
             }
@@ -72,10 +72,8 @@ class LoginActivity : AppCompatActivity() {
     private fun updateUI(currentUser: FirebaseUser?) {
 
         if (currentUser != null) {
-            Toast.makeText(
-                baseContext, "Please verify your email address.",
-                Toast.LENGTH_SHORT
-            ).show()
+            val intent = Intent(this, ListOfCreatedProjectsActivity::class.java)
+            startActivity(intent)
         }
         else {
             Toast.makeText(

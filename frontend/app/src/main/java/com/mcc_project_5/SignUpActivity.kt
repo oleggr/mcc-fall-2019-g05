@@ -3,6 +3,7 @@ package com.mcc_project_5
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -17,13 +18,10 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(R.layout.activity_sign_up)
         auth = FirebaseAuth.getInstance()
 
-        btn_sign_up.setOnClickListener {
-            signUpUser()
-        }
 
     }
 
-    private fun signUpUser() {
+    fun signUpUser(v: View) {
         if (tv_username.text.toString().isEmpty()) {
             tv_username.error = "Please enter username"
             tv_username.requestFocus()
@@ -47,7 +45,7 @@ class SignUpActivity : AppCompatActivity() {
             return
         }
 
-        auth.createUserWithEmailAndPassword(tv_username.text.toString(), tv_password.text.toString())
+        auth.createUserWithEmailAndPassword(tv_email.text.toString(), tv_password.text.toString())
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
@@ -58,6 +56,8 @@ class SignUpActivity : AppCompatActivity() {
                                 finish()
                             }
                         }
+                    val intent = Intent(this, ListOfCreatedProjectsActivity::class.java)
+                    startActivity(intent)
                 } else {
                     Toast.makeText(
                         baseContext, "Sign Up failed. Try again after some time.",

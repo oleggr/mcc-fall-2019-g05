@@ -44,10 +44,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@color/colorPrimaryDark"
+        android:onClick="signUpUser"
         android:padding="16dp"
         android:text="@string/sign_up"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:textSize="18sp"/>
+        android:textSize="18sp" />
 
 </LinearLayout>
