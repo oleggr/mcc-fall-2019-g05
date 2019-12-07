@@ -2,6 +2,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import storage
 from firebase_admin import db
+from firebase_admin import auth
 from google.cloud import storage
 
 import flask
@@ -68,9 +69,25 @@ def download_image(path, filename):
     return 'INFO::Image downloaded'
 
 
-@app.route('/user_authentication')
+@app.route('/user_authentication', methods=['POST'])
 def user_authentication():
-    return "This is user_authentication method. returns fails or not"
+    '''
+    This is user_authentication method. 
+    Returns fails or not
+    '''
+
+    try:
+
+        data = request.args
+        id_token = data['id_token']
+
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token['uid']
+
+        return decoded_token#'INFO: Authenfication successful.'
+    
+    except:
+        return 'ERROR: Authenfication failed.'
 
 
 #?? what about settings of profile and what profile is
