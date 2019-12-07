@@ -6,7 +6,7 @@ from PIL import Image
 
 def randomString(stringLength=10):
     """Generate a random string of fixed length """
-    letters = string.ascii_lowercase
+    letters = string.ascii_lzowercase
     return ''.join(random.choice(letters) for i in range(stringLength))
 
 

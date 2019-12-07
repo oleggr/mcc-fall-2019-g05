@@ -10,7 +10,6 @@ from flask import request
 from flask import send_file
 
 import traceback
-import json
 import os
 import json
 
