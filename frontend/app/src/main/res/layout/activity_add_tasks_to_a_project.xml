@@ -9,8 +9,8 @@
 
     <TextView
         android:id="@+id/text_view_date_1"
-        android:layout_width="156dp"
-        android:layout_height="63dp"
+        android:layout_width="154dp"
+        android:layout_height="68dp"
         android:padding="20dp"
         android:text="dd-mm-yyyy"
         android:textSize="20dp"
