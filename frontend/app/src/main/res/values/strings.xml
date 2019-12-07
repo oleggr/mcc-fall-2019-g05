@@ -10,4 +10,13 @@
     <string name="action_gallery">From Gallery</string>
     <string name="action_document">Attach file</string>
     <string name="title_activity_convert_image">Convert_image</string>
+    <string name="dont_have_account">NOT A MEMBER? SIGN UP NOW</string>
+    <string name="login">LOGIN</string>
+    <string name="sign_up">SignUp</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="current_password">Current Password</string>
+    <string name="change_password">Change Password</string>
 </resources>
+

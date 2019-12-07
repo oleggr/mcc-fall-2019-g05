@@ -1,5 +1,6 @@
 package com.mcc_project_5
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import java.io.IOException
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.*
+import com.google.firebase.auth.FirebaseAuth
 import com.mcc_project_5.Adapters.ProjectListAdapter
 import com.mcc_project_5.Tools.Requester
 import kotlinx.android.synthetic.main.list_of_created_projects_activity.*
@@ -27,6 +29,9 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
     private val visibleProjects = ArrayList<Project>()
     private var lastClicked = 0
     private var sortOrder = SortOrder.DESC
+
+    //delete this when make logout
+    private lateinit var auth: FirebaseAuth
 
     private enum class Sort {
         BY_FAVORITE, BY_TIME, BY_DEADLINE, NONE
@@ -67,6 +72,15 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
     fun refreshList() {
         val adapter = findViewById<ListView>(R.id.listView).adapter as BaseAdapter
         adapter.notifyDataSetChanged()
+    }
+
+
+    //Later delete this and make normal Logout
+
+    fun temporarylogout(v: View) {
+        auth.signOut()
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
     }
 
     fun performSorting() {
@@ -120,6 +134,9 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         toolbar.inflateMenu(R.menu.general)
         toolbar.setTitle("Projects")
         setSupportActionBar(toolbar)
+
+        //delete this when make logout
+        auth = FirebaseAuth.getInstance()
 
         /*findViewById<ListView>(R.id.listView).setOnItemClickListener{ _, _, position, _ ->
             val intent = Intent(this@ListOfCreatedProjectsActivity, Main2Activity::class.java)
