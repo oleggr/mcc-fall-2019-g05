@@ -79,17 +79,7 @@ def get_uid_from(id_token):
 
 @app.route('/')
 def default_route():
-
-    return str({ 
-        'request.data' : request.data, 
-        'request.args' : request.args, 
-        'request.form' : request.form, 
-        'request.files': request.files,
-        'request.values' : request.values, 
-        'request.json' : request.json 
-
-    })
-
+    return 'Hello world!'
 
 @app.route('/first_set_data', methods=['GET'])
 def first_set_data():
