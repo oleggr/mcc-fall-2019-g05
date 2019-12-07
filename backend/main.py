@@ -236,8 +236,10 @@ def create_user():
 @app.route('/user/unique/<username>', methods=['GET'])
 def is_user_unique(username):
 
+    reply = []
+
     if FB_functions.user_is_unique(username):
-        return str(True)
+        return str(reply)
 
     else:
         username_options = FB_functions.unique_names(username)
