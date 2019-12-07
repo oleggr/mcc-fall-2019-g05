@@ -118,7 +118,7 @@ def add_members_to_project(users_id, project_id):
                     'user_id': user_id,
                     'name': name,
                     'project_id': project_id,
-                    'role_id': 'standart user',
+                    'role_id': '',
                     'image_url': image_url
             })
 
@@ -133,6 +133,8 @@ def update_project(project_id, param_name, param_value):
     try:
         project_ref = ref.child('projects')
         project = project_ref.child(project_id)
+
+        fields = project.get()
 
         project.update({param_name: param_value})
 

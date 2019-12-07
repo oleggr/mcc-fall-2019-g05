@@ -204,12 +204,17 @@ def get_image(path, filename):
 
 
 @app.route('/user', methods=['GET'])
-def get_profile_settings():
+def get_user():
+    return "This is get_profile_settings method. returns profile info"
+
+
+@app.route('/users', methods=['GET'])
+def get_all_users():
     return "This is get_profile_settings method. returns profile info"
 
 
 @app.route('/user/update', methods=['PUT'])
-def set_profile_settings():
+def update_user():
     return "This is set_profile_settings method. returns fails or not"
 
 
