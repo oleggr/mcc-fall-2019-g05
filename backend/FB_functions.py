@@ -2,27 +2,32 @@ from main import ref
 
 
 def create_project(
-            name='default_project_name',
+            title='default_project_title',
             is_shared=True,
-            key_word_1=True,
-            key_word_2=True,
-            key_word_3=True,
-            author_id='default_author_id',
+            key_words = [
+                {'key_word_1': True}, 
+                {'key_word_2': True}, 
+                {'key_word_3': True}],
+            creator_id='default_author_id',
             deadline='01/01/1970',
-            description='default_description'
+            description='default_description',
+            image_url = 'link_to_icon.com/project_id/icon',
+            last_modified = 'date',
+            is_media_available = True
     ):
 
     project_ref = ref.child('projects')
 
     project_key = project_ref.push({
-                'name': name,
-                'is_shared': is_shared,
-                'key_word_1': key_word_1,
-                'key_word_2': key_word_2,
-                'key_word_3': key_word_3,
-                'author_id': author_id,
-                'deadline': deadline,
-                'description': description
+            'title': title,
+            'is_shared': is_shared,
+            'key_words': key_words,
+            'creator_id': creator_id,
+            'deadline': deadline,
+            'description': description,
+            'image_url': image_url,
+            'last_modified': last_modified,
+            'is_media_available': is_media_available
     })
 
     return project_key.key
@@ -39,14 +44,24 @@ def delete_project(project_id):
 def add_members_to_project(users_id, project_id):
 
     member_ref = ref.child('members')
+    users_ref = ref.child('users')
 
     try:
+
         for user_id in users_id:
+            user = users_ref.child(user_id)
+
+            name = user['name']
+            image_url = user['image_url']
+
             member_ref.push({
                     'user_id': user_id,
+                    'name': name,
                     'project_id': project_id,
-                    'role_id': 'standart user'
+                    'role_id': 'standart user',
+                    'image_url': image_url
             })
+
         return 'INFO: Members added.'
 
     except:
@@ -100,26 +115,36 @@ def assign_task_to_users(task_id, *user_ids):
             'user_id' : user_id
         })
 
+
 def get_list_of_projects_implementation(user_id):
+    
     task_to_user_ref = ref.child('task_to_user').get()#get list of users and add_projects
     user_tasks = []
     response_list = []
+
     for task_to_user in task_to_user_ref:
         if(task_to_user_ref[task_to_user]["user_id"] == user_id):
             user_tasks.append(task_to_user_ref[task_to_user]["task_id"]) #get a list of users tasks
+    
     if(len(user_tasks) > 0):
         tasks_ref = ref.child('tasks').get()
+        
         for i in tasks_ref:
             if i in user_tasks:
                 path_str = "tasks/" + i
                 response_list.append({i : ref.child(path_str).get()})
+    
     return response_list
 
+
 def search_for_project_implementation(project_id):
+    
     project = ref.child('projects/' + project_id).get()
     response_list = []
     response_list.append({project_id : project})
+    
     return response_list
+
 
 def get_members_of_project(project_id):
 
