@@ -3,14 +3,8 @@ from FB_functions import get_members_of_project, get_tasks_of_project, get_users
 
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
-# import pdfkit
-# from weasyprint import HTML
-# from fpdf import FPDF
+from weasyprint import HTML
 
-
-# path_wkhtmltopdf = r'C:\Users\olegg\Documents\GitHub\Aalto\wkhtmltox'
-# config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
-# pdfkit.from_url("http://google.com", "out.pdf", configuration=config)
 
 def get_data(project_id):
 
@@ -106,9 +100,7 @@ def generate_pdf(data):
     html_file.write(html_out)
     html_file.close()
 
-    pdfkit.from_file(dt_string + '.html', dt_string + '.pdf')
-
-    # HTML(string=html_out).write_pdf(args.outfile.name)
+    HTML(string=html_out).write_pdf(args.outfile.name)
 
     return dt_string + '.pdf'
 
