@@ -49,6 +49,7 @@ def create_user(uid, name, email, image_url):
 
 
 def delete_project(project_id):
+
     #delete project
     project_ref = ref.child('projects')
     project_ref.child(project_id).delete()
@@ -56,6 +57,7 @@ def delete_project(project_id):
     #delete members
     members_ref = ref.child('members')
     members_dict = ref.child('members').get()
+
     for member_id in members_dict:
         if(members_dict[member_id]["project_id"] == project_id):
             members_ref.child(member_id).delete()
@@ -63,7 +65,9 @@ def delete_project(project_id):
     #delete tasks
     tasks_ref = ref.child('tasks')
     tasks_dict = ref.child('tasks').get()
+
     list_of_tasks = []
+
     for tasks_id in tasks_dict:
         if(tasks_dict[tasks_id]["project_id"] == project_id):
             tasks_ref.child(tasks_id).delete()
@@ -72,6 +76,7 @@ def delete_project(project_id):
     #delete task_to_user
     task_to_user_ref = ref.child('task_to_user')
     task_to_user_dict = ref.child('task_to_user').get()
+
     for task_to_user_id in task_to_user_dict:
         if(task_to_user_dict[task_to_user_id]["task_id"] in list_of_tasks):
             task_to_user_ref.child(task_to_user_id).delete()
@@ -80,19 +85,23 @@ def delete_project(project_id):
 
 
 def delete_members(project_id):
+
     #delete tasks
     tasks_ref = ref.child('tasks')
     tasks_dict = ref.child('tasks').get()
+
     list_of_tasks = []
+
     for tasks_id in tasks_dict:
         if(tasks_dict[tasks_id]["project_id"] == project_id):
             #tasks_ref.child(tasks_id).delete()
             list_of_tasks.append(tasks_id)
-    print(list_of_tasks)
+    # print(list_of_tasks)
 
     #delete task_to_user
     task_to_user_ref = ref.child('task_to_user')
     task_to_user_dict = ref.child('task_to_user').get()
+
     for task_to_user_id in task_to_user_dict:
         if(task_to_user_dict[task_to_user_id]["task_id"] in list_of_tasks):
             #task_to_user_ref.child(task_to_user_id).delete()
@@ -201,6 +210,7 @@ def update_task(task_id, new_task_status):
     tasks_ref = ref.child('tasks')
 
     path = task_id + '/status'
+
     tasks_ref.update({
         path : new_task_status
     })
@@ -258,7 +268,9 @@ def get_members_of_project(project_id):
     members_dict = members_ref.get()
 
     for member_record_id in members_dict:
+
         member_record = members_dict[member_record_id]
+
         if member_record['project_id'] == project_id:
             member_record['member_id'] = member_record_id
             members.append(member_record)
@@ -273,7 +285,9 @@ def get_tasks_of_project(project_id):
     tasks_dict = tasks_ref.get()
 
     for task_record_id in tasks_dict:
+
         task_record = tasks_dict[task_record_id]
+
         if task_record['project_id'] == project_id:
             task_record['task_id'] = task_record_id
             tasks.append(task_record)
@@ -326,7 +340,9 @@ def does_user_in_project(user_id, project_id):
     members_ref = ref.child("members").get()
 
     for member_id in members_ref:
+
         member = members_ref[member_id]
+
         if(member["project_id"] == project_id and member["user_id"] == user_id):
             return True
 
@@ -338,14 +354,17 @@ def does_user_admin_of_project(user_id, project_id):
     members_ref = ref.child("members").get()
 
     for member_id in members_ref:
+
         member = members_ref[member_id]
+
         if(member["project_id"] == project_id and member["user_id"] == user_id):
+
             member_role = member["role_id"]
             roles_ref = ref.child("roles").get()
+
             for role in roles_ref:
-                if (role == member_role):
-                    if(roles_ref[role]["level"] == "admin"):
-                        return True
+                if (role == member_role) and (roles_ref[role]["level"] == "admin"):
+                    return True
 
     return False
 

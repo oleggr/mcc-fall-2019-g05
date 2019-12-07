@@ -53,35 +53,34 @@ def get_uid_from(id_token):
         decoded_token = auth.verify_id_token(id_token)
         uid = decoded_token['uid']
 
-        return decoded_token
-
-    except:
-        return 'ERROR: Authenfication failed.'
-
-
-def user_validate(uid):
-    return True
-
-
-def get_uid_from(id_token):
-    '''
-    Function verifying token from client.
-    Returns uid which can be used for user identifying.
-    '''
-
-    try:
-        decoded_token = auth.verify_id_token(id_token)
-        uid = decoded_token['uid']
-
         return uid
 
     except:
         return 'ERROR: Authenfication failed.'
 
 
+def user_validate(uid):
+
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+
+    #check that user in the project
+    user_id = uid_response
+
+    if(not(FB_functions.does_user_in_project(user_id, project_id))):
+        return "ERROR: User not in project"
+
+    return 'OK'
+
+
 @app.route('/')
 def default_route():
     return 'Hello world!'
+
 
 @app.route('/first_set_data', methods=['GET'])
 def first_set_data():
@@ -223,7 +222,7 @@ def update_user():
 def create_user():
 
     data = request.get_json()
-    id_token = request.headers["id_token"]
+    id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
     
     if(uid_response == "ERROR: Authenfication failed."):
@@ -250,7 +249,7 @@ def is_user_unique(username):
 @app.route('/project/create', methods=['POST'])
 def create_project():
 
-    id_token = request.headers["id_token"]
+    id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
     
     if(uid_response == "ERROR: Authenfication failed."):
@@ -270,7 +269,7 @@ def create_project():
             uid_response,
             data['deadline'],
             data['description'],
-            data['image_url'],
+            '',
             dt_string,
             False
     )
@@ -281,31 +280,16 @@ def create_project():
 @app.route('/project/<project_id>/delete', methods=['DELETE'])
 def delete_project(project_id):
 
-    # TODO: Add user check (if user admin or not)
-    # if data.TOKEN is valid (check with firebase)
     #check for valid token
-    id_token = request.headers["id_token"]
+    id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
     
-    if(uid_response == "ERROR: Authenfication failed."):
-        return "ERROR: Authenfication failed."
-    
-    #check that user exists
-    if(not(FB_functions.verify_user(uid_response))):
-        return "ERROR: Not such user."
-    
-    #check that user in the project
-    user_id = uid_response
-    if(not(FB_functions.does_user_in_project(user_id, project_id))):
-        return "Error: User not in project"
-    
-    #check if user admin
-    if (FB_functions.does_user_admin_of_project(user_id, project_id)):
+    if user_validate(uid_response) == 'OK' and \
+            (FB_functions.does_user_admin_of_project(user_id, project_id)):
         return FB_functions.delete_project(project_id)
+
     else:
         return "ERROR: user does not have rights to delete project"
-
-    return "ERROR: Wrong project id."
 
 
 # TODO: Set members functionality
@@ -313,19 +297,13 @@ def delete_project(project_id):
 def add_members_to_project(project_id):
 
     #check for valid token
-    id_token = request.headers["id_token"]
+    id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
-    if(uid_response == "ERROR: Authenfication failed."):
-        return "ERROR: Authenfication failed."
-    #check that user exists
-    if(not(FB_functions.verify_user(uid_response))):
-        return "ERROR: Not such user."
-    #check that user in the project
-    user_id = uid_response
-    if(not(FB_functions.does_user_in_project(user_id, project_id))):
-        return "Error: User not in project"
 
-    return FB_functions.add_members_to_project(users_id, project_id)
+    if user_validate(uid_response) == 'OK':
+        return FB_functions.add_members_to_project(users_id, project_id)
+    else:
+        return 'ERROR: Your user not have permissions to do this.'
 
 
 @app.route('/project/<project_id>/members', methods=['GET'])
@@ -335,21 +313,14 @@ def get_members_of_project(project_id):
     '''
 
     #check for valid token
-    id_token = request.headers["id_token"]
+    id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
-    if(uid_response == "ERROR: Authenfication failed."):
-        return "ERROR: Authenfication failed."
-    #check that user exists
-    if(not(FB_functions.verify_user(uid_response))):
-        return "ERROR: Not such user."
-    #check that user in the project
-    user_id = uid_response
-    if(not(FB_functions.does_user_in_project(user_id, project_id))):
-        return "Error: User not in project"
 
-    members = FB_functions.get_members_of_project(project_id)
-
-    return json.dumps(members)
+    if user_validate(uid_response) == 'OK':
+        members = FB_functions.get_members_of_project(project_id)
+        return json.dumps(members)
+    else:
+        return 'ERROR: Your user not have permissions to do this.'
 
 
 @app.route('/project/<project_id>/tasks/add', methods=['POST'])
@@ -358,26 +329,22 @@ def set_task_to_project(project_id):
     #check for valid token
     id_token = request.headers["id_token"]
     uid_response = get_uid_from(id_token)
-    if(uid_response == "ERROR: Authenfication failed."):
-        return "ERROR: Authenfication failed."
-    #check that user exists
-    if(not(FB_functions.verify_user(uid_response))):
-        return "ERROR: Not such user."
-    #check that user in the project
-    user_id = uid_response
-    if(not(FB_functions.does_user_in_project(user_id, project_id))):
-        return "Error: User not in project"
 
-    data=request.args
-    task_id = FB_functions.add_task_to_project(
-            project_id,
-            data["creater_id"],
-            data["description"],
-            data["status"],
-            data["taskname"]
-    )
+    if user_validate(uid_response) == 'OK':
 
-    return json.dumps(task_id)
+        data=request.args
+        task_id = FB_functions.add_task_to_project(
+                project_id,
+                data["creater_id"],
+                data["description"],
+                data["status"],
+                data["taskname"]
+        )
+
+        return json.dumps(task_id)
+
+    else:
+        return 'ERROR: Your user not have permissions to do this.'
 
 
 # Add to this function checking if field exists
