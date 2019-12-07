@@ -33,6 +33,30 @@
         app:layout_constraintVertical_bias="0.493"
         tools:ignore="MissingConstraints" />
 
+    <CheckBox
+        android:id="@+id/checkBoxProject"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/timeTv"
+        app:layout_constraintTop_toBottomOf="@+id/project_description"
+        app:layout_constraintVertical_bias="0.13"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="224dp" />
+
+    <TextView
+        android:id="@+id/group_project"
+        android:layout_width="186dp"
+        android:layout_height="26dp"
+        android:text="Group project"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/text_view_date_1"
+        app:layout_constraintEnd_toStartOf="@+id/checkBoxProject"
+        app:layout_constraintHorizontal_bias="0.763"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.85"
+        tools:ignore="MissingConstraints" />
+
     <TextView
         android:id="@+id/text_view_date_1"
         android:layout_width="155dp"
@@ -107,7 +131,7 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/text_view_date_1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.085"
+        app:layout_constraintHorizontal_bias="0.106"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
