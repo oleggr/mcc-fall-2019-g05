@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MCC_Project_5</string>
+    <string name="title_activity_add_attachment">Add_attachment</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_photo">Take photo</string>
+    <string name="action_gallery">From Gallery</string>
+    <string name="action_document">Attach file</string>
 </resources>
