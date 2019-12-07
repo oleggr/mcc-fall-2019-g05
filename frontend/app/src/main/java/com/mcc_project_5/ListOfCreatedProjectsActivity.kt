@@ -21,18 +21,13 @@ import com.mcc_project_5.Adapters.ProjectListAdapter
 import com.mcc_project_5.Tools.Properties
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import kotlinx.android.synthetic.main.activity_list_of_created_projects.*
-import kotlinx.android.synthetic.main.list_of_projects_list_layout.*
-import okio.Okio
-import org.json.JSONObject
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlinx.android.synthetic.main.list_of_created_projects_activity.*
 import java.util.*
 import kotlin.Comparator
 import kotlin.collections.ArrayList
-
-
 
 
 class ListOfCreatedProjectsActivity : AppCompatActivity() {
@@ -131,7 +126,7 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_list_of_created_projects)
+        setContentView(R.layout.list_of_created_projects_activity)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.inflateMenu(R.menu.general)
         toolbar.setTitle("Projects")
@@ -154,6 +149,7 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
             lastClicked = position
         }
 
+        this.byTime.performClick()
     }
 
 
