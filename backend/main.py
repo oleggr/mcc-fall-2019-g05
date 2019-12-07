@@ -118,6 +118,13 @@ def set_profile_settings():
 @app.route('/create_project', methods=['POST'])
 def create_project():
 
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+
     data = request.args
 
     if user_validate(get_uid_from(data['id_token'])):
@@ -145,8 +152,23 @@ def delete_project(project_id):
 
     # TODO: Add user check (if user admin or not)
     # if data.TOKEN is valid (check with firebase)
-    if True:
+    #check for valid token
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+    #check that user in the project
+    user_id = uid_response
+    if(not(FB_functions.does_user_in_project(user_id, project_id))):
+        return "Error: User not in project"
+    #check if user admin
+    if (FB_functions.does_user_admin_of_project(user_id, project_id)):
         return FB_functions.delete_project(project_id)
+    else:
+        return "ERROR: user does not have rights to delete project"
 
     return "ERROR: Wrong project id."
 
@@ -154,8 +176,18 @@ def delete_project(project_id):
 @app.route('/project/<project_id>/add_members', methods=['POST'])
 def add_members_to_project(project_id):
 
-    data = request.args
-    users_id = data.getlist('user_id')
+    #check for valid token
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+    #check that user in the project
+    user_id = uid_response
+    if(not(FB_functions.does_user_in_project(user_id, project_id))):
+        return "Error: User not in project"
 
     return FB_functions.add_members_to_project(users_id, project_id)
 
@@ -165,6 +197,18 @@ def get_members_of_project(project_id):
     '''
     Returns dict of members which consist of user_id, project_id and role_id
     '''
+    #check for valid token
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+    #check that user in the project
+    user_id = uid_response
+    if(not(FB_functions.does_user_in_project(user_id, project_id))):
+        return "Error: User not in project"
 
     members = FB_functions.get_members_of_project(project_id)
 
@@ -173,6 +217,19 @@ def get_members_of_project(project_id):
 
 @app.route('/project/<project_id>/add_task', methods=['POST'])
 def set_task_to_project(project_id):
+
+    #check for valid token
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+    #check that user in the project
+    user_id = uid_response
+    if(not(FB_functions.does_user_in_project(user_id, project_id))):
+        return "Error: User not in project"
 
     data=request.args
     task_id = FB_functions.add_task_to_project(

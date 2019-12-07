@@ -210,3 +210,31 @@ def get_attachments_of_project(project_id):
             attachments.append(attachments_record)
 
     return attachments
+
+def verify_user(uid):
+    users_ref = ref.child('users').get()
+    for user in users_ref:
+        if (user==uid):
+            return True
+    return False
+
+def does_user_in_project(user_id, project_id):
+    members_ref = ref.child("members").get()
+    for member_id in members_ref:
+        member = members_ref[member_id]
+        if(member["project_id"] == project_id and member["user_id"] == user_id):
+            return True
+    return False
+
+def does_user_admin_of_project(user_id, project_id):
+    members_ref = ref.child("members").get()
+    for member_id in members_ref:
+        member = members_ref[member_id]
+        if(member["project_id"] == project_id and member["user_id"] == user_id):
+            member_role = member["role_id"]
+            roles_ref = ref.child("roles").get()
+            for role in roles_ref:
+                if (role == member_role):
+                    if(roles_ref[role]["level"] == "admin"):
+                        return True
+    return False
