@@ -6,7 +6,7 @@ def create_project(
             is_shared=True,
             key_words = [
                 {'key_word_1': True},
-                {'key_word_2': True},
+                {'key_word_2': True}, 
                 {'key_word_3': True}],
             creator_id='default_author_id',
             deadline='01/01/1970',

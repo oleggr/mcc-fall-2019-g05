@@ -127,25 +127,18 @@ def create_project():
         return "ERROR: Not such user."
 
     data = request.args
-
-    if user_validate(get_uid_from(data['id_token'])):
-
-        project_id = FB_functions.create_project(
-                data['title'],
-                data['is_shared'],
-                data['key_words'],
-                data['creator_id'],
-                data['deadline'],
-                data['description'],
-                data['image_url'],
-                data['last_modified'],
-                data['is_media_available']
-        )
-
-        return project_id
-
-    else:
-        return 'ERROR: Unauthorized user'
+    project_id = FB_functions.create_project(
+            data['title'],
+            data['is_shared'],
+            data['key_words'],
+            data['creator_id'],
+            data['deadline'],
+            data['description'],
+            data['image_url'],
+            data['last_modified'],
+            data['is_media_available']
+    )
+    return project_id
 
 
 @app.route('/project/<project_id>/delete', methods=['DELETE'])
