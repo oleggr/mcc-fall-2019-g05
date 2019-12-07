@@ -92,7 +92,7 @@ def generate_pdf(data):
     template = env.get_template("report_template.html")
     template_vars = {
                     "title" : 'Report of project {}'.format(project['project_id']),
-                    "project_name" : project['name'],
+                    "project_name" : project['title'],
                     "datetime" : dt_string,
                     "project_info" : project,
                     "users" : users,
