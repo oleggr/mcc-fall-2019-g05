@@ -106,7 +106,7 @@ def generate_pdf(data):
     html_file.write(html_out)
     html_file.close()
 
-    # pdfkit.from_file(dt_string + '.html', dt_string + '.pdf')
+    pdfkit.from_file(dt_string + '.html', dt_string + '.pdf')
 
     # HTML(string=html_out).write_pdf(args.outfile.name)
 

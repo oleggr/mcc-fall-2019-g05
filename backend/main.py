@@ -442,8 +442,8 @@ def generate_project_report(project_id):
     # if not report_name:
     #     return 'ERROR: Project not exist'
 
-    return report_name
-    # return send_file('/pdf/{}'.format(report_name))
+    # return report_name
+    return send_file(report_name)
 
 
 @app.route('/get_projects', methods=['GET'])
