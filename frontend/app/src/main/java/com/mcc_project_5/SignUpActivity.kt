@@ -65,7 +65,7 @@ class SignUpActivity : AppCompatActivity() {
                                 val json= JSONObject()
                                 json.put("name",tv_username.text.toString())
                                 json.put("email",tv_email.text.toString())
-                                requester.httpPost("users/create_user?email=subtrsel@gmail.com&name=ebgat", json,  object: Callback {
+                                requester.httpPost("users/create_user", json,  object: Callback {
                                     override fun onFailure(call: Call, e: IOException) {
                                         Log.d("DDD", "FAIL")
                                         return

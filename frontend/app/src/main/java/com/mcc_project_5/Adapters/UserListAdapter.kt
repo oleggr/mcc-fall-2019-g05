@@ -32,6 +32,7 @@ class UserListAdapter() : BaseAdapter() {
         textView.text = items[position].name
         picasso.load(items[position].imageUrl).fit().into(imageView)
         checkBox.isChecked = items[position].projectsArray.contains(currentProjectId)
+        checkBox.setOnCheckedChangeListener { buttonView, isChecked -> items[position].checked = isChecked }
 
         return rowView
     }

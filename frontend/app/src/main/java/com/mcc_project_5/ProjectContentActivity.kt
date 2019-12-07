@@ -132,6 +132,12 @@ class ProjectContentActivity : AppCompatActivity() {
         popupMenu.menuInflater.inflate(R.layout.attachment, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
             when(item.itemId) {
+                R.id.action_user -> {
+                    val intent = Intent(this, AddUserActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.action_task ->
+                    pickImageFromGallery()
                 R.id.action_photo ->
                     openCamera()
                 R.id.action_gallery ->

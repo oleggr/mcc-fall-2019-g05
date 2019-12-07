@@ -7,6 +7,7 @@ class User {
     var name: String = ""
     var id: Int = 0
     var imageUrl: String  = ""
+    var checked: Boolean = false
     val projectsArray: ArrayList<String> = arrayListOf()
     constructor(json: JSONObject) {
         this.id = json.getInt("id")
