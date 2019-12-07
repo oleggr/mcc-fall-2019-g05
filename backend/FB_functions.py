@@ -130,7 +130,7 @@ def get_members_of_project(project_id):
     for member_record_id in members_dict:
         member_record = members_dict[member_record_id]
         if member_record['project_id'] == project_id:
-            members.append(member_record['user_id'])
+            members.append(member_record)
 
     return members
 
