@@ -2,6 +2,7 @@ package com.mcc_project_5
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
@@ -9,9 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import com.google.firebase.database.FirebaseDatabase
-
-
-
+import com.mcc_project_5.Tools.Requester
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
 
 class SignUpActivity : AppCompatActivity() {
@@ -57,6 +61,25 @@ class SignUpActivity : AppCompatActivity() {
                     user?.sendEmailVerification()
                         ?.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
+                                val requester = Requester(baseContext)
+                                val json= JSONObject()
+                                json.put("name",tv_username.text.toString())
+                                json.put("email",tv_email.text.toString())
+                                requester.httpPost("users/create_user", json,  object: Callback {
+                                    override fun onFailure(call: Call, e: IOException) {
+                                        Log.d("DDD", "FAIL")
+                                        return
+                                    }
+
+                                    override fun onResponse(call: Call, response: Response) {
+                                        if (response.isSuccessful) {
+                                            Log.d("DDD","OK")
+                                        } else {
+                                            Log.d("DDD","NOT OK")
+                                            return
+                                        }
+                                    }
+                                })
                                 startActivity(Intent(this, ListOfCreatedProjectsActivity::class.java))
                                 finish()
                             }
