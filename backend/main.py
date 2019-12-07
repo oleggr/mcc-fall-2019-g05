@@ -9,6 +9,7 @@ import flask
 from flask import request
 from flask import send_file
 
+import traceback
 import json
 import os
 import json
@@ -82,33 +83,35 @@ def update_data():
 def upload_image_to_project(project_id):
 
     data = request.args
-    image = request.files.get("img1.jpg")
+    image = request.files["image"]
 
     try:
         
-        user_id = get_uid_from(data['id_token']) # add user checking
-        project_id = data['project_id']
+        # user_id = get_uid_from(data['id_token']) # add user checking
+        user_id = 'uid'
         filename = image.filename
 
         # Save image locally
-        image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
+        # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
+        image.save('img/' + filename)
         images_names = img_func.image_resize('img/', filename)
 
         save_to_fb_dir = 'attachments/' + project_id + '/'
 
         img_func.image_upload('img/', save_to_fb_dir, images_names)
 
-        for element in images:
+        for element in images_names:
             FB_functions.add_attachment(
                     project_id,
                     filename,
-                    save_to_fb_dir,
+                    save_to_fb_dir + element,
                     'image')
 
         return 'INFO: Image uploaded.'
 
     except Exception as e:
-        return 'ERROR: Image was not uploaded.\nException: {}'.format(e)
+        print(traceback.format_exc())
+        return 'ERROR: Image was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
 
 
 # TODO: Fix this function to post according to new requirements

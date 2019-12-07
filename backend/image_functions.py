@@ -1,5 +1,6 @@
 from main import ref, storage
-
+import string
+import random
 from PIL import Image
 
 
@@ -9,7 +10,7 @@ def randomString(stringLength=10):
     return ''.join(random.choice(letters) for i in range(stringLength))
 
 
-def image_resize(filename, path='img/',):
+def image_resize(path='img/', filename='def_name'):
     '''
     Image from client resizing.
     Return array of names of image files.
@@ -23,12 +24,22 @@ def image_resize(filename, path='img/',):
     mid_quality_name = new_filename + '.mid.' + file_format
     def_quality_name = new_filename + '.def.' + file_format
 
+    # card = Image.new("RGBA", (220, 220), (255, 255, 255))
+    # im = Image.open(path + filename).convert("RGBA")
+    # x, y = im.size
+    # card.paste(im, (0, 0, x, y), im)
+    # # card.save("test.png", format="png")
+    # card.save(path + low_quality_name, quality=1)
+    # card.save(path + mid_quality_name, quality=40)
+    # card.save(path + def_quakity_name, quality=95)
+
     im = Image.open(path + filename)
+    im.putalpha(255)
     img = Image.new('RGB', im.size, (255,255,255))
     img.paste(im, (0,0), im)
     img.save(path + low_quality_name, quality=1)
     img.save(path + mid_quality_name, quality=40)
-    img.save(path + def_quakity_name, quality=95)
+    img.save(path + def_quality_name, quality=95)
 
     images_names = [low_quality_name, mid_quality_name, def_quality_name]
 
