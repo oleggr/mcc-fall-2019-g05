@@ -87,6 +87,7 @@ class ProjectListAdapter: BaseAdapter() {
 
         rowView.setTag(items[position].id.toString())
 
+
         return rowView
     }
 

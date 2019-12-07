@@ -3,11 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/deleteItem"
-        android:title="delete" />
+        android:title="@string/action_delete" />
     <item
         android:id="@+id/contentItem"
-        android:title="content" />
+        android:title="@string/action_content" />
     <item
         android:id="@+id/reportItem"
-        android:title="report" />
+        android:title="@string/action_report" />
 </menu>
