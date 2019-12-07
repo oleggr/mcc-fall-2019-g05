@@ -25,6 +25,16 @@ class Requester(context: Context) {
     val JSON = "application/json; charset=utf-8".toMediaType()
     private val X_FIREBASE_TOKEN = "Firebase-token"
 
+    fun httpGetNoToken(url: String, callBack: Callback) {
+        val request = Request.Builder()
+            .url(baseUrl + url)
+            .get()
+            .build()
+
+        val call = client.newCall(request)
+        call.enqueue(callBack)
+    }
+
     fun httpGet(url: String, callBack: Callback) {
         val mUser = FirebaseAuth.getInstance().currentUser
         mUser!!.getIdToken(true)

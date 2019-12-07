@@ -14,6 +14,7 @@ import com.mcc_project_5.Tools.Requester
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 
@@ -21,6 +22,7 @@ import java.io.IOException
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    var names = arrayListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,8 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     fun signUpUser(v: View) {
+        val requester = Requester(baseContext)
+
         if (tv_username.text.toString().isEmpty()) {
             tv_username.error = "Please enter username"
             tv_username.requestFocus()
@@ -53,45 +57,74 @@ class SignUpActivity : AppCompatActivity() {
             tv_password.requestFocus()
             return
         }
+        var username = tv_username.text.toString()
 
-        auth.createUserWithEmailAndPassword(tv_email.text.toString(), tv_password.text.toString())
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    val user = auth.currentUser
-                    user?.sendEmailVerification()
-                        ?.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                val requester = Requester(baseContext)
-                                val json= JSONObject()
-                                json.put("name",tv_username.text.toString())
-                                json.put("email",tv_email.text.toString())
-                                requester.httpPost("users/create_user", json,  object: Callback {
-                                    override fun onFailure(call: Call, e: IOException) {
-                                        Log.d("DDD", "FAIL")
-                                        return
-                                    }
+        requester.httpGetNoToken("user/unique/$username",  object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("DDD", "FAIL")
+                return
+            }
 
-                                    override fun onResponse(call: Call, response: Response) {
-                                        if (response.isSuccessful) {
-                                            Log.d("DDD","OK")
-                                        } else {
-                                            Log.d("DDD","NOT OK")
-                                            return
-                                        }
-                                    }
-                                })
-                                startActivity(Intent(this, ListOfCreatedProjectsActivity::class.java))
-                                finish()
-                            }
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    Log.d("DDD",response.body!!.string())
+                    val resultJson = response.body!!.string()
+                    val json = JSONArray(resultJson)
+                    if (json.length() == 0){
+                        register(requester)
+                    } else {
+                        for(i in 0 until json.length()) {
+                            val item = json.getJSONObject(i)
+                            names.add(item.toString())
                         }
-                    val intent = Intent(this, ListOfCreatedProjectsActivity::class.java)
-                    startActivity(intent)
+                    }
                 } else {
-                    Toast.makeText(
-                        baseContext, "Sign Up failed. Try again after some time.",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Log.d("DDD","NOT OK")
+                    return
                 }
             }
+        })
+
+
     }
+
+    fun register(requester: Requester) = auth.createUserWithEmailAndPassword(tv_email.text.toString(), tv_password.text.toString())
+        .addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                val user = auth.currentUser
+                user?.sendEmailVerification()
+                    ?.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+
+                            val json= JSONObject()
+                            json.put("name",tv_username.text.toString())
+                            json.put("email",tv_email.text.toString())
+                            requester.httpPost("users/create_user", json,  object: Callback {
+                                override fun onFailure(call: Call, e: IOException) {
+                                    Log.d("DDD", "FAIL")
+                                    return
+                                }
+
+                                override fun onResponse(call: Call, response: Response) {
+                                    if (response.isSuccessful) {
+                                        Log.d("DDD","OK")
+                                    } else {
+                                        Log.d("DDD","NOT OK")
+                                        return
+                                    }
+                                }
+                            })
+                            startActivity(Intent(this, ListOfCreatedProjectsActivity::class.java))
+                            finish()
+                        }
+                    }
+                val intent = Intent(this, ListOfCreatedProjectsActivity::class.java)
+                startActivity(intent)
+            } else {
+                Toast.makeText(
+                    baseContext, "Sign Up failed. Try again after some time.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
 }
