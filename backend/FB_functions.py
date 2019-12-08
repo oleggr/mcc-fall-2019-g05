@@ -232,7 +232,7 @@ def assign_task_to_users(task_id, *user_ids):
 
 
 def get_list_of_projects_implementation(user_id):
-
+    """
     task_to_user_ref = ref.child('task_to_user').get()#get list of users and add_projects
     user_tasks = []
     response_list = []
@@ -249,6 +249,37 @@ def get_list_of_projects_implementation(user_id):
                 path_str = "tasks/" + i
                 response_list.append({i : ref.child(path_str).get()})
 
+    return response_list
+    """
+    projects_ref = ref.child('projects/')
+    projects_list = []
+    projects = projects_ref.get()
+    for project_id in projects:
+        if(projects[project_id]["creator_id"] == user_id):
+            projects_list.append(project_id)
+
+    members_ref = ref.child('members/')
+    members = members_ref.get()
+    for member in members:
+        if(members[member]["user_id"] == user_id and not(members[member]["project_id"] in projects_list)):
+            projects_list.append(members[member]["project_id"])
+
+    response_list = []
+    for project in projects_list:
+        certain_project_item = {}
+        certain_project_item.update({ "project_id" : project})
+        certain_project = projects_ref.child(project).get()
+        certain_project_item.update({ "title" : certain_project["title"]})
+        certain_project_item.update({ "deadline" : certain_project["deadline"]})
+        certain_project_item.update({ "image_url" : certain_project["image_url"]})
+        certain_project_item.update({ "last_modified" : certain_project["last_modified"]})
+        certain_project_item.update({ "is_favorite" : False})
+        certain_project_item.update({ "is_media_available" : certain_project["is_media_available"]})
+        certain_project_item.update({ "is_shared" : certain_project["is_media_available"]})
+        certain_project_item.update({ "key_words" : certain_project["key_words"]})
+        certain_project_item.update({ "members" : {"id":1,"imageUrl":"ololo"}})
+        #print(certain_project_item)
+        response_list.append(certain_project_item)
     return response_list
 
 

@@ -474,7 +474,8 @@ def get_list_of_projects():
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
-    list_of_projects = FB_functions.get_list_of_projects_implementation(request.args["user_id"])
+    list_of_projects = FB_functions.get_list_of_projects_implementation(uid_response)
+#    list_of_projects = FB_functions.get_list_of_projects_implementation("a291rNkgKHQyUhOa9ZcyISOGqLr1")
 
     return json.dumps(list_of_projects)
 
