@@ -8,7 +8,7 @@ class Project {
     val title: String
     val imageUrl: String
     val lastModified: String
-    val isFavorite: Boolean
+    var isFavorite: Boolean
     val isMediaAvailable: Boolean
     val isOwner: Boolean
     val deadline: String

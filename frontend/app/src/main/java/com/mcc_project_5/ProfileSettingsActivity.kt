@@ -40,6 +40,8 @@ class ProfileSettingsActivity: AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_settings)
 
+        val mUser = FirebaseAuth.getInstance().currentUser ?: finish()
+
         imageView = findViewById(R.id.imageView)
         upload = findViewById<View>(R.id.upload) as Button
         upload!!.setOnClickListener { choosePhotoFromGallary()}

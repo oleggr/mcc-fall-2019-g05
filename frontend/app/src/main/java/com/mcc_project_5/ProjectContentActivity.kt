@@ -102,6 +102,8 @@ class ProjectContentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.project_content_activity)
 
+        val mUser = FirebaseAuth.getInstance().currentUser ?: finish()
+
         projectId = this.intent.getStringExtra("projectId")
         isOwner = this.intent.getBooleanExtra("isOwner", false)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)

@@ -31,12 +31,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.widget.Toast
 import android.view.MenuItem
-
-
-
-
-
-
+import com.google.firebase.auth.FirebaseAuth
 
 
 class AddTasksToAProjectActivity : AppCompatActivity() {
@@ -50,6 +45,8 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_tasks_to_a_project)
+
+        val mUser = FirebaseAuth.getInstance().currentUser ?: finish()
 
         // get the references from layout file
         textview_date = this.text_view_date_1
