@@ -287,7 +287,7 @@ def get_list_of_projects_implementation(user_id):
             user = users_ref[m]
             members_data_list.append({"id" : m, "imageUrl" : user["image_url"]})
         certain_project_item.update({ "members" : members_data_list})
-        print(certain_project_item)
+#        print(certain_project_item)
         response_list.append(certain_project_item)
     return response_list
 
