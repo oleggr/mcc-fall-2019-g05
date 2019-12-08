@@ -337,6 +337,20 @@ def get_tasks_of_project(project_id):
     return tasks
 
 
+def get_users_by_id(users_id):
+
+    res = []
+    users_ref = ref.child('users')
+    users = users_ref.get()
+
+    for user_id in users:
+        user = users[user_id]
+        if user_id in users_id:
+            res.append(user)
+
+    return res
+
+
 def get_users_on_task(task_id):
 
     users_on_task = []
