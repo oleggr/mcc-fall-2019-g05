@@ -10,10 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.*
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.mcc_project_5.DataModels.Project
 import com.squareup.picasso.Picasso
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mcc_project_5.ListOfCreatedProjectsActivity
 import com.mcc_project_5.ProjectContentActivity
 import com.mcc_project_5.R
 import com.mcc_project_5.Tools.ImageStorage
@@ -29,11 +31,16 @@ import java.time.format.DateTimeFormatter
 
 class ProjectListAdapter: BaseAdapter() {
     private val picasso = Picasso.get()
+    private lateinit var context: Context
 
-    fun showPopupMenu(context: Context, v: View, projectId: String, requester: Requester) {
+    fun showPopupMenu(context: Context, v: View, projectId: String, isOwner: Boolean, requester: Requester) {
         val popup = PopupMenu(context, v)
         val inflater: MenuInflater = popup.menuInflater
         inflater.inflate(R.menu.list_of_projects_popup, popup.menu)
+        if (!isOwner) {
+            popup.menu.getItem(0).isVisible = false
+        }
+
 
         popup.setOnMenuItemClickListener (PopupMenu.OnMenuItemClickListener { item ->
             when(item.itemId) {
@@ -44,6 +51,7 @@ class ProjectListAdapter: BaseAdapter() {
                     val intent =
                         Intent(context, ProjectContentActivity::class.java)
                     intent.putExtra("projectId", projectId)
+                    intent.putExtra("isOwner", isOwner)
                     context.startActivity(intent)
                 }
                 R.id.reportItem ->
@@ -57,7 +65,7 @@ class ProjectListAdapter: BaseAdapter() {
 
 
     fun deleteItem(id: String, requester: Requester) {
-        requester.httpDelete("/project/delete?prjctid=$id", object: Callback {
+        requester.httpDelete("project/$id/delete", object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
                 return
@@ -66,7 +74,12 @@ class ProjectListAdapter: BaseAdapter() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     //items.removeAt(id)
+                    Log.d("DDD", "OK")
+                    val intent = Intent(context, ListOfCreatedProjectsActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    context.startActivity(intent)
                 } else {
+                    Log.d("DDD", "NO")
                     return
                 }
             }
@@ -75,8 +88,8 @@ class ProjectListAdapter: BaseAdapter() {
 
     fun reportItem(id: String, requester: Requester) {
         try {
-            val reportUrl = "/project/report?projctid=$id"
-            val path = File(Environment.getExternalStorageDirectory() , "/projectID")
+            val reportUrl = "project/$id/generate_report"
+            val path = File(Environment.getExternalStorageDirectory() , "/Downloads")
             downloadFile(reportUrl, path, null, null, requester)
         }
         catch (e: IOException) {
@@ -111,6 +124,7 @@ class ProjectListAdapter: BaseAdapter() {
                         val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-kkmmss"))
                         File.createTempFile(timestamp, ext, dir)
                     }
+                    Log.d("sfsfg", "sfgfg")
                     /*val body = response.body
                     val sink = Okio.buffer(Okio.sink(file))
 
@@ -129,7 +143,7 @@ class ProjectListAdapter: BaseAdapter() {
 
     private var items: ArrayList<Project> = ArrayList()
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val context = parent!!.context
+        context = parent!!.context
         val requester = Requester(context)
         val inflater = LayoutInflater.from(context)
         val rowView = inflater.inflate(R.layout.list_of_projects_list_layout, parent, false)
@@ -142,7 +156,7 @@ class ProjectListAdapter: BaseAdapter() {
         val membersList = rowView.findViewById(R.id.membersView) as RecyclerView
 
         rowView.menuBtn.setOnClickListener {
-            showPopupMenu(context, it, items[position].id, requester)
+            showPopupMenu(context, it, items[position].id, items[position].isOwner, requester)
         }
 
         if (!items[position].isMediaAvailable)

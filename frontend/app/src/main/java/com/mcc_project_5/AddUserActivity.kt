@@ -26,6 +26,7 @@ class AddUserActivity : AppCompatActivity() {
     private val users  =  arrayListOf<User>()
     private val visibleUsers = arrayListOf<User>()
     private val checkedUsers = arrayListOf<User>()
+    var projectId = ""
 
     private enum class SortOrder {
         ASC, DESC
@@ -53,7 +54,7 @@ class AddUserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.users_list_activity)
 
-        val projectId = "1"//this.intent.getStringExtra("projectId")
+        projectId = this.intent.getStringExtra("projectId")
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.inflateMenu(R.menu.project_content_general)
         toolbar.setTitle(projectId)
@@ -63,6 +64,8 @@ class AddUserActivity : AppCompatActivity() {
         userListAdapter.setItems(visibleUsers)
         val usersListView = findViewById<ListView>(R.id.usersListView)
         usersListView.adapter = userListAdapter
+
+        loadUsersTemplate()
     }
 
     fun refreshUserList() {
@@ -92,7 +95,9 @@ class AddUserActivity : AppCompatActivity() {
                         visibleUsers.add(it)
                     }
                 }
-                refreshUserList()
+                runOnUiThread {
+                    refreshUserList()
+                }
                 return true
             }
 
@@ -121,7 +126,6 @@ class AddUserActivity : AppCompatActivity() {
     }
 
     fun addMembersProject(v: View) {
-        finish()
         val requester = Requester(baseContext)
         val json= JSONObject()
         checkedUsers.clear()
@@ -131,7 +135,7 @@ class AddUserActivity : AppCompatActivity() {
             }
         }
         json.put("members",checkedUsers)
-        requester.httpPost("members/add", json,  object: Callback {
+        requester.httpPost("project/$projectId/members/set", json,  object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
                 return
@@ -140,6 +144,7 @@ class AddUserActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     Log.d("DDD","OK")
+                    finish()
                 } else {
                     Log.d("DDD","NOT OK")
                     return
@@ -150,17 +155,34 @@ class AddUserActivity : AppCompatActivity() {
 
 
     fun loadUsersTemplate() {
-        val testJson = "[{\"id\":\"123\", \"name\":\"xxx\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\", \"projects\":[\"2\"]}, {\"id\":\"124\", \"name\":\"yyy\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\", \"projects\":[\"1\"]}, {\"id\":\"125\", \"name\":\"zzz\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\", \"projects\":[\"1\"]}]"
-        val json = JSONArray(testJson)
-        users.clear()
-        for(i in 0 until json.length()) {
-            val item = json.getJSONObject(i)
-            val user = User(item)
-            users.add(user)
-        }
-        visibleUsers.clear()
-        visibleUsers.addAll(users)
-        performSorting()
-        refreshUserList()
+        val requester = Requester(baseContext)
+        requester.httpGet("users", object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("DDD", "FAIL")
+                return
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val resultJson = response.body!!.string()
+                    val json = JSONArray(resultJson)
+                    users.clear()
+                    for(i in 0 until json.length()) {
+                        val item = json.getJSONObject(i)
+                        val user = User(item)
+                        users.add(user)
+                    }
+                    visibleUsers.clear()
+                    visibleUsers.addAll(users)
+                    runOnUiThread {
+                        performSorting()
+                        refreshUserList()
+                    }
+                } else {
+                    return
+                }
+            }
+        })
+
     }
 }

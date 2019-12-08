@@ -31,8 +31,11 @@ class UserListAdapter() : BaseAdapter() {
         val checkBox = rowView.findViewById<CheckBox>(R.id.userChecked)
 
         textView.text = items[position].name
-        //picasso.load(items[position].imageUrl).fit().into(imageView)
-        ImageStorage(parent.context).loadToImageView(items[position].imageUrl, imageView)
+        if (items[position].imageUrl != "") {
+            ImageStorage(parent.context).loadToImageView(items[position].imageUrl, imageView)
+        } else {
+            imageView.setImageResource(R.drawable.ic_account_circle_black_24dp)
+        }
         checkBox.isChecked = items[position].projectsArray.contains(currentProjectId)
         checkBox.setOnCheckedChangeListener { buttonView, isChecked -> items[position].checked = isChecked }
 

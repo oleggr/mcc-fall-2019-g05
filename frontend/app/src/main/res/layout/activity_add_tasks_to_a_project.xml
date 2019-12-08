@@ -96,9 +96,16 @@
                 android:id="@+id/assign_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="onClick"
                 android:text="Assigned to"
                 android:textSize="20sp"
                 tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/chosen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
         </LinearLayout>
 
         <LinearLayout
