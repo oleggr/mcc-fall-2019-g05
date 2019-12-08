@@ -2,6 +2,7 @@ import random
 import string
 import smtplib, ssl
 import traceback
+from email.message import EmailMessage
 
 
 def randomString(stringLength=10):
@@ -17,8 +18,6 @@ def send_mail(connected_users, object_name, object_id):
     for user in connected_users:
 
         mail_receiver = user['email']
-        
-        print(mail_receiver)
 
         # email server
         mail_server = 'smtp.yandex.ru'
@@ -28,11 +27,18 @@ def send_mail(connected_users, object_name, object_id):
 
         # body = '\nHello!\nYour {} by id {} will expires in 1 day.'.format(object_name, object_id)
 
-        message = """\
-Subject: Your activity is expiring
+        msg = EmailMessage()
 
+        msg['Subject'] = 'Your activity is expiring'
+        msg['From'] = mail_sender
+        msg['To'] = mail_receiver
+        msg.preamble = 'Mail notification\n'
+
+        msg.set_content("""\
 Hello!
-Your {} by id {} will expires in 1 day""".format(object_name, object_id)
+
+Your {} by id {} will expires in 1 day
+""".format(object_name, object_id))
 
         # message  ='Sent from: {}\nSent to:{}\nSubject:{}\n Body:{}'.format(mail_sender, mail_receiver, subject, body)
 
@@ -42,7 +48,8 @@ Your {} by id {} will expires in 1 day""".format(object_name, object_id)
 
             with smtplib.SMTP_SSL(mail_server, mail_port, context=context) as server:
                 server.login(mail_sender, mail_password)
-                server.sendmail(mail_sender, mail_receiver, message)
+                # server.sendmail(mail_sender, mail_receiver, message)
+                server.send_message(msg)
 
         except Exception:
             print('ERROR: Somathind wrong happened.\nException: {}\n{}'.format(Exception, traceback.print_exc()))

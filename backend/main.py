@@ -542,7 +542,7 @@ def start_notification_scheduler():
     data = request.json
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=check_deadlines, trigger="interval", seconds=30)
+    scheduler.add_job(func=check_deadlines, trigger="interval", seconds=43200)
     scheduler.start()
 
     # Shut down the scheduler when exiting the app
