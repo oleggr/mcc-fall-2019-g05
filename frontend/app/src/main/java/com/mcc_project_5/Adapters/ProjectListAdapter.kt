@@ -88,8 +88,8 @@ class ProjectListAdapter: BaseAdapter() {
 
     fun reportItem(id: String, requester: Requester) {
         try {
-            val reportUrl = "project/$id/report"
-            val path = File(Environment.getExternalStorageDirectory() , "/projectID")
+            val reportUrl = "project/$id/generate_report"
+            val path = File(Environment.getExternalStorageDirectory() , "/Downloads")
             downloadFile(reportUrl, path, null, null, requester)
         }
         catch (e: IOException) {
@@ -124,6 +124,7 @@ class ProjectListAdapter: BaseAdapter() {
                         val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-kkmmss"))
                         File.createTempFile(timestamp, ext, dir)
                     }
+                    Log.d("sfsfg", "sfgfg")
                     /*val body = response.body
                     val sink = Okio.buffer(Okio.sink(file))
 

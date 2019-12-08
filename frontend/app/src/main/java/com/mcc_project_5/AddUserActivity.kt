@@ -26,6 +26,7 @@ class AddUserActivity : AppCompatActivity() {
     private val users  =  arrayListOf<User>()
     private val visibleUsers = arrayListOf<User>()
     private val checkedUsers = arrayListOf<User>()
+    var projectId = ""
 
     private enum class SortOrder {
         ASC, DESC
@@ -53,7 +54,7 @@ class AddUserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.users_list_activity)
 
-        val projectId = this.intent.getStringExtra("projectId")
+        projectId = this.intent.getStringExtra("projectId")
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.inflateMenu(R.menu.project_content_general)
         toolbar.setTitle(projectId)
@@ -94,7 +95,9 @@ class AddUserActivity : AppCompatActivity() {
                         visibleUsers.add(it)
                     }
                 }
-                refreshUserList()
+                runOnUiThread {
+                    refreshUserList()
+                }
                 return true
             }
 
@@ -123,7 +126,6 @@ class AddUserActivity : AppCompatActivity() {
     }
 
     fun addMembersProject(v: View) {
-        finish()
         val requester = Requester(baseContext)
         val json= JSONObject()
         checkedUsers.clear()
@@ -133,7 +135,7 @@ class AddUserActivity : AppCompatActivity() {
             }
         }
         json.put("members",checkedUsers)
-        requester.httpPost("members/add", json,  object: Callback {
+        requester.httpPost("project/$projectId/members/set", json,  object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
                 return
@@ -142,6 +144,7 @@ class AddUserActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     Log.d("DDD","OK")
+                    finish()
                 } else {
                     Log.d("DDD","NOT OK")
                     return
@@ -171,8 +174,8 @@ class AddUserActivity : AppCompatActivity() {
                     }
                     visibleUsers.clear()
                     visibleUsers.addAll(users)
-                    performSorting()
                     runOnUiThread {
+                        performSorting()
                         refreshUserList()
                     }
                 } else {

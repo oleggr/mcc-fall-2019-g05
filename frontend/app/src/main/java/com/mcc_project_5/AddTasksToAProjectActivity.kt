@@ -16,16 +16,27 @@ import androidx.core.view.isVisible
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
+import com.mcc_project_5.DataModels.ProjectMember
+import com.mcc_project_5.DataModels.User
 import com.mcc_project_5.Tools.Requester
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_add_tasks_to_a_project.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import android.widget.Toast
+import android.view.MenuItem
+
+
+
+
+
+
 
 
 class AddTasksToAProjectActivity : AppCompatActivity() {
@@ -49,8 +60,10 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         projectId = this.intent.getStringExtra("projectId")
         isOwner = this.intent.getBooleanExtra("isOwner", false)
 
+
         if (!isOwner) {
             assign_text_view.isVisible = false
+            chosen.isVisible = false
         }
 
         val dateSetListener = object : DatePickerDialog.OnDateSetListener {
@@ -90,6 +103,45 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
             TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
         }
 
+    }
+
+    fun onClick(v: View) {
+        val requester  = Requester(baseContext)
+        var users = ArrayList<ProjectMember>()
+        requester.httpGet("project/$projectId/members", object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("DDD", "FAIL")
+                return
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val resultJson = response.body!!.string()
+                    Log.d("Log", resultJson)
+                    val json = JSONArray(resultJson)
+                    for(i in 0 until json.length()) {
+                        val item = json.getJSONObject(i)
+                        val user = ProjectMember(item)
+                        users.add(user)
+                    }
+                } else {
+                    return
+                }
+            }
+        })
+        val menu = PopupMenu(this@AddTasksToAProjectActivity, v)
+        for ( user in users) {
+            menu.menu.add(user.name)
+        }
+        menu.menuInflater.inflate(R.menu.attachment, menu.menu)
+        menu.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
+
+            override fun onMenuItemClick(item: MenuItem): Boolean {
+                chosen.text = item.title
+                return true
+            }
+        })
+        menu.show()
     }
 
     fun selectImage(v: View) {
@@ -144,6 +196,9 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         json.put("description",project_description.text.toString())
         val deadline = text_view_date_1.text.toString() + " " + timeTv.text.toString()
         json.put("deadline",deadline)
+        if (isOwner && chosen.text != null) {
+            json.put("assigned_to",chosen.text)
+        }
 
         requester.httpPost("project/$projectId/tasks/add", json, object: Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -160,7 +215,11 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
                 }
             }
         })
-        finish()
+        //MAY BE TEMPORARY SOLUTION
+        //finish()
+        val intent = Intent(this@AddTasksToAProjectActivity, ProjectContentActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 
     private fun updateDateInView() {
