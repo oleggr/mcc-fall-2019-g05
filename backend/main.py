@@ -112,7 +112,7 @@ def upload_image_to_project(project_id):
 
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
         filepath = json_data["url"]
-        filename = filepath.splt('/')[-1]
+        filename = filepath.split('/')[-1]
 
         # Save image locally
         img_func.file_download(filepath, filename)
@@ -150,7 +150,7 @@ def upload_project_icon(project_id):
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
         filepath = json_data["url"]
         # filename = json_data["name"]
-        filename = filepath.splt('/')[-1]
+        filename = filepath.split('/')[-1]
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
@@ -190,7 +190,7 @@ def upload_user_icon():
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
         filepath = json_data["url"]
         # filename = json_data["name"]
-        filename = filepath.splt('/')[-1]
+        filename = filepath.split('/')[-1]
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
@@ -590,8 +590,6 @@ def search_for_project(project_id):
 
 @app.route('/notification_scheduler/start')
 def start_notification_scheduler():
-
-    data = request.json
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(func=check_deadlines, trigger="interval", seconds=43200)
