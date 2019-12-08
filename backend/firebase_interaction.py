@@ -67,8 +67,6 @@ def object_exists(object_type='default_object', object_value="dafault_name",  ob
     return False
 
 
-
-
 def add_users():
 
     users_ref = ref.child('users')

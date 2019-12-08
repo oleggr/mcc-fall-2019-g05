@@ -374,7 +374,11 @@ def set_task_to_project(project_id):
 
     if user_validate(uid_response, project_id) == 'OK':
 
+        if "assignee_id" not in data:
+            data["assignee_id"] = uid_response
+
         data=request.args
+
         task_id = FB_functions.add_task_to_project(
                 project_id,
                 uid_response,
