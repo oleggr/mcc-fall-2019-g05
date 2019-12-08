@@ -3,6 +3,7 @@ package com.mcc_project_5.Tools
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.StrictMode
 import android.util.Log
 import android.widget.ImageView
 import com.google.firebase.storage.FirebaseStorage
@@ -16,6 +17,9 @@ class ImageStorage {
     constructor(context: Context) {
         this.context = context
         properties = Properties(context)
+
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
     }
 
     fun findSuitableImageUrl(link: String): String {

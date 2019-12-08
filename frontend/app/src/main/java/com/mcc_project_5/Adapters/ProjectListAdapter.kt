@@ -24,6 +24,7 @@ import okhttp3.*
 import java.io.IOException
 import kotlin.collections.ArrayList
 import com.mcc_project_5.Tools.Requester
+import org.json.JSONObject
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -83,6 +84,28 @@ class ProjectListAdapter: BaseAdapter() {
                     return
                 }
             }
+        })
+    }
+
+    fun updateFavorite(position: Int, isFavorite: ImageView) {
+        val projectId = items[position].id
+        val requester = Requester(context)
+        requester.httpPost("project/$projectId/favorite_project", JSONObject("{}"), object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                System.err.println(e.message)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                System.err.println(response.message)
+                if (items[position].isFavorite) {
+                    items[position].isFavorite = false
+                    isFavorite.setImageResource(android.R.drawable.btn_star_big_off)
+                } else {
+                    items[position].isFavorite = true
+                    isFavorite.setImageResource(android.R.drawable.btn_star_big_on)
+                }
+            }
+
         })
     }
 
@@ -154,6 +177,10 @@ class ProjectListAdapter: BaseAdapter() {
         val isFavorite = rowView.findViewById(R.id.isFavorite) as ImageView
         val isMediaAvailable = rowView.findViewById(R.id.isMediaAvailable) as ImageView
         val membersList = rowView.findViewById(R.id.membersView) as RecyclerView
+
+        isFavorite.setOnClickListener {
+            updateFavorite(position, isFavorite)
+        }
 
         rowView.menuBtn.setOnClickListener {
             showPopupMenu(context, it, items[position].id, items[position].isOwner, requester)

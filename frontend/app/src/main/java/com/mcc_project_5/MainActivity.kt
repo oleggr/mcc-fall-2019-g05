@@ -30,7 +30,7 @@ import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
 import android.os.StrictMode
-
+import com.google.firebase.auth.FirebaseAuth
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //val mUser = FirebaseAuth.getInstance().currentUser ?: finish()
 
         val channelId = getString(R.string.default_notification_channel_id)
         val channelName = "XXX"
@@ -92,8 +94,6 @@ class MainActivity : AppCompatActivity() {
         val storageRef = FirebaseStorage.getInstance().reference
         val imageView = findViewById<ImageView>(R.id.tmpImageView)
 
-        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
 
         storageRef.child("attachments/kek.png").stream.addOnCompleteListener {
             System.err.println(it.exception)

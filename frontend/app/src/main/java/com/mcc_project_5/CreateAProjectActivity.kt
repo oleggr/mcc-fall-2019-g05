@@ -11,6 +11,7 @@ import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.*
+import com.google.firebase.auth.FirebaseAuth
 import com.mcc_project_5.Tools.Requester
 import kotlinx.android.synthetic.main.activity_create_a_project.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
@@ -37,6 +38,8 @@ class CreateAProjectActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_a_project)
+
+        val mUser = FirebaseAuth.getInstance().currentUser ?: finish()
 
         imageView = findViewById(R.id.imageView)
         upload = findViewById<View>(R.id.upload) as Button

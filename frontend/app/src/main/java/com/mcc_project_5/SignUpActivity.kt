@@ -1,6 +1,8 @@
 package com.mcc_project_5
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
@@ -9,9 +11,12 @@ import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import com.mcc_project_5.Tools.Requester
 import okhttp3.Call
 import okhttp3.Callback
@@ -30,6 +35,7 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
+
         auth = FirebaseAuth.getInstance()
 
         imageView.setOnClickListener { choosePhotoFromGallary()}

@@ -30,7 +30,7 @@ class Requester(context: Context) {
     }
 
     fun httpGet(url: String, callBack: Callback) {
-        val mUser = FirebaseAuth.getInstance().currentUser
+        val mUser = FirebaseAuth.getInstance().currentUser ?: return
         mUser!!.getIdToken(true)
             .addOnCompleteListener(object : OnCompleteListener<GetTokenResult> {
                 override fun onComplete(task: Task<GetTokenResult>) {
@@ -53,7 +53,7 @@ class Requester(context: Context) {
     }
 
     fun httpDelete(url: String, callBack: Callback) {
-        val mUser = FirebaseAuth.getInstance().currentUser
+        val mUser = FirebaseAuth.getInstance().currentUser ?: return
         mUser!!.getIdToken(true)
             .addOnCompleteListener(object : OnCompleteListener<GetTokenResult> {
                 override fun onComplete(task: Task<GetTokenResult>) {
@@ -78,7 +78,7 @@ class Requester(context: Context) {
     }
 
     fun httpPost(url: String, json: JSONObject, callBack: Callback) {
-        val mUser = FirebaseAuth.getInstance().currentUser
+        val mUser = FirebaseAuth.getInstance().currentUser ?: return
         mUser!!.getIdToken(true)
             .addOnCompleteListener(object : OnCompleteListener<GetTokenResult> {
                 override fun onComplete(task: Task<GetTokenResult>) {
@@ -104,7 +104,7 @@ class Requester(context: Context) {
     }
 
     fun httpPut(url: String, json: JSONObject, callBack: Callback) {
-        val mUser = FirebaseAuth.getInstance().currentUser
+        val mUser = FirebaseAuth.getInstance().currentUser ?: return
         mUser!!.getIdToken(true)
             .addOnCompleteListener(object : OnCompleteListener<GetTokenResult> {
                 override fun onComplete(task: Task<GetTokenResult>) {
@@ -130,7 +130,7 @@ class Requester(context: Context) {
     }
 
     fun httpPostWithFile(url: String, json: JSONObject, file: File, ext: String, callBack: Callback) {
-        val mUser = FirebaseAuth.getInstance().currentUser
+        val mUser = FirebaseAuth.getInstance().currentUser ?: return
         mUser!!.getIdToken(true)
             .addOnCompleteListener(object : OnCompleteListener<GetTokenResult> {
                 override fun onComplete(task: Task<GetTokenResult>) {
@@ -164,7 +164,7 @@ class Requester(context: Context) {
     }
 
     fun httpDownload(url: String, callBack: Callback) {
-        val mUser = FirebaseAuth.getInstance().currentUser
+        val mUser = FirebaseAuth.getInstance().currentUser ?: return
         mUser!!.getIdToken(true)
             .addOnCompleteListener(object : OnCompleteListener<GetTokenResult> {
                 override fun onComplete(task: Task<GetTokenResult>) {

@@ -9,6 +9,7 @@ import android.widget.ListView
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.google.firebase.auth.FirebaseAuth
 import com.mcc_project_5.Adapters.UserListAdapter
 import com.mcc_project_5.DataModels.User
 import com.mcc_project_5.Tools.Requester
@@ -53,6 +54,8 @@ class AddUserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.users_list_activity)
+
+        val mUser = FirebaseAuth.getInstance().currentUser ?: finish()
 
         projectId = this.intent.getStringExtra("projectId")
         val toolbar = findViewById<Toolbar>(R.id.toolbar)

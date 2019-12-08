@@ -127,6 +127,9 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.list_of_created_projects_activity)
+
+        val mUser = FirebaseAuth.getInstance().currentUser ?: finish()
+
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.inflateMenu(R.menu.general)
         toolbar.setTitle("Projects")
