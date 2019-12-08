@@ -326,8 +326,15 @@ def delete_project(project_id):
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
-    if user_validate(uid_response, project_id) == 'OK' and \
-            (FB_functions.does_user_admin_of_project(uid_response, project_id)):
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+
+#    if user_validate(uid_response, project_id) == 'OK' and \
+    if(FB_functions.does_user_admin_of_project(uid_response, project_id)):
         return FB_functions.delete_project(project_id)
 
     else:
