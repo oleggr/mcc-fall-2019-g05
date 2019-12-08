@@ -114,6 +114,8 @@ def upload_image_to_project(project_id):
         filepath = json_data["url"]
         filename = filepath.split('/')[-1]
 
+        os.system('touch {}'.format(filename))
+
         # Save image locally
         img_func.file_download(filepath, filename)
 
@@ -151,6 +153,8 @@ def upload_project_icon(project_id):
         filepath = json_data["url"]
         # filename = json_data["name"]
         filename = filepath.split('/')[-1]
+
+        os.system('touch {}'.format(filename))
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
@@ -191,6 +195,8 @@ def upload_user_icon():
         filepath = json_data["url"]
         # filename = json_data["name"]
         filename = filepath.split('/')[-1]
+
+        os.system('touch {}'.format(filename))
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
@@ -509,6 +515,8 @@ def add_attachments_to_project(project_id):
         filepath = json_data['url']
         # filename = json_data['name']
         filename = filepath.splt('/')[-1]
+
+        os.system('touch {}'.format(filename))
 
         fileext = filename.split('.')[-1]
 
