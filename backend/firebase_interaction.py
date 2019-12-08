@@ -1,6 +1,7 @@
 from main import ref, storage
 from dev_functions import randomString
 
+from datetime import datetime
 from PIL import Image
 
 
@@ -177,18 +178,25 @@ def add_tasks():
 
     for i in range(0, 3):
 
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+
         taskname = 'taskname' + str(i)
         project_id = 'prjct_id'
         creator_id = 'creator_id'
         description = 'description' + str(i)
         status = 'status' + str(i)
+        createdAt = dt_string
+        deadline = '01/01/2020'
 
         tasks_ref.push().set({
-                    'taskname': taskname,
                     'project_id': project_id,
                     'creator_id': creator_id,
+                    'assignee_id': creator_id,
                     'description': description,
-                    'status': status
+                    'status': status,
+                    'createdAt': createdAt,
+                    'deadline': deadline
         })
 
 

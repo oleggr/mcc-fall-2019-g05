@@ -11,13 +11,15 @@ from flask import request
 from flask import send_file
 from flask import jsonify
 
-from datetime import datetime
 import traceback
 import os
 import json
+import time
+from datetime import datetime
 
-import random
-import string
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 
 # Check if db activating first time
@@ -384,15 +386,21 @@ def set_task_to_project(project_id):
         if "assignee_id" not in data:
             data["assignee_id"] = uid_response
 
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        data["createdAt"] = dt_string
+        data["status"] = 'pending'
+
         data=request.args
 
-        task_id = FB_functions.add_task_to_project(
+        task_id = FB_functions.add_task(
                 project_id,
                 uid_response,
                 data["assignee_id"],
                 data["description"],
-                data["status"],
-                data["taskname"]
+                data["deadline"],
+                data["createdAt"],
+                data["status"]
         )
 
         return json.dumps(task_id)
@@ -525,26 +533,17 @@ def search_for_project(project_id):
     return json.dumps(project)
 
 
-@app.route('/send_notification')
-def send_notification():
+@app.route('/notification_scheduler/start')
+def start_notification_scheduler():
 
-    # This registration token comes from the client FCM SDKs.
-    registration_token = 'eMk-_0csB7k:APA91bGGKsCU60_tuDGAG_vgL5bNWYgbV2Utoh2ERgQFRRDAUMq_oaoFMLWq5R5w5qTZfVIm1WOTDmpRbXQA0KN38jDL6K5ShLYtFECjTLxARAc_jpfTA3w3id3y7kTV8ww3pmDbPY8k'
+    data = request.json
 
-    # See documentation on defining a message payload.
-    message = messaging.Message(
-        data={
-            'score': '850',
-            'time': '2:45',
-        },
-        token=registration_token,
-    )
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=check_deadlines, trigger="interval", seconds=30)
+    scheduler.start()
 
-    # Send a message to the device corresponding to the provided
-    # registration token.
-    response = messaging.send(message)
-    # Response is a message ID string.
-    print('Successfully sent message:', response)
+    # Shut down the scheduler when exiting the app
+    atexit.register(lambda: scheduler.shutdown())
 
     return "This is send_notification method. sends a notification"
 
@@ -563,6 +562,77 @@ def delete_favorite_project1(project_id):
     uid_response = get_uid_from(id_token)
 
     return str(FB_functions.make_unfavorite(uid_response,project_id))
+
+
+def days_between(d1, d2):
+
+    d1 = datetime.strptime(d1, "%d/%m/%Y")
+    d2 = datetime.strptime(d2, "%d/%m/%Y")
+
+    return abs((d2 - d1).days)
+
+
+def check_deadlines():
+
+    projects_ref = ref.child('projects')
+    projects = projects_ref.get()
+
+    tasks_ref = ref.child('tasks')
+    tasks = tasks_ref.get()
+
+    users_ref = ref.child('users')
+    users = users_ref.get()
+
+    now = datetime.now()
+    today = now.strftime("%d/%m/%Y")
+
+    for project_id in projects:
+
+        project = projects[project_id]
+        deadline = project['deadline']
+        deadline = deadline.split()[0]
+
+        if days_between(today, deadline) < 2:
+            connected_users = FB_functions.get_members_of_project(project_id)
+            send_notification(connected_users, project['title'])
+            # print('{} expires in {} days'.format(project_id, days_between(today, deadline)))
+
+
+    for task_id in tasks:
+
+        task = tasks[task_id]
+        deadline = task['deadline']
+        deadline = deadline.split()[0]
+
+        if days_between(today, deadline) < 2:
+            connected_users = FB_functions.get_users_by_id(FB_functions.get_users_on_task(project_id))
+            send_notification(connected_users, task['id'])
+            # print('{} expires in {} days'.format(task_id, days_between(today, deadline)))
+
+
+def send_notification(connected_users, element_name):
+
+    # registration_token = 'eMk-_0csB7k:APA91bGGKsCU60_tuDGAG_vgL5bNWYgbV2Utoh2ERgQFRRDAUMq_oaoFMLWq5R5w5qTZfVIm1WOTDmpRbXQA0KN38jDL6K5ShLYtFECjTLxARAc_jpfTA3w3id3y7kTV8ww3pmDbPY8k'
+
+    # See documentation on defining a message payload.
+    try:
+        for user in connected_users:
+
+            registration_token = user['registration_token']
+
+            message = messaging.Message(
+                data = '{} expires in 1 day.'.format(element_name),
+                token = registration_token,
+            )
+
+            # Send a message to the device corresponding to the provided
+            # registration token.
+            response = messaging.send(message)
+
+        return True
+
+    except:
+        return False
 
 
 if __name__ == "__main__":
