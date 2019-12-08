@@ -389,7 +389,7 @@ def does_user_admin_of_project(user_id, project_id):
                     return True
 
     projects_ref = ref.child("projects")
-    project = projects_ref.child(progect_id).get()
+    project = projects_ref.child(project_id).get()
     if(project["creator_id"] == user_id):
         return True
 
