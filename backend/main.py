@@ -497,7 +497,7 @@ def generate_project_report(project_id):
 
     report_name = report_generate.generate_project_report(project_id)
 
-    send_file(report_name)
+    send_file(report_name + '.pdf')
 
     os.remove('img/{}'.format(report_name + '.html'))
     os.remove('img/{}'.format(report_name + '.pdf'))
@@ -596,7 +596,6 @@ def check_deadlines():
             connected_users = FB_functions.get_members_of_project(project_id)
             send_notification(connected_users, project['title'])
             # print('{} expires in {} days'.format(project_id, days_between(today, deadline)))
-
 
     for task_id in tasks:
 
