@@ -497,7 +497,7 @@ def generate_project_report(project_id):
 
     report_name = report_generate.generate_project_report(project_id)
 
-    send_file(report_name)
+    send_file(report_name + '.pdf')
 
     os.remove('img/{}'.format(report_name + '.html'))
     os.remove('img/{}'.format(report_name + '.pdf'))

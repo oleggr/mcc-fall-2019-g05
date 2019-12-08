@@ -103,7 +103,7 @@ def generate_pdf(data):
     html_file.write(html_out)
     html_file.close()
 
-    # HTML(string=html_out).write_pdf(args.outfile.name)
+    # HTML(string=html_out).write_pdf(dt_string + '.pdf')
 
     return dt_string
 
