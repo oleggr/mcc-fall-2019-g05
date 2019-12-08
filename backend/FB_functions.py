@@ -36,10 +36,10 @@ def create_project(
     return project_key.key
 
 
-def create_user(uid, name, email, image_url):
+def create_user(uid, name, email, image_url=""):
 
     users_ref = ref.child('users')
-    user_ref = users_ref.child(uid).push({
+    user_ref = users_ref.child(uid).set({
         "email" : email,
         "image_url" : image_url,
         "name" : name
@@ -259,7 +259,7 @@ def get_list_of_projects_implementation(user_id):
         certain_project_item.update({ "isMediaAvailable" : certain_project["is_media_available"]})
         certain_project_item.update({ "isShared" : certain_project["is_media_available"]})
         certain_project_item.update({ "keywords" : certain_project["key_words"]})
-        certain_project_item.update({ "isOwner" : True if certain_project["creator_id"] == user_id else False }) #certain_project["key_words"]})
+        certain_project_item.update({ "isOwner" : True if certain_project["creator_id"] == user_id else False })
         members_list = []
         for member in members:
             if(members[member]["user_id"] != user_id):
