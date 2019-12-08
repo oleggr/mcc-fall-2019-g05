@@ -19,6 +19,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.net.toFile
+import com.google.api.SystemParameterRule
 import com.google.firebase.auth.FirebaseAuth
 import com.mcc_project_5.Adapters.FileListAdapter
 import com.mcc_project_5.Adapters.PictureListAdapter
@@ -460,7 +461,10 @@ class ProjectContentActivity : AppCompatActivity() {
 
         val link = FileStorage(this).saveToStorage(file)
         val requester = Requester(this)
-        requester.httpPost("project/$projectId/add_attachment", JSONObject("{\"url\":\"$link\"}"), object: Callback {
+        val originalName = file.name
+        System.err.println(originalName)
+        System.err.println(link)
+        requester.httpPost("project/$projectId/add_attachment", JSONObject("{\"name\":\"$originalName\", \"url\":\"$link\"}"), object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 System.err.println(e.message)
             }
@@ -482,7 +486,8 @@ class ProjectContentActivity : AppCompatActivity() {
             if(data == null || data.data == null){
                 return
             }
-            file_uri = data?.data //The uri with the location of the file
+            file_uri = data.data
+            System.err.println(file_uri)
             val extension = MimeTypeMap.getFileExtensionFromUrl(file_uri.toString())
             if (extension != null) {
                 val ext = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
