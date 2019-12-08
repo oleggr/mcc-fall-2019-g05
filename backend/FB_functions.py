@@ -277,17 +277,17 @@ def get_list_of_projects_implementation(user_id):
         certain_project_item.update({ "isMediaAvailable" : certain_project["is_media_available"]})
         certain_project_item.update({ "isShared" : certain_project["is_media_available"]})
         certain_project_item.update({ "keywords" : certain_project["key_words"]})
-#        members_list = []
-#        for member in members:
-#            if(members[member]["user_id"] != user_id):
-#                members_list.append(members[member]["user_id"])
-#        members_data_list = []
-#        users_ref = ref.child('users/')
-#        for m in members_list:
-#            user = users_ref.child(m).get()
-#            members_data_list.append[{"id" : m, "imageUrl" : user["image_url"]}]
-        certain_project_item.update({ "members" : [{"id" : 1, "imageUrl":"kjdhfhdfgit"}]})
-        #print(certain_project_item)
+        members_list = []
+        for member in members:
+            if(members[member]["user_id"] != user_id):
+                members_list.append(members[member]["user_id"])
+        members_data_list = []
+        users_ref = ref.child('users/').get()
+        for m in members_list:
+            user = users_ref[m]
+            members_data_list.append({"id" : m, "imageUrl" : user["image_url"]})
+        certain_project_item.update({ "members" : members_data_list})
+        print(certain_project_item)
         response_list.append(certain_project_item)
     return response_list
 
