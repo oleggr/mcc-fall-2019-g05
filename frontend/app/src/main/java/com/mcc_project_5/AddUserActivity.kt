@@ -1,6 +1,7 @@
 package com.mcc_project_5
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -10,13 +11,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.mcc_project_5.Adapters.UserListAdapter
 import com.mcc_project_5.DataModels.User
+import com.mcc_project_5.Tools.Requester
+import kotlinx.android.synthetic.main.activity_sign_up.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
 import org.json.JSONArray
+import org.json.JSONObject
+import java.io.IOException
 import java.util.*
 import kotlin.Comparator
 
 class AddUserActivity : AppCompatActivity() {
     private val users  =  arrayListOf<User>()
     private val visibleUsers = arrayListOf<User>()
+    private val checkedUsers = arrayListOf<User>()
 
     private enum class SortOrder {
         ASC, DESC
@@ -110,6 +119,35 @@ class AddUserActivity : AppCompatActivity() {
 
         return true
     }
+
+    fun addMembersProject(v: View) {
+        finish()
+        val requester = Requester(baseContext)
+        val json= JSONObject()
+        checkedUsers.clear()
+        users.forEach {
+            if (it.checked) {
+                checkedUsers.add(it)
+            }
+        }
+        json.put("members",checkedUsers)
+        requester.httpPost("members/add", json,  object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("DDD", "FAIL")
+                return
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    Log.d("DDD","OK")
+                } else {
+                    Log.d("DDD","NOT OK")
+                    return
+                }
+            }
+        })
+    }
+
 
     fun loadUsersTemplate() {
         val testJson = "[{\"id\":\"123\", \"name\":\"xxx\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\", \"projects\":[\"2\"]}, {\"id\":\"124\", \"name\":\"yyy\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\", \"projects\":[\"1\"]}, {\"id\":\"125\", \"name\":\"zzz\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\", \"projects\":[\"1\"]}]"

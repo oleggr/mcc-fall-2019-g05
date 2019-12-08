@@ -4,7 +4,7 @@ import android.util.Base64
 import org.json.JSONObject
 
 class Project {
-    var id:Int
+    var id:String
     val title: String
     val imageUrl: String
     val lastModified: String
@@ -19,7 +19,7 @@ class Project {
     }
 
     constructor(json: JSONObject) {
-        id = json.getInt("id")
+        id = json.getString("id")
         title = json.getString("title")
         imageUrl = String(Base64.decode(json.getString("imageUrl"), Base64.DEFAULT))
         lastModified = json.getString("lastModified")
@@ -64,7 +64,7 @@ class Project {
     }
 
     override fun hashCode(): Int {
-        var result = id
+        var result = id.hashCode()
         result = 31 * result + title.hashCode()
         result = 31 * result + imageUrl.hashCode()
         result = 31 * result + lastModified.hashCode()

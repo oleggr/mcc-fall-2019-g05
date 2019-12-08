@@ -21,7 +21,7 @@
             android:minHeight="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_menu_black_24dp"
             app:titleTextColor="@android:color/white"
-            tools:ignore="MissingConstraints"/>
+            tools:ignore="MissingConstraints" />
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/filterToolbar"
@@ -84,7 +84,19 @@
             android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:dividerHeight="1dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="112dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:onClick="createProject"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@android:drawable/ic_input_add" />
 
     </LinearLayout>
 
