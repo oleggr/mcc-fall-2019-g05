@@ -3,15 +3,17 @@ package com.mcc_project_5.DataModels
 import org.json.JSONObject
 
 class Task {
-    var title: String = "title"
-    var done: Boolean = false
-    var id: Int
+    var description: String = "Description"
+    var status: String = "pending"
+    var deadline: String = ""
+    var id: String
     var createdAt: String = ""
     constructor(json: JSONObject) {
-        this.id = json.getInt("id")
-        this.title = json.getString("title")
+        this.id = json.getString("id")
+        this.description = json.getString("description")
+        this.deadline = json.getString("deadline")
         this.createdAt = json.getString("createdAt")
-        this.done = json.getBoolean("done")
+        this.status = json.getString("status")
     }
 
     override fun equals(other: Any?): Boolean {
@@ -20,8 +22,9 @@ class Task {
 
         other as Task
 
-        if (title != other.title) return false
-        if (done != other.done) return false
+        if (description != other.description) return false
+        if (status != other.status) return false
+        if (deadline != other.deadline) return false
         if (id != other.id) return false
         if (createdAt != other.createdAt) return false
 
@@ -29,15 +32,16 @@ class Task {
     }
 
     override fun hashCode(): Int {
-        var result = title.hashCode()
-        result = 31 * result + done.hashCode()
-        result = 31 * result + id
+        var result = description.hashCode()
+        result = 31 * result + status.hashCode()
+        result = 31 * result + id.hashCode()
+        result = 31 * result + deadline.hashCode()
         result = 31 * result + createdAt.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "Task(title='$title', done=$done, id=$id, createdAt='$createdAt')"
+        return "Task(title='$description', done=$status, id=$id, deadline=$deadline, createdAt='$createdAt')"
     }
 
 

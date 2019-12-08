@@ -5,11 +5,12 @@ import org.json.JSONObject
 
 class User {
     var name: String = ""
-    var id: Int = 0
+    var id: String
     var imageUrl: String  = ""
+    var checked: Boolean = false
     val projectsArray: ArrayList<String> = arrayListOf()
     constructor(json: JSONObject) {
-        this.id = json.getInt("id")
+        this.id = json.getString("id")
         this.name = json.getString("name")
         this.imageUrl = String(Base64.decode(json.getString("imageUrl"), Base64.DEFAULT))
 
@@ -36,7 +37,7 @@ class User {
 
     override fun hashCode(): Int {
         var result = name.hashCode()
-        result = 31 * result + id
+        result = 31 * result + id.hashCode()
         result = 31 * result + imageUrl.hashCode()
         return result
     }

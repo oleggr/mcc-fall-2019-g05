@@ -7,9 +7,9 @@ class File {
     var url: String = ""
     var createdAt: String = ""
     var title: String = ""
-    var id: Int
+    var id: String
     constructor(json: JSONObject) {
-        this.id = json.getInt("id")
+        this.id = json.getString("id")
         url = String(Base64.decode(json.getString("url"), Base64.DEFAULT))
         createdAt = json.getString("createdAt")
         title = json.getString("title")
@@ -33,7 +33,7 @@ class File {
         var result = url.hashCode()
         result = 31 * result + createdAt.hashCode()
         result = 31 * result + title.hashCode()
-        result = 31 * result + id
+        result = 31 * result + id.hashCode()
         return result
     }
 

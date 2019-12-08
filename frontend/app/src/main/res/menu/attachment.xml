@@ -1,8 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="300dp"
     android:layout_width="300dp">
+    <item
+        android:id="@+id/action_task"
+        android:title="@string/action_task"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_user"
+        android:title="@string/action_user"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_document"
+        android:title="@string/action_document"
+        app:showAsAction="never"/>
     <item
         android:id="@+id/action_photo"
         android:title="@string/action_photo"
@@ -10,10 +22,6 @@
     <item
         android:id="@+id/action_gallery"
         android:title="@string/action_gallery"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_document"
-        android:title="@string/action_document"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_cancel"

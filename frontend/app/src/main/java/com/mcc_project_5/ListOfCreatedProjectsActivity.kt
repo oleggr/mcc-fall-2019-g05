@@ -3,9 +3,7 @@ package com.mcc_project_5
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
-import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.Toolbar
 
@@ -15,36 +13,31 @@ import org.json.JSONArray
 import java.io.IOException
 import android.view.Menu
 import android.view.MenuItem
-import android.webkit.MimeTypeMap
 import android.widget.*
+import com.google.firebase.auth.FirebaseAuth
 import com.mcc_project_5.Adapters.ProjectListAdapter
-import com.mcc_project_5.Tools.Properties
+import com.mcc_project_5.Tools.Requester
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.Nameable
-import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import kotlinx.android.synthetic.main.list_of_created_projects_activity.*
 import java.util.*
 import kotlin.Comparator
 import kotlin.collections.ArrayList
 
 
+
+
 class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
     private var result: Drawer? = null
 
-    private val client = OkHttpClient()
     private val projects = ArrayList<Project>()
     private val visibleProjects = ArrayList<Project>()
     private var lastClicked = 0
     private var sortOrder = SortOrder.DESC
-    private val reportUrl = ""
+    private lateinit var auth: FirebaseAuth
 
     private enum class Sort {
         BY_FAVORITE, BY_TIME, BY_DEADLINE, NONE
@@ -139,6 +132,8 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         toolbar.setTitle("Projects")
         setSupportActionBar(toolbar)
 
+        auth = FirebaseAuth.getInstance()
+
         result = DrawerBuilder()
             .withActivity(this)
             .withToolbar(toolbar)
@@ -148,13 +143,20 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
                     if (drawerItem is Nameable<*>) {
                         when (drawerItem.identifier.toInt()) {
                             R.id.profile -> {
-                                //GOTO PROFILE
+                                val intent = Intent(this@ListOfCreatedProjectsActivity, ProfileSettingsActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
                             }
                             R.id.projects -> {
-                                //GOTO PROJECTS
+                                val intent = Intent(this@ListOfCreatedProjectsActivity, ListOfCreatedProjectsActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
                             }
                             R.id.logout -> {
-                                //LOGOUT
+                                auth.signOut()
+                                val intent = Intent(this@ListOfCreatedProjectsActivity, LoginActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
                             }
                         }
                     }
@@ -222,7 +224,7 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.title == "refresh") {
-            loadTemplate()
+            onLoadBtnClick()
         } else if (item.title == "sort") {
             if (sortOrder == SortOrder.DESC) {
                 item.setIcon(R.drawable.ic_sort_reversed_black_24dp)
@@ -242,115 +244,6 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         return true
     }
 
-    fun httpGet(url: String, callBack: Callback): Call {
-        val request = Request.Builder()
-            .url(url)
-            .get()
-            .build()
-
-        val call = client.newCall(request)
-        call.enqueue(callBack)
-        return call
-    }
-
-    fun httpDelete(url: String, callBack: Callback): Call {
-        val request = Request.Builder()
-            .url(url)
-            .delete()
-            .build()
-
-        val call = client.newCall(request)
-        call.enqueue(callBack)
-        return call
-    }
-
-
-    fun showPopupMenu(v: View) {
-        val popup = PopupMenu(this, v)
-        //temporary
-        val listItemPosition = 0;
-        System.err.println(visibleProjects[lastClicked])
-        val inflater: MenuInflater = popup.menuInflater
-        inflater.inflate(R.menu.list_of_projects_popup, popup.menu)
-        popup.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
-            when(item.itemId) {
-                R.id.deleteItem ->
-                    deleteItem(listItemPosition)
-                R.id.contentItem ->
-                    Toast.makeText(this, "Content", Toast.LENGTH_SHORT).show()
-                R.id.reportItem ->
-                    reportItem(listItemPosition)
-            }
-            true
-        })
-
-        popup.show()
-    }
-
-
-    fun deleteItem(id: Int) {
-        val baseUrl = Properties(baseContext).getProperty("baseUrl")
-        httpDelete(baseUrl + "/project/delete?prjctid=" + id, object:Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d("DDD", "FAIL")
-                return
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    visibleProjects.removeAt(id)
-                    val listView = findViewById<ListView>(R.id.listView)
-                    val adapter = listView.adapter as ProjectListAdapter
-                    adapter.notifyDataSetChanged()
-                } else {
-                    return
-                }
-            }
-        })
-    }
-
-    fun reportItem(id: Int) {
-        try {
-            val path = File(Environment.getExternalStorageDirectory() , "/projectID")
-            downloadFile(reportUrl, path, null, null)
-        }
-        catch (e: IOException) {
-
-        }
-    }
-
-    fun downloadFile(url: String, dir: File, name: String?, fileExt: String?) {
-        val client = OkHttpClient()
-        val request = Request.Builder().url(url).build()
-
-        val response = client.newCall(request).execute()
-        val contentType = response.header("content-type", null)
-        var ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(contentType)
-        ext = if (ext == null) {
-            fileExt
-        } else {
-            ".$ext"
-        }
-
-        // use provided name or generate a temp file
-        var file: File? = null
-        file = if (name != null) {
-            val filename = String.format("%s%s", name, ext)
-            File(dir.absolutePath, filename)
-        } else {
-            val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-kkmmss"))
-            File.createTempFile(timestamp, ext, dir)
-        }
-
-        /*val body = response.body
-        val sink = Okio.buffer(Okio.sink(file))
-
-        body?.source().use { input ->
-            sink.use { output ->
-                output.writeAll(input)
-            }
-        }*/
-    }
 
 
     fun loadTemplate() {
@@ -369,9 +262,14 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         Log.d("DDD", projects.toString())
     }
 
-    fun onLoadBtnClick(view: View) {
-        val baseUrl = Properties(baseContext).getProperty("baseUrl")
-        httpGet(baseUrl + "/getAvailableProjects?userid=%", object:Callback {
+    fun createProject(v: View) {
+        val intent = Intent(this, CreateAProjectActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun onLoadBtnClick() {
+        val requester = Requester(baseContext)
+        requester.httpGet("projects", object:Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
                 return
@@ -380,12 +278,15 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     val resultJson = response.body!!.string()
+                    Log.d("DDD", resultJson)
                     val json = JSONArray(resultJson)
                     projects.clear()
                     for(i in 0 until json.length()) {
                         val item = json.getJSONObject(i)
                         projects.add(Project(item))
                         //Dirty hack here, b careful vvv
+                        visibleProjects.clear()
+                        visibleProjects.addAll(projects)
                         runOnUiThread {
                             refreshList()
                         }

@@ -6,10 +6,10 @@ import org.json.JSONObject
 class Picture {
     var imageUrl: String = ""
     var createdAt: String = ""
-    var id: Int
+    var id: String
     var description: String = ""
     constructor(json: JSONObject) {
-        this.id = json.getInt("id")
+        this.id = json.getString("id")
         imageUrl = String(Base64.decode(json.getString("imageUrl"), Base64.DEFAULT))
         createdAt = json.getString("createdAt")
         description = json.getString("description")
@@ -32,7 +32,7 @@ class Picture {
     override fun hashCode(): Int {
         var result = imageUrl.hashCode()
         result = 31 * result + createdAt.hashCode()
-        result = 31 * result + id
+        result = 31 * result + id.hashCode()
         result = 31 * result + description.hashCode()
         return result
     }

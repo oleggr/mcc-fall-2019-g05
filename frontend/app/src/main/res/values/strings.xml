@@ -8,6 +8,20 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_photo">Take photo</string>
     <string name="action_gallery">From Gallery</string>
+    <string name="action_task">Add Task</string>
+    <string name="action_user">Add User</string>
     <string name="action_document">Attach file</string>
     <string name="title_activity_convert_image">Convert_image</string>
+    <string name="dont_have_account">SIGN UP</string>
+    <string name="login">LOGIN</string>
+    <string name="sign_up">SignUp</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="current_password">Current Password</string>
+    <string name="change_password">Change Password</string>
+    <string name="project_name">Name</string>
+    <string name="project_description">Description</string>
+    <string name="add_keywords">Add keywords</string>
+    <string name="deadline">Deadline</string>
 </resources>

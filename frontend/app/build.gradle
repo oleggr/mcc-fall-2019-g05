@@ -44,6 +44,7 @@ dependencies {
 
     implementation "com.mikepenz:materialdrawer-nav:8.0.0-a01"
     implementation "com.mikepenz:materialdrawer:8.0.0-a01"
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
