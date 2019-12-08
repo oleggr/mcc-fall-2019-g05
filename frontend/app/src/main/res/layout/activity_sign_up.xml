@@ -17,6 +17,11 @@
             android:layout_gravity="center"
             android:src="@drawable/ic_launcher_background" />
 
+        <TextView
+            android:id="@+id/possible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <EditText
             android:id="@+id/tv_username"
             android:layout_width="match_parent"
