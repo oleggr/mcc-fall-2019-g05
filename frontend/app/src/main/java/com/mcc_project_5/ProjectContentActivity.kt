@@ -25,6 +25,7 @@ import com.mcc_project_5.Adapters.PictureListAdapter
 import com.mcc_project_5.Adapters.TaskListAdapter
 import com.mcc_project_5.DataModels.Attachment
 import com.mcc_project_5.DataModels.Task
+import com.mcc_project_5.Tools.FileStorage
 import com.mcc_project_5.Tools.Requester
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
@@ -440,37 +441,18 @@ class ProjectContentActivity : AppCompatActivity() {
 
     private fun uploadImage(file: java.io.File, ext: String): JSONObject? {
 
-        try {
+        val link = FileStorage(this).saveToStorage(file)
+        val requester = Requester(this)
+        requester.httpPost("project/$projectId/add_attachment", JSONObject("{\"url\":\"$link\"}"), object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                System.err.println(e.message)
+            }
 
-            val MEDIA_TYPE = ("jpg/pdf/txt/mp3").toMediaType()
+            override fun onResponse(call: Call, response: Response) {
+                System.err.println(response.message)
+            }
 
-            val req = MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("userid", "8457851245")
-                .addFormDataPart(
-                    "userfile",
-                    "profile." + ext,
-                    RequestBody.create(MEDIA_TYPE, file)
-                ).build()
-
-            val request = Request.Builder()
-                .url(fileUrl)
-                .post(req)
-                .build()
-
-            val client = OkHttpClient()
-            val response = client.newCall(request).execute()
-
-            Log.d("response", "uploadImage:" + response.body!!.string())
-
-            return JSONObject(response.body!!.string())
-
-        } catch (e: UnknownHostException) {
-            System.err.println( "Error: " + e.getLocalizedMessage())
-        } catch (e: UnsupportedEncodingException) {
-            System.err.println( "Error: " + e.getLocalizedMessage())
-        } catch (e: Exception) {
-            System.err.println( "Error: " + e.localizedMessage!!)
-        }
+        })
 
         return null
     }
