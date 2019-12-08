@@ -21,6 +21,7 @@ import os
 import json
 import time
 from datetime import datetime
+import urllib.parse
 
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -111,7 +112,7 @@ def upload_image_to_project(project_id):
     try:
 
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        filepath = json_data["url"]
+        filepath = urllib.unquote(json_data["url"])
         filename = filepath.split('/')[-1]
 
         # Save image locally
@@ -148,7 +149,7 @@ def upload_project_icon(project_id):
 
     try:
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        filepath = json_data["url"]
+        filepath = urllib.unquote(json_data["url"])
         # filename = json_data["name"]
         filename = filepath.split('/')[-1]
 
@@ -188,7 +189,7 @@ def upload_user_icon():
 
     try:
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        filepath = json_data["url"]
+        filepath = urllib.unquote(json_data["url"])
         # filename = json_data["name"]
         filename = filepath.split('/')[-1]
 
@@ -506,11 +507,9 @@ def add_attachments_to_project(project_id):
     try:
 
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        filepath = json_data['url']
+        filepath = urllib.unquote(json_data["url"])
         # filename = json_data['name']
         filename = filepath.splt('/')[-1]
-
-        os.system('touch {}'.format(filename))
 
         fileext = filename.split('.')[-1]
 
