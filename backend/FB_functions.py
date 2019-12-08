@@ -182,7 +182,7 @@ def add_attachment(
         return 'ERROR: Attachment was not added.'
 
 
-def add_task_to_project(project_id, creator_id, assignee_id, description, status, taskname):
+def add_task(project_id, creator_id, assignee_id, description, deadline, createdAt, status):
     '''
     Create task the task attributes and assign it to project by project ID.
     Returns the task ID after creation.
@@ -191,10 +191,12 @@ def add_task_to_project(project_id, creator_id, assignee_id, description, status
     tasks_to_project_ref = ref.child('tasks')
 
     id_ref  = tasks_to_project_ref.push({
-            'taskname': taskname,
             'project_id': project_id,
             'creator_id': creator_id,
+            'assignee_id': assignee_id,
             'description': description,
+            'deadline': deadline,
+            'createdAt': createdAt,
             'status': status
     })
 

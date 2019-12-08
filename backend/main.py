@@ -384,7 +384,7 @@ def set_task_to_project(project_id):
 
         data=request.args
 
-        task_id = FB_functions.add_task_to_project(
+        task_id = FB_functions.add_task(
                 project_id,
                 uid_response,
                 data["assignee_id"],
