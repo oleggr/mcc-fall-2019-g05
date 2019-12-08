@@ -128,7 +128,7 @@ class SignUpActivity : AppCompatActivity() {
                 startActivity(intent)
             } else {
                 Toast.makeText(
-                    baseContext, "Sign Up failed. Try again after some time.",
+                    baseContext, "Sign Up failed. Try again later.",
                     Toast.LENGTH_SHORT
                 ).show()
             }

@@ -12,7 +12,7 @@
     <string name="action_user">Add User</string>
     <string name="action_document">Attach file</string>
     <string name="title_activity_convert_image">Convert_image</string>
-    <string name="dont_have_account">NOT A MEMBER? SIGN UP NOW</string>
+    <string name="dont_have_account">SIGN UP</string>
     <string name="login">LOGIN</string>
     <string name="sign_up">SignUp</string>
     <string name="email">Email</string>
