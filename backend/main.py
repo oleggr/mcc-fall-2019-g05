@@ -383,10 +383,11 @@ def set_task_to_project(project_id):
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
     data=request.json
+    print(uid_response)
     print(data)
     if user_validate(uid_response, project_id) == 'OK':
 
-        if "assignee_id" not in data:
+        if "assignee_id" not in data.keys():
             data["assignee_id"] = uid_response
 
         now = datetime.now()
