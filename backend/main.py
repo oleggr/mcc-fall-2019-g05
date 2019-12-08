@@ -597,7 +597,6 @@ def check_deadlines():
             send_notification(connected_users, project['title'])
             # print('{} expires in {} days'.format(project_id, days_between(today, deadline)))
 
-
     for task_id in tasks:
 
         task = tasks[task_id]

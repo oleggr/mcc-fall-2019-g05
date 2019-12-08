@@ -483,8 +483,12 @@ def return_all_users():
 
 
 def return_certain_user(user_id):
+    
     user = ref.child('users/' + user_id).get()
-    return {user_id : user}
+    res = user[user_id]
+    res['id'] = user_id
+
+    return res
 
 
 def update_user(user_id, data):
