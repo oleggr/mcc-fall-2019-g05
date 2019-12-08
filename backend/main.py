@@ -213,7 +213,7 @@ def get_user():
     #check that user exists
     if(not(FB_functions.verify_user(uid_response))):
         return "ERROR: Not such user."
-        
+
     return json.dumps(FB_functions.return_certain_user(uid_response))
 
 
@@ -233,7 +233,12 @@ def get_all_users():
 
 @app.route('/user/update', methods=['PUT'])
 def update_user():
-    return "This is set_profile_settings method. returns fails or not"
+
+    user_id = "uid2"
+    data = request.get_json()
+
+    return str(FB_functions.update_user(user_id,data))
+
 
 
 @app.route('/user/create', methods=['POST'])
