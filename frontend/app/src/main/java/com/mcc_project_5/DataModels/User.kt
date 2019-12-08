@@ -12,7 +12,7 @@ class User {
     constructor(json: JSONObject) {
         this.id = json.getString("id")
         this.name = json.getString("name")
-        this.imageUrl = String(Base64.decode(json.getString("imageUrl"), Base64.DEFAULT))
+        this.imageUrl = json.getString("imageUrl")
 
         var tmpArray = json.getJSONArray("projects")
         projectsArray.clear()

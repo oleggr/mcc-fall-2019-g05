@@ -2,6 +2,9 @@ package com.mcc_project_5
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -11,11 +14,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.mcc_project_5.Tools.ImageStorage
+import com.mcc_project_5.Tools.Requester
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.Nameable
 import kotlinx.android.synthetic.main.activity_profile_settings.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
 class ProfileSettingsActivity: AppCompatActivity(){
 
@@ -71,6 +81,31 @@ class ProfileSettingsActivity: AppCompatActivity(){
             })
             .withSelectedItemByPosition(0)
             .build()
+
+        loadUserProfile()
+    }
+
+    private fun loadUserProfile() {
+        val requester = Requester(this)
+        requester.httpGet("user", object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                System.err.println(e.message)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val content = response.body!!.string()
+                System.err.println(content)
+                val json = JSONObject(content)
+                val url = json.getString("image_url")
+                if (url == "") {
+                    runOnUiThread {
+                        imageView.setImageResource(R.drawable.ic_account_circle_black_24dp)
+                    }
+                } else
+                    ImageStorage(this@ProfileSettingsActivity).loadToImageView(url, this@ProfileSettingsActivity.imageView)
+            }
+
+        })
     }
 
     private fun choosePhotoFromGallary() {
@@ -83,7 +118,6 @@ class ProfileSettingsActivity: AppCompatActivity(){
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
             imageView.setImageURI(data!!.data)
-
         }
     }
 
@@ -129,7 +163,25 @@ class ProfileSettingsActivity: AppCompatActivity(){
             }
 
         } else {
-            Toast.makeText(this, "Please enter all the fields.", Toast.LENGTH_SHORT).show()
+            val bmp = (imageView.drawable as BitmapDrawable).bitmap
+            val storedUrl = ImageStorage(this).saveImageToStorage(bmp)
+            val requester = Requester(this)
+            requester.httpPost("user/set_icon", JSONObject("{\"url\":\"$storedUrl\"}") , object: Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    System.err.println(e.message)
+                    runOnUiThread {
+                        Toast.makeText(this@ProfileSettingsActivity, "Failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    System.err.println("OK" + response.message)
+                    runOnUiThread {
+                        Toast.makeText(this@ProfileSettingsActivity, "Image updated.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            })
         }
 
     }

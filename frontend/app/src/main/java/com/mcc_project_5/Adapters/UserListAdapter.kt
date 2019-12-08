@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.mcc_project_5.DataModels.User
 import com.mcc_project_5.R
+import com.mcc_project_5.Tools.ImageStorage
 import com.squareup.picasso.Picasso
 
 class UserListAdapter() : BaseAdapter() {
@@ -30,7 +31,8 @@ class UserListAdapter() : BaseAdapter() {
         val checkBox = rowView.findViewById<CheckBox>(R.id.userChecked)
 
         textView.text = items[position].name
-        picasso.load(items[position].imageUrl).fit().into(imageView)
+        //picasso.load(items[position].imageUrl).fit().into(imageView)
+        ImageStorage(parent.context).loadToImageView(items[position].imageUrl, imageView)
         checkBox.isChecked = items[position].projectsArray.contains(currentProjectId)
         checkBox.setOnCheckedChangeListener { buttonView, isChecked -> items[position].checked = isChecked }
 

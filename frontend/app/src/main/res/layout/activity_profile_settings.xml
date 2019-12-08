@@ -26,17 +26,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/image_text_view"
-                android:layout_width="133dp"
-                android:layout_height="35dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:text="Change image"
-                android:textSize="20sp"
-                tools:ignore="MissingConstraints" />
-
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="263dp"
@@ -52,7 +41,7 @@
                 android:layout_width="166dp"
                 android:layout_height="43dp"
                 android:layout_gravity="center"
-                android:layout_marginBottom="64dp"
+                android:layout_marginBottom="14dp"
                 android:background="@color/colorPrimary"
                 android:onClick="selectImage"
                 android:text="select Image"

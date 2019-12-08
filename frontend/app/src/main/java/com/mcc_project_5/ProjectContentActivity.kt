@@ -6,9 +6,7 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -25,9 +23,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.mcc_project_5.Adapters.FileListAdapter
 import com.mcc_project_5.Adapters.PictureListAdapter
 import com.mcc_project_5.Adapters.TaskListAdapter
-import com.mcc_project_5.DataModels.File
-import com.mcc_project_5.DataModels.Picture
-import com.mcc_project_5.DataModels.Project
+import com.mcc_project_5.DataModels.Attachment
 import com.mcc_project_5.DataModels.Task
 import com.mcc_project_5.Tools.Requester
 import com.mikepenz.materialdrawer.Drawer
@@ -53,11 +49,11 @@ class ProjectContentActivity : AppCompatActivity() {
     private val tasks  =  arrayListOf<Task>()
     private val visibleTasks = arrayListOf<Task>()
 
-    private val pictures  =  arrayListOf<Picture>()
-    private val visiblePictures = arrayListOf<Picture>()
+    private val pictures  =  arrayListOf<Attachment>()
+    private val visiblePictures = arrayListOf<Attachment>()
 
-    private val files  =  arrayListOf<File>()
-    private val visibleFiles = arrayListOf<File>()
+    private val files  =  arrayListOf<Attachment>()
+    private val visibleFiles = arrayListOf<Attachment>()
 
     private var projectId = ""
 
@@ -81,21 +77,12 @@ class ProjectContentActivity : AppCompatActivity() {
     private val fileUrl = ""
 
 
-    class ComparatorByTimeFile: Comparator<File>{
-        override fun compare(o1: File?, o2: File?): Int {
+    class ComparatorByTimeAttachment: Comparator<Attachment>{
+        override fun compare(o1: Attachment?, o2: Attachment?): Int {
             if(o1 == null || o2 == null){
                 return 0;
             }
-            return o1.createdAt.compareTo(o2.createdAt)
-        }
-    }
-
-    class ComparatorByTimePicture: Comparator<Picture>{
-        override fun compare(o1: Picture?, o2: Picture?): Int {
-            if(o1 == null || o2 == null){
-                return 0;
-            }
-            return o1.createdAt.compareTo(o2.createdAt)
+            return o1.creation_time.compareTo(o2.creation_time)
         }
     }
 
@@ -273,38 +260,39 @@ class ProjectContentActivity : AppCompatActivity() {
         })
     }
 
-    fun loadPicturesTemplate() {
-        val testJson = "[{\"id\":1, \"createdAt\":\"01.01.01\", \"description\":\"random random random\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}, {\"id\":2, \"createdAt\":\"01.01.02\", \"description\":\"random random random\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}, {\"id\":3, \"createdAt\":\"01.01.03\", \"description\":\"random random random\", \"imageUrl\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}]"
-        val json = JSONArray(testJson)
-        pictures.clear()
-        for(i in 0 until json.length()) {
-            val item = json.getJSONObject(i)
-            val picture = Picture(item)
-            pictures.add(picture)
-        }
-        visiblePictures.clear()
-        visiblePictures.addAll(pictures)
-        refreshPictureList()
-    }
-
-    fun loadFilesTemplate() {
-        val testJson = "[{\"id\":1, \"title\":\"file1.pdf\", \"createdAt\":\"01.01.01\", \"url\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}, {\"id\":2, \"title\":\"file2.doc\", \"createdAt\":\"01.01.02\", \"url\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}, {\"id\":3, \"title\":\"file1.jpeg\", \"createdAt\":\"01.01.03\", \"url\":\"aHR0cHM6Ly9wYnMudHdpbWcuY29tL3Byb2ZpbGVfaW1hZ2VzLzQ4ODU0MDk4MjUzOTg0OTcyOC9CODl0MzVzNS5qcGVn\"}]"
-        val json = JSONArray(testJson)
-        files.clear()
-        for(i in 0 until json.length()) {
-            val item = json.getJSONObject(i)
-            val file = File(item)
-            files.add(file)
-        }
-        visibleFiles.clear()
-        visibleFiles.addAll(files)
-        refreshFileList()
-    }
 
     fun loadTemplate(id: String) {
+        val requester = Requester(this)
+        requester.httpGet("project/" + id + "/attachments", object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                System.err.println(e.message)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                pictures.clear()
+                files.clear()
+                val content = response.body!!.string()
+                System.err.println(content)
+                val json = JSONArray(content)
+                //image, file
+                for (i in 0 until json.length()) {
+                    val item = json.getJSONObject(i)
+                    val attachment = Attachment(item)
+                    if (attachment.attachment_type == "image") {
+                        pictures.add(attachment)
+                    } else if (attachment.attachment_type == "file") {
+                        files.add(attachment)
+                    }
+                }
+                visibleFiles.clear()
+                visiblePictures.clear()
+                visibleFiles.addAll(files)
+                visiblePictures.addAll(pictures)
+            }
+        })
+
         loadTasksTemplate(id)
-        loadPicturesTemplate()
-        loadFilesTemplate()
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -336,13 +324,13 @@ class ProjectContentActivity : AppCompatActivity() {
                 refreshTaskList()
             }
             Sort.BY_FILE -> {
-                Collections.sort(visibleFiles, ComparatorByTimeFile())
+                Collections.sort(visibleFiles, ComparatorByTimeAttachment())
                 if (sortOrder == SortOrder.DESC)
                     visibleFiles.reverse()
                 refreshFileList()
             }
             Sort.BY_PICTURE -> {
-                Collections.sort(visiblePictures, ComparatorByTimePicture())
+                Collections.sort(visiblePictures, ComparatorByTimeAttachment())
                 if (sortOrder == SortOrder.DESC)
                     visiblePictures.reverse()
                 refreshPictureList()
@@ -385,7 +373,7 @@ class ProjectContentActivity : AppCompatActivity() {
 
     private fun openCamera() {
         val values = ContentValues()
-        values.put(MediaStore.Images.Media.TITLE, "New Picture")
+        values.put(MediaStore.Images.Media.TITLE, "New Attachment")
         values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
         file_uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
         //camera intent
