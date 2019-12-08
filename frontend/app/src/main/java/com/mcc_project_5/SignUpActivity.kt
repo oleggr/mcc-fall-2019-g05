@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -17,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_sign_up.*
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
+import com.mcc_project_5.Tools.ImageStorage
 import com.mcc_project_5.Tools.Requester
 import okhttp3.Call
 import okhttp3.Callback
@@ -24,6 +26,7 @@ import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
+import java.lang.Exception
 
 
 class SignUpActivity : AppCompatActivity() {
@@ -126,7 +129,44 @@ class SignUpActivity : AppCompatActivity() {
 
                                 override fun onResponse(call: Call, response: Response) {
                                     if (response.isSuccessful) {
-                                        Log.d("DDD","OK")
+                                        val userId = response.body!!.string()
+                                        Log.d("DDD","CREATED" + userId)
+                                        var failed = false
+                                        try {
+                                            var bitmap =
+                                                (imageView.drawable as BitmapDrawable).bitmap
+                                        } catch (e: Exception) {
+                                            e.printStackTrace()
+                                            failed = true
+                                        }
+                                        if (!failed) {
+                                            val link =
+                                                ImageStorage(this@SignUpActivity).saveImageToStorage(
+                                                    (imageView.drawable as BitmapDrawable).bitmap
+                                                )
+                                            val originalName = "avatar"
+                                            System.err.println(originalName)
+                                            System.err.println(link)
+                                            requester.httpPost(
+                                                "user/set_icon",
+                                                JSONObject("{\"name\":\"$originalName\", \"url\":\"$link\"}"),
+                                                object : Callback {
+                                                    override fun onFailure(
+                                                        call: Call,
+                                                        e: IOException
+                                                    ) {
+                                                        System.err.println("Image FAILED update")
+                                                    }
+
+                                                    override fun onResponse(
+                                                        call: Call,
+                                                        response: Response
+                                                    ) {
+                                                        System.err.println("Image successfully updated")
+                                                    }
+
+                                                })
+                                        }
                                         this@SignUpActivity.startActivity(Intent(this@SignUpActivity, ListOfCreatedProjectsActivity::class.java))
                                         this@SignUpActivity.finish()
                                     } else {

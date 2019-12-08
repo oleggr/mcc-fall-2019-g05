@@ -6,12 +6,16 @@ import android.view.View
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.provider.MediaStore
 import android.util.Log
 import android.webkit.MimeTypeMap
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
+import com.mcc_project_5.Tools.FileStorage
+import com.mcc_project_5.Tools.ImageStorage
 import com.mcc_project_5.Tools.Requester
 import kotlinx.android.synthetic.main.activity_create_a_project.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
@@ -141,6 +145,10 @@ class CreateAProjectActivity : AppCompatActivity() {
                 }
             }
         })*/
+        val link = ImageStorage(this).saveImageToStorage((imageView.drawable as BitmapDrawable).bitmap)
+        val originalName = "project_icon"
+        System.err.println(originalName)
+        System.err.println(link)
         requester.httpPost("project/create", json, object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
@@ -149,7 +157,18 @@ class CreateAProjectActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
-                    Log.d("DDD","OK")
+                    val projectId = response.body!!.string()
+                    Log.d("DDD","CREATED" + projectId)
+                        requester.httpPost("project/$projectId/set_icon", JSONObject("{\"url\":\"$link\"}"), object: Callback {
+                            override fun onFailure(call: Call, e: IOException) {
+                                System.err.println("Image FAILED update")
+                            }
+
+                            override fun onResponse(call: Call, response: Response) {
+                                System.err.println("Image successfully updated")
+                            }
+
+                        })
                 } else {
                     Log.d("DDD","NOT OK")
                     return
