@@ -1,0 +1,11 @@
+stages:
+  - build_back
+build_back:
+  stage: build_back
+  rules:
+  - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master_backend" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "dev_backend"'
+    when: always
+  image: ryazangrove/mccproject
+  script: 
+    - cd ./backend
+    - bash -c 'python3 main.py'
