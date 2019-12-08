@@ -44,6 +44,7 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
     var users = ArrayList<ProjectMember>()
     var chosenUserId = ""
     var isOwner = false
+    var isShared = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +60,7 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
 
         projectId = this.intent.getStringExtra("projectId")
         title = this.intent.getStringExtra("title")
+        isShared = this.intent.getBooleanExtra("isShared", false)
 
         isOwner = this.intent.getBooleanExtra("isOwner", false)
         chosen.text = ""
@@ -234,6 +236,7 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         intent.putExtra("projectId", projectId)
         intent.putExtra("title", title)
+        intent.putExtra("isShared", isShared)
         startActivity(intent)
     }
 

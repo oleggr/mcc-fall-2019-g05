@@ -11,6 +11,7 @@ class Project {
     var isFavorite: Boolean
     val isMediaAvailable: Boolean
     val isOwner: Boolean
+    val isShared: Boolean
     val deadline: String
     val keywordsArray: ArrayList<String> = arrayListOf()
     val membersArray: ArrayList<ProjectMember> = arrayListOf()
@@ -28,6 +29,7 @@ class Project {
         isMediaAvailable = json.getBoolean("isMediaAvailable")
         deadline = json.getString("deadline")
         isOwner = json.getBoolean("isOwner")
+        isShared = json.getBoolean("isShared")
 
         var tmpArray = json.getJSONArray("members")
         membersArray.clear()

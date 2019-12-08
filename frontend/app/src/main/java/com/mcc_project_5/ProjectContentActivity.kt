@@ -60,6 +60,7 @@ class ProjectContentActivity : AppCompatActivity() {
     private var projectId = ""
     private var title = ""
     private var isOwner = false
+    private var isShared = false
 
     private enum class Sort {
         BY_FILE, BY_PICTURE, BY_TASK, NONE
@@ -108,6 +109,7 @@ class ProjectContentActivity : AppCompatActivity() {
 
         projectId = this.intent.getStringExtra("projectId")
         title = this.intent.getStringExtra("title")
+        isShared = this.intent.getBooleanExtra("isShared", false)
 
         System.err.println("IN1 " + projectId)
         isOwner = this.intent.getBooleanExtra("isOwner", false)
@@ -174,7 +176,7 @@ class ProjectContentActivity : AppCompatActivity() {
     fun attachment(v: View) {
         val popupMenu: PopupMenu = PopupMenu(this,fab)
         popupMenu.menuInflater.inflate(R.menu.attachment, popupMenu.menu)
-        if (!isOwner) {
+        if (!isOwner || !isShared) {
             popupMenu.menu.getItem(1).isVisible = false
         }
         popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
@@ -190,6 +192,7 @@ class ProjectContentActivity : AppCompatActivity() {
                     intent.putExtra("projectId", projectId)
                     intent.putExtra("title", title)
                     intent.putExtra("isOwner", isOwner)
+                    intent.putExtra("isShared", isShared)
                     startActivity(intent)
                 }
                 R.id.action_photo ->
