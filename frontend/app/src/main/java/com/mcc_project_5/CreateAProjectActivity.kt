@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.activity_sign_up.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.util.*
@@ -115,7 +116,9 @@ class CreateAProjectActivity : AppCompatActivity() {
         json.put("is_shared",checkBoxProject.isChecked)
         val deadline = text_view_date_1.text.toString() + " " + timeTv.text.toString()
         json.put("deadline",deadline)
-        json.put("key_words",add_keywords.text.toString())
+        val keywords = add_keywords.text.split(" ").toTypedArray()
+        val jsonKeywords = JSONArray(keywords)
+        json.put("key_words",jsonKeywords)
 
         /*var file_uri = imageView.getTag().toString()
         val extension = MimeTypeMap.getFileExtensionFromUrl(file_uri.toString())

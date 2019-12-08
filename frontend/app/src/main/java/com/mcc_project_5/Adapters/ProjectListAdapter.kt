@@ -30,7 +30,7 @@ import java.time.format.DateTimeFormatter
 class ProjectListAdapter: BaseAdapter() {
     private val picasso = Picasso.get()
 
-    fun showPopupMenu(context: Context, v: View, projectId: Int, requester: Requester) {
+    fun showPopupMenu(context: Context, v: View, projectId: String, requester: Requester) {
         val popup = PopupMenu(context, v)
         val inflater: MenuInflater = popup.menuInflater
         inflater.inflate(R.menu.list_of_projects_popup, popup.menu)
@@ -43,7 +43,7 @@ class ProjectListAdapter: BaseAdapter() {
                 {
                     val intent =
                         Intent(context, ProjectContentActivity::class.java)
-                    intent.putExtra("projectId", projectId.toString())
+                    intent.putExtra("projectId", projectId)
                     context.startActivity(intent)
                 }
                 R.id.reportItem ->
@@ -56,7 +56,7 @@ class ProjectListAdapter: BaseAdapter() {
     }
 
 
-    fun deleteItem(id: Int, requester: Requester) {
+    fun deleteItem(id: String, requester: Requester) {
         requester.httpDelete("/project/delete?prjctid=$id", object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
@@ -65,7 +65,7 @@ class ProjectListAdapter: BaseAdapter() {
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
-                    items.removeAt(id)
+                    //items.removeAt(id)
                 } else {
                     return
                 }
@@ -73,7 +73,7 @@ class ProjectListAdapter: BaseAdapter() {
         })
     }
 
-    fun reportItem(id: Int, requester: Requester) {
+    fun reportItem(id: String, requester: Requester) {
         try {
             val reportUrl = "/project/report?projctid=$id"
             val path = File(Environment.getExternalStorageDirectory() , "/projectID")

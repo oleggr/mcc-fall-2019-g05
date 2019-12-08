@@ -5,10 +5,10 @@ import org.json.JSONObject
 class Task {
     var title: String = "title"
     var done: Boolean = false
-    var id: Int
+    var id: String
     var createdAt: String = ""
     constructor(json: JSONObject) {
-        this.id = json.getInt("id")
+        this.id = json.getString("id")
         this.title = json.getString("title")
         this.createdAt = json.getString("createdAt")
         this.done = json.getBoolean("done")
@@ -31,7 +31,7 @@ class Task {
     override fun hashCode(): Int {
         var result = title.hashCode()
         result = 31 * result + done.hashCode()
-        result = 31 * result + id
+        result = 31 * result + id.hashCode()
         result = 31 * result + createdAt.hashCode()
         return result
     }
