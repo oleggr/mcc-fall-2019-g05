@@ -19,7 +19,6 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
-            android:onClick="temporarylogout"
             app:navigationIcon="@drawable/ic_menu_black_24dp"
             app:titleTextColor="@android:color/white"
             tools:ignore="MissingConstraints" />

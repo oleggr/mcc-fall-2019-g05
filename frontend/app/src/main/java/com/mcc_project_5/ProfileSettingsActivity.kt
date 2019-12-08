@@ -11,11 +11,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
+import com.mikepenz.materialdrawer.model.interfaces.Nameable
 import kotlinx.android.synthetic.main.activity_profile_settings.*
 
 class ProfileSettingsActivity: AppCompatActivity(){
 
     private lateinit var auth: FirebaseAuth
+    private var result: Drawer? = null
 
     lateinit var imageView: ImageView
     private var upload: Button? = null
@@ -33,6 +38,39 @@ class ProfileSettingsActivity: AppCompatActivity(){
         btn_change_password.setOnClickListener {
             changePassword()
         }
+
+        result = DrawerBuilder()
+            .withActivity(this)
+            .withToolbar(toolbar)
+            .inflateMenu(R.menu.navigation)
+            .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    if (drawerItem is Nameable<*>) {
+                        when (drawerItem.identifier.toInt()) {
+                            R.id.profile -> {
+                                val intent = Intent(this@ProfileSettingsActivity, ProfileSettingsActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                            }
+                            R.id.projects -> {
+                                val intent = Intent(this@ProfileSettingsActivity, ListOfCreatedProjectsActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                            }
+                            R.id.logout -> {
+                                auth.signOut()
+                                val intent = Intent(this@ProfileSettingsActivity, LoginActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                            }
+                        }
+                    }
+
+                    return false
+                }
+            })
+            .withSelectedItemByPosition(0)
+            .build()
     }
 
     private fun choosePhotoFromGallary() {
@@ -73,7 +111,6 @@ class ProfileSettingsActivity: AppCompatActivity(){
                                         if (task.isSuccessful) {
                                             Toast.makeText(this, "Password changed successfully.", Toast.LENGTH_SHORT).show()
                                             auth.signOut()
-                                            startActivity(Intent(this, MainActivity::class.java))
                                             finish()
                                         }
                                     }
@@ -83,7 +120,7 @@ class ProfileSettingsActivity: AppCompatActivity(){
                             }
                         }
                 } else {
-                    startActivity(Intent(this, MainActivity::class.java))
+                    startActivity(Intent(this, LoginActivity::class.java))
                     finish()
                 }
 

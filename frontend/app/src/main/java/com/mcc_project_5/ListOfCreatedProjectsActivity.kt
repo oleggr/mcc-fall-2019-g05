@@ -144,7 +144,9 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
                     if (drawerItem is Nameable<*>) {
                         when (drawerItem.identifier.toInt()) {
                             R.id.profile -> {
-                                //GOTO PROFILE
+                                val intent = Intent(this@ListOfCreatedProjectsActivity, ProfileSettingsActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
                             }
                             R.id.projects -> {
                                 val intent = Intent(this@ListOfCreatedProjectsActivity, ListOfCreatedProjectsActivity::class.java)

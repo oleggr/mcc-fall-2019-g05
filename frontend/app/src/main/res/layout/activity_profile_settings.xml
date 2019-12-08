@@ -7,103 +7,103 @@
     tools:context=".MainActivity">
 
 
-    <TextView
-        android:id="@+id/image_text_view"
-        android:layout_width="133dp"
-        android:layout_height="35dp"
-        android:text="Change image"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.711"
-        tools:ignore="MissingConstraints" />
-
-    <TextView
-        android:id="@+id/password_text_view"
-        android:layout_width="172dp"
-        android:layout_height="32dp"
-        android:text="Change password"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.526"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="327dp" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="263dp"
-        android:layout_height="143dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/upload"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints" />
-
-    <Button
-        android:id="@+id/upload"
-        android:layout_width="166dp"
-        android:layout_height="43dp"
-        android:layout_marginBottom="64dp"
-        android:background="@color/colorPrimary"
-        android:onClick="selectImage"
-        android:text="select Image"
-        app:layout_constraintBottom_toTopOf="@+id/password_text_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.52"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints,OnClick" />
-
-    <EditText
-        android:id="@+id/et_current_password"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autofillHints=""
-        android:hint="Current Password"
-        app:layout_constraintBottom_toTopOf="@+id/et_new_password"
-        app:layout_constraintTop_toBottomOf="@+id/password_text_view"
-        app:layout_constraintVertical_bias="1.0"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="0dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_menu_black_24dp"
+            app:titleTextColor="@android:color/white"
+            tools:ignore="MissingConstraints" />
 
-    <EditText
-        android:id="@+id/et_new_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autofillHints=""
-        android:hint="New Password"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="415dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/et_confirm_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:autofillHints=""
-        android:hint="Confirm Password"
-        app:layout_constraintTop_toBottomOf="@+id/et_new_password"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="0dp" />
+            <TextView
+                android:id="@+id/image_text_view"
+                android:layout_width="133dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Change image"
+                android:textSize="20sp"
+                tools:ignore="MissingConstraints" />
 
-    <Button
-        android:id="@+id/btn_change_password"
-        android:layout_width="170dp"
-        android:layout_height="42dp"
-        android:background="@color/colorPrimary"
-        android:text="save changes"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.531"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_confirm_password"
-        app:layout_constraintVertical_bias="0.631"
-        tools:ignore="MissingConstraints" />
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="263dp"
+                android:layout_height="143dp"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/upload"
+                android:layout_width="166dp"
+                android:layout_height="43dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="64dp"
+                android:background="@color/colorPrimary"
+                android:onClick="selectImage"
+                android:text="select Image"
+                tools:ignore="MissingConstraints,OnClick" />
+
+            <TextView
+                android:id="@+id/password_text_view"
+                android:layout_width="172dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="10dp"
+                android:text="Change password"
+                android:textSize="20sp"
+                tools:ignore="MissingConstraints" />
+
+            <EditText
+                android:id="@+id/et_current_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:hint="Current Password"
+                tools:ignore="MissingConstraints" />
+
+            <EditText
+                android:id="@+id/et_new_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:hint="New Password"
+                tools:ignore="MissingConstraints" />
+
+            <EditText
+                android:id="@+id/et_confirm_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:hint="Confirm Password"
+                tools:ignore="MissingConstraints" />
+
+            <Button
+                android:id="@+id/btn_change_password"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:background="@color/colorPrimary"
+                android:text="save changes"
+                tools:ignore="MissingConstraints" />
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
