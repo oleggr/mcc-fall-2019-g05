@@ -259,6 +259,7 @@ def get_list_of_projects_implementation(user_id):
         certain_project_item.update({ "isMediaAvailable" : certain_project["is_media_available"]})
         certain_project_item.update({ "isShared" : certain_project["is_media_available"]})
         certain_project_item.update({ "keywords" : certain_project["key_words"]})
+        certain_project_item.update({ "isOwner" : True if certain_project["creator_id"] == user_id else False }) #certain_project["key_words"]})
         members_list = []
         for member in members:
             if(members[member]["user_id"] != user_id):
