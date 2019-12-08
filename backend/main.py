@@ -366,9 +366,9 @@ def get_members_of_project(project_id):
     '''
 
     #check for valid token
-#    id_token = request.headers["Firebase-Token"]
-#    uid_response = get_uid_from(id_token)
-    uid_response= "a291rNkgKHQyUhOa9ZcyISOGqLr1"
+    id_token = request.headers["Firebase-Token"]
+    uid_response = get_uid_from(id_token)
+
     if user_validate(uid_response, project_id) == 'OK':
         members = FB_functions.get_members_of_project(project_id)
         return json.dumps(members)
@@ -382,7 +382,7 @@ def set_task_to_project(project_id):
     #check for valid token
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
-
+    data=request.json
     if user_validate(uid_response, project_id) == 'OK':
 
         if "assignee_id" not in data:
