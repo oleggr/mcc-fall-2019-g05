@@ -421,6 +421,18 @@ def user_is_unique(username):
     return True
 
 
+def registration_token_is_unique(registration_token):
+
+    users = ref.child('users').get()
+
+    for user_id in users:
+        user = users[user_id]
+        if user['registration_token'] == registration_token:
+            return False
+
+    return True
+
+
 def email_is_unique(email):
 
     users = ref.child('users').get()
@@ -458,33 +470,54 @@ def return_certain_user(user_id):
     user = ref.child('users/' + user_id).get()
     return {user_id : user}
 
+
 def update_user(user_id, data):
+
     users = ref.child('users')
     user = users.child(user_id).get()
     old_data = user
-    if(not(data)):
+
+    if (not(data)):
         return "ERROR: Empty dictionary"
-    if("name" in data):
+
+    if ("name" in data):
+
         if(not(user_is_unique(data["name"]))):
             return "ERROR: Name is not unique"
+
         if(data["name"] == ""):
             return "ERROR: Name is empty"
+
         path_user_name = user_id + "/name"
         users.update({
             path_user_name : data["name"]
         })
-    if("email" in data):
+
+    if ("email" in data):
+
         if(not(email_is_unique(data["email"]))):
             return "ERROR: Email is not unique"
+
         if(data["email"] == ""):
             return "ERROR: Email is empty"
+
         path_user_email = user_id + "/email"
         users.update({
             path_user_email : data["email"]
         })
-    if("image_url" in data):
+
+    if ("image_url" in data):
         path_user_image_url = user_id + "/image_url"
         users.update({
             path_user_image_url : data["image_url"]
+        })
+
+    if ("registration_token" in data):
+        if(not(registration_token_is_unique(data["registration_token"]))):
+            return "ERROR: Registration token is not unique"
+
+        path_user_registration_token = user_id + "/registration_token"
+        users.update({
+            path_user_registration_token : data["registration_token"]
         })
     return "ok"

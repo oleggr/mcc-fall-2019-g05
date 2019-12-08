@@ -80,11 +80,13 @@ def add_users():
        # if not object_exists('users', name):
         email = name + '@mail.ru'
         image_url = 'http://photo-link.ru/' + name
+        registration_token = ''
 
         users_ref.push().set({
                     'name': name,
                     'email': email,
-                    'image_url': image_url
+                    'image_url': image_url,
+                    'registration_token': registration_token
         })
 
 
