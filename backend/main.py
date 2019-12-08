@@ -3,6 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import storage
 from firebase_admin import db
 from firebase_admin import auth
+from firebase_admin import messaging
 from google.cloud import storage
 
 import flask
@@ -501,6 +502,24 @@ def search_for_project(project_id):
 
 @app.route('/send_notification')
 def send_notification():
+
+    # This registration token comes from the client FCM SDKs.
+    registration_token = 'eMk-_0csB7k:APA91bGGKsCU60_tuDGAG_vgL5bNWYgbV2Utoh2ERgQFRRDAUMq_oaoFMLWq5R5w5qTZfVIm1WOTDmpRbXQA0KN38jDL6K5ShLYtFECjTLxARAc_jpfTA3w3id3y7kTV8ww3pmDbPY8k'
+
+    # See documentation on defining a message payload.
+    message = messaging.Message(
+        data={
+            'score': '850',
+            'time': '2:45',
+        },
+        token=registration_token,
+    )
+
+    # Send a message to the device corresponding to the provided
+    # registration token.
+    response = messaging.send(message)
+    # Response is a message ID string.
+    print('Successfully sent message:', response)
     return "This is send_notification method. sends a notification"
 
 
