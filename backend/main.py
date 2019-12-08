@@ -115,7 +115,7 @@ def upload_image_to_project(project_id):
         filename = json_data["name"]
 
         # Save image locally
-        img_func.file_download(filepath)
+        img_func.file_download(filepath, filename)
 
         images_names = img_func.image_resize('tmp/', filename)
 
@@ -153,7 +153,7 @@ def upload_project_icon(project_id):
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-        img_func.file_download(filepath)
+        img_func.file_download(filepath, filename)
 
         images_names = img_func.image_resize('tmp/', filename)
 
@@ -192,7 +192,7 @@ def upload_user_icon():
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-        img_func.file_download(filepath)
+        img_func.file_download(filepath, filename)
 
         images_names = img_func.image_resize('tmp/', filename)
 
@@ -204,6 +204,9 @@ def upload_user_icon():
 
         for element in images_names[1:]:
             os.remove('tmp/{}'.format(element))
+
+        os.remove('tmp/{}'.format(filename))
+
 
         return 'INFO: User icon uploaded.'
 
