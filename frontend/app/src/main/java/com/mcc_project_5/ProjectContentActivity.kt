@@ -60,6 +60,7 @@ class ProjectContentActivity : AppCompatActivity() {
     private val visibleFiles = arrayListOf<File>()
 
     private var projectId = ""
+    private var isOwner = false
 
     private enum class Sort {
         BY_FILE, BY_PICTURE, BY_TASK, NONE
@@ -114,6 +115,7 @@ class ProjectContentActivity : AppCompatActivity() {
         setContentView(R.layout.project_content_activity)
 
         projectId = this.intent.getStringExtra("projectId")
+        isOwner = this.intent.getBooleanExtra("isOwner", false)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.inflateMenu(R.menu.project_content_general)
         toolbar.setTitle(projectId)
@@ -170,6 +172,8 @@ class ProjectContentActivity : AppCompatActivity() {
             .withSelectedItemByPosition(1)
             .build()
 
+        loadTemplate(projectId)
+
     }
 
     fun attachment(v: View) {
@@ -179,11 +183,13 @@ class ProjectContentActivity : AppCompatActivity() {
             when(item.itemId) {
                 R.id.action_user -> {
                     val intent = Intent(this, AddUserActivity::class.java)
+                    intent.putExtra("projectId", projectId)
                     startActivity(intent)
                 }
                 R.id.action_task -> {
                     val intent = Intent(this, AddTasksToAProjectActivity::class.java)
                     intent.putExtra("projectId", projectId)
+                    intent.putExtra("isOwner", isOwner)
                     startActivity(intent)
                 }
                 R.id.action_photo ->

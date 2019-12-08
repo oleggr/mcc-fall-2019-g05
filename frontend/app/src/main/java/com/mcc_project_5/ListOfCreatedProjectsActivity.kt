@@ -184,6 +184,8 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
             lastClicked = position
         }
 
+        onLoadBtnClick()
+
         this.byTime.performClick()
     }
 

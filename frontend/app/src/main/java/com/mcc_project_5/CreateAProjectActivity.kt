@@ -153,7 +153,11 @@ class CreateAProjectActivity : AppCompatActivity() {
                 }
             }
         })
-        finish()
+        //MAY BE TEMPORARY SOLUTION
+        //finish()
+        val intent = Intent(this@CreateAProjectActivity, ListOfCreatedProjectsActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 
 }

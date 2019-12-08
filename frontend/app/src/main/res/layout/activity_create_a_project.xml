@@ -25,7 +25,7 @@
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="251dp"
-            android:layout_height="132dp"
+            android:layout_height="100dp"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             tools:ignore="MissingConstraints" />
@@ -102,7 +102,7 @@
                 tools:ignore="MissingConstraints" />
 
             <Button
-                android:id="@+id/pickTimeBtn"
+                android:id="@+id/button_date_1"
                 android:layout_width="34dp"
                 android:layout_height="32dp"
                 android:text="^"
@@ -118,7 +118,7 @@
                 tools:ignore="MissingConstraints" />
 
             <Button
-                android:id="@+id/button_date_1"
+                android:id="@+id/pickTimeBtn"
                 android:layout_width="34dp"
                 android:layout_height="32dp"
                 android:text="^"
@@ -139,7 +139,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:onClick="createProject"
             android:text="Create" />
 

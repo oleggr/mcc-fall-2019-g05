@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.MenuInflater
 import android.view.View
 import android.widget.*
+import androidx.core.view.isVisible
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.text.FirebaseVisionText
@@ -33,6 +34,7 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
     var textview_date: TextView? = null
     var cal = Calendar.getInstance()
     var projectId = ""
+    var isOwner = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +47,11 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         textview_date!!.text = "--/--/----"
 
         projectId = this.intent.getStringExtra("projectId")
+        isOwner = this.intent.getBooleanExtra("isOwner", false)
+
+        if (!isOwner) {
+            assign_text_view.isVisible = false
+        }
 
         val dateSetListener = object : DatePickerDialog.OnDateSetListener {
             override fun onDateSet(view: DatePicker, year: Int, monthOfYear: Int,
