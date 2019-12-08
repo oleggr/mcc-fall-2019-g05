@@ -270,7 +270,7 @@ def get_list_of_projects_implementation(user_id):
         certain_project_item.update({ "lastModified" : certain_project["last_modified"]})
         certain_project_item.update({ "isFavorite" : favorite_project_exists(user_id, project)})
         certain_project_item.update({ "isMediaAvailable" : certain_project["is_media_available"]})
-        certain_project_item.update({ "isShared" : certain_project["is_media_available"]})
+        certain_project_item.update({ "isShared" : certain_project["is_shared"]})
         certain_project_item.update({ "keywords" : certain_project["key_words"]})
         certain_project_item.update({ "isOwner" : True if certain_project["creator_id"] == user_id else False })
         members_list = []
