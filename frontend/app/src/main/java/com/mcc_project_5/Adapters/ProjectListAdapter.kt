@@ -33,7 +33,7 @@ class ProjectListAdapter: BaseAdapter() {
     private val picasso = Picasso.get()
     private lateinit var context: Context
 
-    fun showPopupMenu(context: Context, v: View, projectId: String, isOwner: Boolean, requester: Requester) {
+    fun showPopupMenu(context: Context, v: View, projectId: String, title: String, isOwner: Boolean, requester: Requester) {
         val popup = PopupMenu(context, v)
         val inflater: MenuInflater = popup.menuInflater
         inflater.inflate(R.menu.list_of_projects_popup, popup.menu)
@@ -48,9 +48,11 @@ class ProjectListAdapter: BaseAdapter() {
                     deleteItem(projectId, requester)
                 R.id.contentItem ->
                 {
+                    System.err.println(projectId)
                     val intent =
                         Intent(context, ProjectContentActivity::class.java)
                     intent.putExtra("projectId", projectId)
+                    intent.putExtra("title", title)
                     intent.putExtra("isOwner", isOwner)
                     context.startActivity(intent)
                 }
@@ -156,7 +158,7 @@ class ProjectListAdapter: BaseAdapter() {
         val membersList = rowView.findViewById(R.id.membersView) as RecyclerView
 
         rowView.menuBtn.setOnClickListener {
-            showPopupMenu(context, it, items[position].id, items[position].isOwner, requester)
+            showPopupMenu(context, it, items[position].id, items[position].title, items[position].isOwner, requester)
         }
 
         if (!items[position].isMediaAvailable)

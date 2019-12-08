@@ -44,7 +44,8 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
     var button_date: Button? = null
     var textview_date: TextView? = null
     var cal = Calendar.getInstance()
-    var projectId = ""
+    private lateinit var projectId: String
+    private lateinit var title: String
     var isOwner = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +59,10 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         textview_date!!.text = "--/--/----"
 
         projectId = this.intent.getStringExtra("projectId")
+        title = this.intent.getStringExtra("title")
+
         isOwner = this.intent.getBooleanExtra("isOwner", false)
+        chosen.text = ""
 
 
         if (!isOwner) {
@@ -129,11 +133,14 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
                 }
             }
         })
+        if (users.isEmpty()) {
+            return
+        }
         val assign = PopupMenu(this@AddTasksToAProjectActivity, v)
         for ( user in users) {
             assign.menu.add(user.name)
         }
-        assign.menuInflater.inflate(R.menu.attachment, assign.menu)
+        assign.menuInflater.inflate(R.menu.asigned, assign.menu)
         assign.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
 
             override fun onMenuItemClick(item: MenuItem): Boolean {
@@ -196,8 +203,8 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         json.put("description",project_description.text.toString())
         val deadline = text_view_date_1.text.toString() + " " + timeTv.text.toString()
         json.put("deadline",deadline)
-        if (isOwner && chosen.text != null) {
-            json.put("assigned_to",chosen.text)
+        if (isOwner && chosen.text != "") {
+            json.put("assignee_id",chosen.text)
         }
 
         requester.httpPost("project/$projectId/tasks/add", json, object: Callback {
@@ -208,9 +215,9 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
-                    Log.d("DDD","OK")
+                    Log.d("DDD","OK" + response.message)
                 } else {
-                    Log.d("DDD","NOT OK")
+                    Log.d("DDD","NOT OK" + response.message)
                     return
                 }
             }
@@ -219,11 +226,13 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         //finish()
         val intent = Intent(this@AddTasksToAProjectActivity, ProjectContentActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.putExtra("projectId", projectId)
+        intent.putExtra("title", title)
         startActivity(intent)
     }
 
     private fun updateDateInView() {
-        val myFormat = "MM/dd/yyyy" // mention the format you need
+        val myFormat = "dd/MM/yyyy" // mention the format you need
         val sdf = SimpleDateFormat(myFormat, Locale.US)
         textview_date!!.text = sdf.format(cal.getTime())
     }

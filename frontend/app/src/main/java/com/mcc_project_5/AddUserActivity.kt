@@ -25,8 +25,9 @@ import kotlin.Comparator
 class AddUserActivity : AppCompatActivity() {
     private val users  =  arrayListOf<User>()
     private val visibleUsers = arrayListOf<User>()
-    private val checkedUsers = arrayListOf<User>()
+    private val checkedUsers = arrayListOf<String>()
     var projectId = ""
+    var title = ""
 
     private enum class SortOrder {
         ASC, DESC
@@ -55,9 +56,10 @@ class AddUserActivity : AppCompatActivity() {
         setContentView(R.layout.users_list_activity)
 
         projectId = this.intent.getStringExtra("projectId")
+        title = this.intent.getStringExtra("title")
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.inflateMenu(R.menu.project_content_general)
-        toolbar.setTitle(projectId)
+        toolbar.setTitle(title)
         setSupportActionBar(toolbar)
 
         val userListAdapter = UserListAdapter(projectId!!)
@@ -131,10 +133,11 @@ class AddUserActivity : AppCompatActivity() {
         checkedUsers.clear()
         users.forEach {
             if (it.checked) {
-                checkedUsers.add(it)
+                checkedUsers.add(it.id)
             }
         }
         json.put("members",checkedUsers)
+        Log.d("members", checkedUsers.toString())
         requester.httpPost("project/$projectId/members/set", json,  object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
@@ -143,10 +146,10 @@ class AddUserActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
-                    Log.d("DDD","OK")
+                    Log.d("DDD","OK" + response.message)
                     finish()
                 } else {
-                    Log.d("DDD","NOT OK")
+                    Log.d("DDD","NOT OK" + response.message)
                     return
                 }
             }

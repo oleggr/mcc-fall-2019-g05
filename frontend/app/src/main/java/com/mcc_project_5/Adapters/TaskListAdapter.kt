@@ -69,9 +69,9 @@ class TaskListAdapter() : BaseAdapter() {
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
-                    Log.d("DDD","OK")
+                    Log.d("DDD","OK" + response.message)
                 } else {
-                    Log.d("DDD","NOT OK")
+                    Log.d("DDD","NOT OK" +  response.message)
                     return
                 }
             }
