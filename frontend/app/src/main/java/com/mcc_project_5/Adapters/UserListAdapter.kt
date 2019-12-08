@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.mcc_project_5.DataModels.User
 import com.mcc_project_5.R
+import com.mcc_project_5.Tools.ImageStorage
 import com.squareup.picasso.Picasso
 
 class UserListAdapter() : BaseAdapter() {
@@ -31,7 +32,7 @@ class UserListAdapter() : BaseAdapter() {
 
         textView.text = items[position].name
         if (items[position].imageUrl != "") {
-            picasso.load(items[position].imageUrl).fit().into(imageView)
+            ImageStorage(parent.context).loadToImageView(items[position].imageUrl, imageView)
         } else {
             imageView.setImageResource(R.drawable.ic_account_circle_black_24dp)
         }

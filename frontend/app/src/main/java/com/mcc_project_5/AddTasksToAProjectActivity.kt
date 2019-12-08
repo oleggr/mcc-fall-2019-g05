@@ -147,7 +147,7 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
     fun selectImage(v: View) {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.type = "image/*"
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1)
+        startActivityForResult(Intent.createChooser(intent, "Select Attachment"), 1)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

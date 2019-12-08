@@ -22,7 +22,7 @@ class Project {
     constructor(json: JSONObject) {
         id = json.getString("id")
         title = json.getString("title")
-        imageUrl = String(Base64.decode(json.getString("imageUrl"), Base64.DEFAULT))
+        imageUrl = json.getString("imageUrl")
         lastModified = json.getString("lastModified")
         isFavorite = json.getBoolean("isFavorite")
         isMediaAvailable = json.getBoolean("isMediaAvailable")

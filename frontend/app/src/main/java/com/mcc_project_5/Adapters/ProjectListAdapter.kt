@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mcc_project_5.ListOfCreatedProjectsActivity
 import com.mcc_project_5.ProjectContentActivity
 import com.mcc_project_5.R
-import com.mcc_project_5.Tools.Properties
+import com.mcc_project_5.Tools.ImageStorage
 import kotlinx.android.synthetic.main.list_of_projects_list_layout.view.*
 import okhttp3.*
 import java.io.IOException
@@ -171,7 +171,8 @@ class ProjectListAdapter: BaseAdapter() {
         titleText.text = items[position].title
 
         if (items[position].imageUrl != "") {
-            picasso.load(items[position].imageUrl).into(imageView)
+            //picasso.load(items[position].imageUrl).into(imageView)
+            ImageStorage(parent.context).loadToImageView(items[position].imageUrl, imageView)
         } else {
             imageView.setImageResource(R.drawable.ic_folder_open_black_24dp)
         }
@@ -182,7 +183,7 @@ class ProjectListAdapter: BaseAdapter() {
         val layoutManager = LinearLayoutManager(rowView.context, LinearLayoutManager.HORIZONTAL, false)
         membersList.layoutManager = layoutManager
         val membersListAdapter =
-            MemberListAdapter(items[position].membersArray)
+            MemberListAdapter(context, items[position].membersArray)
         membersList.adapter = membersListAdapter
 
         rowView.setTag(items[position].id.toString())

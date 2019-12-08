@@ -6,13 +6,14 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import com.mcc_project_5.DataModels.Picture
+import com.mcc_project_5.DataModels.Attachment
 import com.mcc_project_5.R
+import com.mcc_project_5.Tools.ImageStorage
 import com.squareup.picasso.Picasso
 
 class PictureListAdapter : BaseAdapter() {
     private val picasso = Picasso.get()
-    private var items: ArrayList<Picture> = ArrayList()
+    private var items: ArrayList<Attachment> = ArrayList()
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val context = parent!!.context
         val inflater = LayoutInflater.from(context)
@@ -22,15 +23,16 @@ class PictureListAdapter : BaseAdapter() {
         val createdAtTextView = rowView.findViewById<TextView>(R.id.createdAtTextView)
         val descriptionTextView = rowView.findViewById<TextView>(R.id.descriptionTextView)
 
-        picasso.load(items[position].imageUrl).into(imageView)
+        //picasso.load(items[position].imageUrl).into(imageView)
+        ImageStorage(parent.context).loadToImageView(items[position].attachment_url, imageView)
 
-        createdAtTextView.text = items[position].createdAt
-        descriptionTextView.text = items[position].description
+        createdAtTextView.text = items[position].creation_time
+        descriptionTextView.text = items[position].name
 
         return rowView
     }
 
-    fun setItems(data: ArrayList<Picture>) {
+    fun setItems(data: ArrayList<Attachment>) {
         items = data
     }
 
