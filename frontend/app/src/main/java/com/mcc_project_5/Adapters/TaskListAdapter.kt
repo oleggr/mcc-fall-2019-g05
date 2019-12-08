@@ -13,7 +13,7 @@ import com.mcc_project_5.R
 class TaskListAdapter : BaseAdapter() {
     private var items: ArrayList<Task> = ArrayList()
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val context = parent!!.context
+        val context = parent.context
         val inflater = LayoutInflater.from(context)
         val rowView = inflater.inflate(R.layout.project_content_task_list_layout, parent, false)
 
@@ -28,14 +28,14 @@ class TaskListAdapter : BaseAdapter() {
 
         }}
 
-        if (items[position].done) {
+        if (items[position].status == "completed") {
             checkBox.isChecked = true
             title.paintFlags = checkBox.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
         } else {
             checkBox.isChecked = false
             title.paintFlags = checkBox.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
         }
-        title.text = items[position].title
+        title.text = items[position].description
 
         return rowView
     }

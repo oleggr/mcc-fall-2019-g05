@@ -187,7 +187,7 @@ class ProjectContentActivity : AppCompatActivity() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 visibleTasks.clear()
                 tasks.forEach {
-                    if (it.title.contains(newText!!, true)) {
+                    if (it.description.contains(newText!!, true)) {
                         visibleTasks.add(it)
                     }
                 }
