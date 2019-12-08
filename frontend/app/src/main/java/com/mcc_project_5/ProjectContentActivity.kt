@@ -26,15 +26,15 @@ import com.mcc_project_5.Adapters.PictureListAdapter
 import com.mcc_project_5.Adapters.TaskListAdapter
 import com.mcc_project_5.DataModels.File
 import com.mcc_project_5.DataModels.Picture
+import com.mcc_project_5.DataModels.Project
 import com.mcc_project_5.DataModels.Task
+import com.mcc_project_5.Tools.Requester
 import kotlinx.android.synthetic.main.project_content_activity.*
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.IOException
 import java.io.UnsupportedEncodingException
 import java.net.UnknownHostException
 import java.util.*
@@ -49,6 +49,8 @@ class ProjectContentActivity : AppCompatActivity() {
 
     private val files  =  arrayListOf<File>()
     private val visibleFiles = arrayListOf<File>()
+
+    private var projectId = ""
 
     private enum class Sort {
         BY_FILE, BY_PICTURE, BY_TASK, NONE
@@ -102,7 +104,7 @@ class ProjectContentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.project_content_activity)
 
-        val projectId = this.intent.getStringExtra("projectId")
+        projectId = this.intent.getStringExtra("projectId")
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.inflateMenu(R.menu.project_content_general)
         toolbar.setTitle(projectId)
@@ -136,8 +138,11 @@ class ProjectContentActivity : AppCompatActivity() {
                     val intent = Intent(this, AddUserActivity::class.java)
                     startActivity(intent)
                 }
-                R.id.action_task ->
-                    pickImageFromGallery()
+                R.id.action_task -> {
+                    val intent = Intent(this, AddTasksToAProjectActivity::class.java)
+                    intent.putExtra("projectId", projectId)
+                    startActivity(intent)
+                }
                 R.id.action_photo ->
                     openCamera()
                 R.id.action_gallery ->
@@ -194,18 +199,33 @@ class ProjectContentActivity : AppCompatActivity() {
         return true
     }
 
-    fun loadTasksTemplate() {
-        val testJson = "[{\"id\":1, \"title\":\"Title1\", \"createdAt\":\"01.01.01\", \"done\":false}, {\"id\":2, \"createdAt\":\"01.01.01\", \"title\":\"Title2\", \"done\":true}, {\"id\":3, \"createdAt\":\"01.01.01\", \"title\":\"Title1\", \"done\":false}]"
-        val json = JSONArray(testJson)
-        tasks.clear()
-        for(i in 0 until json.length()) {
-            val item = json.getJSONObject(i)
-            val task = Task(item)
-            tasks.add(task)
-        }
-        visibleTasks.clear()
-        visibleTasks.addAll(tasks)
-        refreshTaskList()
+    fun loadTasksTemplate(id: String) {
+        val requester = Requester(baseContext)
+        requester.httpGet("project/$id/tasks", object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.d("DDD", "FAIL")
+                return
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val resultJson = response.body!!.string()
+                    Log.d("DDD", resultJson)
+                    val json = JSONArray(resultJson)
+                    tasks.clear()
+                    for(i in 0 until json.length()) {
+                        val item = json.getJSONObject(i)
+                        val task = Task(item)
+                        tasks.add(task)
+                    }
+                    visibleTasks.clear()
+                    visibleTasks.addAll(tasks)
+                    refreshTaskList()
+                } else {
+                    return
+                }
+            }
+        })
     }
 
     fun loadPicturesTemplate() {
@@ -236,15 +256,15 @@ class ProjectContentActivity : AppCompatActivity() {
         refreshFileList()
     }
 
-    fun loadTemplate() {
-        loadTasksTemplate()
+    fun loadTemplate(id: String) {
+        loadTasksTemplate(id)
         loadPicturesTemplate()
         loadFilesTemplate()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.title == "refresh") {
-            loadTemplate()
+            loadTemplate(projectId)
         } else if (item.title == "sort") {
             if (sortOrder == SortOrder.DESC) {
                 item.setIcon(R.drawable.ic_sort_reversed_black_24dp)
