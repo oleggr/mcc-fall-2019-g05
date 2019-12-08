@@ -47,6 +47,7 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
     private lateinit var projectId: String
     private lateinit var title: String
     var users = ArrayList<ProjectMember>()
+    var chosenUserId = ""
     var isOwner = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -135,6 +136,8 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
 
     }
 
+
+
     fun onClick(v: View) {
 
         Log.d("users", users.toString())
@@ -143,16 +146,15 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         }
         val assign = PopupMenu(this@AddTasksToAProjectActivity, v)
         for ( user in users) {
-            assign.menu.add(user.name)
+            assign.menu.add(user.name).setOnMenuItemClickListener {
+                chosenUserId = user.user_id
+                chosen.text = user.name
+                Log.d("change_assignee ", chosenUserId)
+                true
+            }
+
         }
         assign.menuInflater.inflate(R.menu.asigned, assign.menu)
-        assign.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
-
-            override fun onMenuItemClick(item: MenuItem): Boolean {
-                chosen.text = item.title
-                return true
-            }
-        })
         assign.show()
     }
 
@@ -208,9 +210,11 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         json.put("description",project_description.text.toString())
         val deadline = text_view_date_1.text.toString() + " " + timeTv.text.toString()
         json.put("deadline",deadline)
-        if (isOwner && chosen.text != "") {
-            json.put("assignee_id",chosen.text)
+        if (isOwner && chosenUserId != "") {
+
+            json.put("assignee_id", chosenUserId)
         }
+
 
         requester.httpPost("project/$projectId/tasks/add", json, object: Callback {
             override fun onFailure(call: Call, e: IOException) {
