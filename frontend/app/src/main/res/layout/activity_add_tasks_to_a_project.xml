@@ -26,11 +26,19 @@
         <EditText
             android:id="@+id/project_description"
             android:layout_width="match_parent"
-            android:layout_height="41dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="76dp"
+            android:layout_marginBottom="40dp"
             android:hint="Description"
             tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:onClick="selectImage"
+            android:text="Get Task from image" />
 
         <LinearLayout
             android:layout_width="match_parent"

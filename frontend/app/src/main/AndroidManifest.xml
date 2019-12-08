@@ -14,10 +14,6 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".Convert_image"
-            android:label="@string/title_activity_convert_image"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".AddUserActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

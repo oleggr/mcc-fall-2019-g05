@@ -1,13 +1,20 @@
 package com.mcc_project_5
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuInflater
 import android.view.View
 import android.widget.*
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.firebase.ml.vision.text.FirebaseVisionText
 import com.mcc_project_5.Tools.Requester
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_add_tasks_to_a_project.*
@@ -76,6 +83,52 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
             TimePickerDialog(this, timeSetListener, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true).show()
         }
 
+    }
+
+    fun selectImage(v: View) {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, data!!.data)
+
+            startRecognizing(bitmap)
+        }
+    }
+
+    fun startRecognizing(bitmap: Bitmap) {
+        if (bitmap != null) {
+            project_description.setText("")
+            val image = FirebaseVisionImage.fromBitmap(bitmap)
+            val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
+
+            detector.processImage(image)
+                .addOnSuccessListener { firebaseVisionText ->
+                    processResultText(firebaseVisionText)
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show()
+                }
+        } else {
+            Toast.makeText(this, "Select an Image First", Toast.LENGTH_LONG).show()
+        }
+
+    }
+
+
+    private fun processResultText(resultText: FirebaseVisionText) {
+        if (resultText.textBlocks.size == 0) {
+            Toast.makeText(this, "No text found", Toast.LENGTH_LONG).show()
+            return
+        }
+        for (block in resultText.textBlocks) {
+            val blockText = block.text
+            project_description.append(blockText)
+        }
     }
 
     fun createTask(v: View) {
