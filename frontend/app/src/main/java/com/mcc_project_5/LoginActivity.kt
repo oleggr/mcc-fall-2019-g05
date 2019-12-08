@@ -67,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
                     val msg = token
                     Log.d("DDD TOKEN", msg)
                     val requester = Requester(this@LoginActivity)
-                    requester.httpPut("/user/update", JSONObject("{\"registrationToken\":\"$token\"}"), object:
+                    requester.httpPut("user/update", JSONObject("{\"registrationToken\":\"$token\"}"), object:
                         Callback {
                         override fun onFailure(call: Call, e: IOException) {
                             Log.d("DDD", "FAIL")
