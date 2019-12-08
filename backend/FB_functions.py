@@ -182,7 +182,7 @@ def add_attachment(
         return 'ERROR: Attachment was not added.'
 
 
-def add_task_to_project(project_id, creator_id, description, status, taskname):
+def add_task_to_project(project_id, creator_id, assignee_id, description, status, taskname):
     '''
     Create task the task attributes and assign it to project by project ID.
     Returns the task ID after creation.

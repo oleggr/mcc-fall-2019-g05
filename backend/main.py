@@ -98,10 +98,11 @@ def update_data():
 def upload_image_to_project(project_id):
 
     image = request.files["image"]
+    data = request.headers
 
     try:
         
-        user_id = get_uid_from(data['id_token']) # add user checking
+        user_id = get_uid_from(data['Firebase-Token']) # add user checking
         filename = image.filename
 
         # Save image locally
@@ -132,10 +133,10 @@ def upload_image_to_project(project_id):
 def upload_project_icon(project_id):
 
     image = request.files["image"]
+    data = request.headers
 
     try:
-        # user_id = get_uid_from(data['id_token']) # add user checking
-        user_id = 'uid'
+        user_id = get_uid_from(data['Firebase-Token'])
         filename = image.filename
 
         # Save image locally
@@ -166,12 +167,12 @@ def upload_project_icon(project_id):
 @app.route('/user/set_icon', methods=['POST'])
 def upload_user_icon():
 
-    data = request.args
     image = request.files["image"]
+    data = request.headers
 
     try:
         # user_id = get_uid_from(data['id_token']) # add user checking
-        user_id = 'uid'
+        user_id = get_uid_from(data['Firebase-Token'])
         filename = image.filename
 
         # Save image locally
@@ -196,7 +197,7 @@ def upload_user_icon():
 @app.route('/get_image/<path>/<filename>', methods=['GET'])
 def get_image(path, filename):
 
-    data = request.args
+    data = request.get_json()
     quality = data['quality']
 
     img_func.image_download(path + '/', filename, quality)
@@ -240,11 +241,11 @@ def is_user_unique(username):
     reply = []
 
     if FB_functions.user_is_unique(username):
-        return str(reply)
+        return jsonify(reply)
 
     else:
         username_options = FB_functions.unique_names(username)
-        return str(username_options)
+        return jsonify(username_options)
 
 
 @app.route('/project/create', methods=['POST'])
@@ -263,7 +264,6 @@ def create_project():
     now = datetime.now()
     dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 
-    data = request.args
     project_id = FB_functions.create_project(
             data['title'],
             data['is_shared'],
@@ -329,7 +329,7 @@ def get_members_of_project(project_id):
 def set_task_to_project(project_id):
 
     #check for valid token
-    id_token = request.headers["id_token"]
+    id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
     if user_validate(uid_response) == 'OK':
@@ -337,7 +337,8 @@ def set_task_to_project(project_id):
         data=request.args
         task_id = FB_functions.add_task_to_project(
                 project_id,
-                data["creater_id"],
+                uid_response,
+                data["assignee_id"],
                 data["description"],
                 data["status"],
                 data["taskname"]
@@ -354,21 +355,28 @@ def set_task_to_project(project_id):
 @app.route('/project/<project_id>/update', methods=['PUT'])
 def project_update(project_id):
 
-    data=request.args
+    data=request.json
+
+    id_token = request.headers["Firebase-Token"]
+    uid_response = get_uid_from(id_token)
 
     param_name = data['parameter']
     param_value = data['value']
 
     res = FB_functions.update_project(project_id, param_name, param_value)
 
-    return str(res)
+    return jsonify(res)
 
 
 # Add task assign functionality
 @app.route('/task/<task_id>/update', methods=['PUT'])
 def update_task_status(task_id):
     
-    data=request.args
+    data=request.json
+
+    id_token = request.headers["Firebase-Token"]
+    uid_response = get_uid_from(id_token)
+
     FB_functions.update_task(task_id, data["task_status"])
     
     return "OK"
@@ -377,7 +385,11 @@ def update_task_status(task_id):
 @app.route('/task/<task_id>/assign_to_user', methods=['POST'])
 def assign_task_to_users(task_id):
     
-    data=request.args
+    data=request.json
+
+    id_token = request.headers["Firebase-Token"]
+    uid_response = get_uid_from(id_token)
+
     FB_functions.assign_task_to_users(task_id, data["user_ids"])
 
     return "OK"
@@ -390,7 +402,11 @@ def get_tasks_of_project(project_id):
     Returns list of tasks.
     '''
 
+    id_token = request.headers["Firebase-Token"]
+    uid_response = get_uid_from(id_token)
+
     tasks = FB_functions.get_tasks_of_project(project_id)
+
     return json.dumps(tasks)
 
 
@@ -405,6 +421,9 @@ def generate_project_report(project_id):
     This is generate_project_report method.
     Returns report file.
     '''
+
+    id_token = request.headers["Firebase-Token"]
+    uid_response = get_uid_from(id_token)
 
     report_name = report_generate.generate_project_report(project_id)
 
@@ -423,6 +442,9 @@ def get_list_of_projects():
     Returns list of projects with all provided information.
     '''
 
+    id_token = request.headers["Firebase-Token"]
+    uid_response = get_uid_from(id_token)
+
     list_of_projects = FB_functions.get_list_of_projects_implementation(request.args["user_id"])
 
     return json.dumps(list_of_projects)
@@ -434,8 +456,11 @@ def search_for_project(project_id):
     Search_for_project method. Searching for single project.
     Returns json with all information about project.
     '''
+    id_token = request.headers["Firebase-Token"]
+    uid_response = get_uid_from(id_token)
 
     project = FB_functions.search_for_project_implementation(project_id)
+    
     return json.dumps(project)
 
 
