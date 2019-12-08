@@ -482,7 +482,6 @@ def get_list_of_projects():
     uid_response = get_uid_from(id_token)
 
     list_of_projects = FB_functions.get_list_of_projects_implementation(uid_response)
-#    list_of_projects = FB_functions.get_list_of_projects_implementation("a291rNkgKHQyUhOa9ZcyISOGqLr1")
     return json.dumps(list_of_projects)
 
 
@@ -520,7 +519,7 @@ def send_notification():
     response = messaging.send(message)
     # Response is a message ID string.
     print('Successfully sent message:', response)
-    
+
     return "This is send_notification method. sends a notification"
 
 
