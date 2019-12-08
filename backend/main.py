@@ -353,8 +353,10 @@ def add_members_to_project(project_id):
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
+    data = request.get_json()
+    print(data)    
     if user_validate(uid_response, project_id) == 'OK':
-        return FB_functions.add_members_to_project(uid_response, project_id)
+        return FB_functions.add_members_to_project(data, project_id)
     else:
         return 'ERROR: Your user not have permissions to do this.'
 

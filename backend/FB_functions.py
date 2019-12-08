@@ -114,10 +114,11 @@ def add_members_to_project(users_id, project_id):
 
     member_ref = ref.child('members')
     users_ref = ref.child('users')
-
+    print(users_id)
+    print(project_id)
     try:
 
-        for user_id in users_id:
+        for user_id in data:
             user = users_ref.child(user_id)
 
             name = user['name']
