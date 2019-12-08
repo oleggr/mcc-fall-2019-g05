@@ -204,18 +204,24 @@ def add_task(project_id, creator_id, assignee_id, description, deadline, created
     return  task_id
 
 
-def update_task(task_id, new_task_status):
+def update_task(task_id, new_task_status, user_id):
     '''
     Updates the task status by given task ID.
     '''
+    #check if task assign to to user
 
     tasks_ref = ref.child('tasks')
+    task = tasks_ref.get()
+    if(task[task_id]["assignee_id"] != user_id):
+        return "ERROR: The task is not assign to the user"
 
     path = task_id + '/status'
 
     tasks_ref.update({
         path : new_task_status
     })
+
+    return "OK"
 
 
 def assign_task_to_users(task_id, *user_ids):
