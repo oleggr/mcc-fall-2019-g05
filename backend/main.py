@@ -56,6 +56,7 @@ def get_uid_from(id_token):
         return uid
 
     except:
+
         return 'ERROR: Authenfication failed.'
 
 
@@ -249,6 +250,7 @@ def is_user_unique(username):
 @app.route('/project/create', methods=['POST'])
 def create_project():
 
+    data = request.get_json()
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
     
