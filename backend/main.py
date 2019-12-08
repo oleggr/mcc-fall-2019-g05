@@ -101,7 +101,7 @@ def upload_image_to_project(project_id):
     data = request.headers
 
     try:
-        
+
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
         filename = image.filename
 
@@ -207,17 +207,46 @@ def get_image(path, filename):
 
 @app.route('/user', methods=['GET'])
 def get_user():
-    return "This is get_profile_settings method. returns profile info"
+    #check for valid token
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+
+    return json.dumps(FB_functions.return_certain_user(uid_response))
 
 
 @app.route('/users', methods=['GET'])
 def get_all_users():
-    return "This is get_profile_settings method. returns profile info"
+    #check for valid token
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+
+    return json.dumps(FB_functions.return_all_users())
 
 
 @app.route('/user/update', methods=['PUT'])
 def update_user():
-    return "This is set_profile_settings method. returns fails or not"
+    #check for valid token
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+    user_id = uid_response
+    data = request.get_json()
+
+    return str(FB_functions.update_user(user_id,data))
 
 
 @app.route('/user/create', methods=['POST'])
@@ -226,12 +255,12 @@ def create_user():
     data = request.get_json()
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
-    
+
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
-    
+
     FB_functions.create_user(uid_response, data["name"], data["email"])
-    
+
     return 'OK'
 
 
@@ -254,10 +283,10 @@ def create_project():
     data = request.get_json()
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
-    
+
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
-    
+
     if(not(FB_functions.verify_user(uid_response))):
         return "ERROR: Not such user."
 
@@ -285,7 +314,7 @@ def delete_project(project_id):
     #check for valid token
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
-    
+
     if user_validate(uid_response) == 'OK' and \
             (FB_functions.does_user_admin_of_project(user_id, project_id)):
         return FB_functions.delete_project(project_id)
@@ -371,20 +400,20 @@ def project_update(project_id):
 # Add task assign functionality
 @app.route('/task/<task_id>/update', methods=['PUT'])
 def update_task_status(task_id):
-    
+
     data=request.json
 
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
     FB_functions.update_task(task_id, data["task_status"])
-    
+
     return "OK"
 
 
 @app.route('/task/<task_id>/assign_to_user', methods=['POST'])
 def assign_task_to_users(task_id):
-    
+
     data=request.json
 
     id_token = request.headers["Firebase-Token"]
@@ -460,7 +489,7 @@ def search_for_project(project_id):
     uid_response = get_uid_from(id_token)
 
     project = FB_functions.search_for_project_implementation(project_id)
-    
+
     return json.dumps(project)
 
 
