@@ -13,7 +13,7 @@ from flask import jsonify
 from flask_mail import Mail
 from flask_mail import Message
 # from app import app, mail
-from dev_functions import ADMINS
+from dev_functions import send_mail
 
 import traceback
 import os
@@ -104,14 +104,13 @@ def update_data():
 @app.route('/project/<project_id>/upload_image', methods=['POST'])
 def upload_image_to_project(project_id):
 
-    image = request.files["image"]
     data = request.headers
+    json_data = request.json
 
     try:
 
-        # user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        user_id = 'uid2'
-        filename = image.filename
+        user_id = get_uid_from(data['Firebase-Token']) # add user checking
+        filename = json_data["url"]
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
@@ -598,8 +597,12 @@ def check_deadlines():
 
         if days_between(today, deadline) < 2:
             connected_users = FB_functions.get_members_of_project(project_id)
-            send_mail_notification(connected_users, project['title'])
-            send_push_notification(connected_users, project['title'])
+            send_mail(connected_users, 'project', project['title'])
+            send_push(connected_users, project['title'])
+            print('notification send')
+            print(project['title'], project['id'])
+            print(connected_users)
+            print()
             # print('{} expires in {} days'.format(project_id, days_between(today, deadline)))
 
     for task_id in tasks:
@@ -609,33 +612,17 @@ def check_deadlines():
         deadline = deadline.split()[0]
 
         if days_between(today, deadline) < 2:
-            connected_users = FB_functions.get_users_by_id(FB_functions.get_users_on_task(project_id))
-            send_mail_notification(connected_users, task['id'])
-            send_push_notification(connected_users, task['id'])
+            connected_users = FB_functions.get_users_by_id(FB_functions.get_users_on_task(task_id))
+            send_mail(connected_users, 'task', task_id)
+            send_push(connected_users, task_id)
+            print('notification send')
+            print(task_id)
+            print(connected_users)
+            print()
             # print('{} expires in {} days'.format(task_id, days_between(today, deadline)))
 
 
-def send_mail_notification(connected_users, element_name):
-    
-    from app import app, mail
-
-    mail = Mail(app)
-
-    recipients = []
-
-    for user in connected_users:
-        mail = user['email']
-        recipients.append(mail)
-
-    msg = Message('test', sender=ADMINS[0], recipients=['oleg3601350@gmail.com'])#recipients)
-
-    msg.body = '{} expires in 1 day.'.format(element_name)
-    msg.html = '<b>HTML</b> body'
-    with app.app_context():
-        mail.send(msg)
-
-
-def send_push_notification(connected_users, element_name):
+def send_push(connected_users, element_name):
 
     try:
         for user in connected_users:
