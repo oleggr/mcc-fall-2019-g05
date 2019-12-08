@@ -114,13 +114,7 @@ def upload_image_to_project(project_id):
     try:
 
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        # filepath = urllib.unquote_plus(json_data["url"])
-
-        parsed = urlparse(json_data["url"])
-        filepath = parse_qs(parsed.query)['path']
-        filepath = filepath[1:]
-        print(filepath)
-        
+        filepath = json_data["url"]
         filename = filepath.split('/')[-1]
 
         # Save image locally
@@ -157,12 +151,7 @@ def upload_project_icon(project_id):
 
     try:
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        # filepath = urllib.unquote_plus(json_data["url"])
-        parsed = urlparse(json_data["url"])
-        filepath = parse_qs(parsed.query)['path']
-        filepath = filepath[1:]
-        print(filepath)
-        # filename = json_data["name"]
+        filepath = json_data["url"]
         filename = filepath.split('/')[-1]
 
         # Save image locally
@@ -201,12 +190,8 @@ def upload_user_icon():
 
     try:
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        # filepath = urllib.unquote_plus(json_data["url"])
-        parsed = urlparse(json_data["url"])
-        filepath = parse_qs(parsed.query)['path']
-        filepath = filepath[1:]
-        print(filepath)
-        # filename = json_data["name"]
+
+        filepath = json_data["url"]
         filename = filepath.split('/')[-1]
 
         # Save image locally
@@ -523,11 +508,7 @@ def add_attachments_to_project(project_id):
     try:
 
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        parsed = urlparse(json_data["url"])
-        filepath = parse_qs(parsed.query)['path']
-        filepath = filepath[1:]
-        print(filepath)
-        # filename = json_data['name']
+        filepath = json_data["url"]
         filename = filepath.splt('/')[-1]
 
         fileext = filename.split('.')[-1]
