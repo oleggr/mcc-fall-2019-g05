@@ -57,6 +57,7 @@ class ProjectContentActivity : AppCompatActivity() {
     private val visibleFiles = arrayListOf<Attachment>()
 
     private var projectId = ""
+    private var title = ""
     private var isOwner = false
 
     private enum class Sort {
@@ -105,13 +106,16 @@ class ProjectContentActivity : AppCompatActivity() {
         val mUser = FirebaseAuth.getInstance().currentUser ?: finish()
 
         projectId = this.intent.getStringExtra("projectId")
+        title = this.intent.getStringExtra("title")
+
+        System.err.println("IN1 " + projectId)
         isOwner = this.intent.getBooleanExtra("isOwner", false)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toolbar.inflateMenu(R.menu.project_content_general)
-        toolbar.setTitle(projectId)
+        toolbar.setTitle(title)
         setSupportActionBar(toolbar)
 
-        val taskListAdapter = TaskListAdapter()
+        val taskListAdapter = TaskListAdapter(projectId)
         taskListAdapter.setItems(visibleTasks)
         val taskListView = findViewById<ListView>(R.id.taskListView)
         taskListView.adapter = taskListAdapter
@@ -169,16 +173,21 @@ class ProjectContentActivity : AppCompatActivity() {
     fun attachment(v: View) {
         val popupMenu: PopupMenu = PopupMenu(this,fab)
         popupMenu.menuInflater.inflate(R.menu.attachment, popupMenu.menu)
+        if (!isOwner) {
+            popupMenu.menu.getItem(1).isVisible = false
+        }
         popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
             when(item.itemId) {
                 R.id.action_user -> {
                     val intent = Intent(this, AddUserActivity::class.java)
                     intent.putExtra("projectId", projectId)
+                    intent.putExtra("title", title)
                     startActivity(intent)
                 }
                 R.id.action_task -> {
                     val intent = Intent(this, AddTasksToAProjectActivity::class.java)
                     intent.putExtra("projectId", projectId)
+                    intent.putExtra("title", title)
                     intent.putExtra("isOwner", isOwner)
                     startActivity(intent)
                 }

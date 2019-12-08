@@ -106,7 +106,7 @@ class CreateAProjectActivity : AppCompatActivity() {
     }
 
     private fun updateDateInView() {
-        val myFormat = "MM/dd/yyyy"
+        val myFormat = "dd/MM/yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.US)
         textview_date!!.text = sdf.format(cal.getTime())
     }

@@ -39,7 +39,10 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
     var button_date: Button? = null
     var textview_date: TextView? = null
     var cal = Calendar.getInstance()
-    var projectId = ""
+    private lateinit var projectId: String
+    private lateinit var title: String
+    var users = ArrayList<ProjectMember>()
+    var chosenUserId = ""
     var isOwner = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,13 +58,41 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         textview_date!!.text = "--/--/----"
 
         projectId = this.intent.getStringExtra("projectId")
+        title = this.intent.getStringExtra("title")
+
         isOwner = this.intent.getBooleanExtra("isOwner", false)
+        chosen.text = ""
 
 
         if (!isOwner) {
             assign_text_view.isVisible = false
             chosen.isVisible = false
         }
+        if (isOwner) {
+            val requester  = Requester(baseContext)
+            requester.httpGet("project/$projectId/members", object: Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Log.d("DDD", "FAIL")
+                    return
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.isSuccessful) {
+                        val resultJson = response.body!!.string()
+                        Log.d("Log", resultJson)
+                        val json = JSONArray(resultJson)
+                        for(i in 0 until json.length()) {
+                            val item = json.getJSONObject(i)
+                            val user = ProjectMember(item)
+                            users.add(user)
+                        }
+                    } else {
+                        return
+                    }
+                }
+            })
+        }
+
 
         val dateSetListener = object : DatePickerDialog.OnDateSetListener {
             override fun onDateSet(view: DatePicker, year: Int, monthOfYear: Int,
@@ -102,42 +133,25 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
 
     }
 
-    fun onClick(v: View) {
-        val requester  = Requester(baseContext)
-        var users = ArrayList<ProjectMember>()
-        requester.httpGet("project/$projectId/members", object: Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d("DDD", "FAIL")
-                return
-            }
 
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val resultJson = response.body!!.string()
-                    Log.d("Log", resultJson)
-                    val json = JSONArray(resultJson)
-                    for(i in 0 until json.length()) {
-                        val item = json.getJSONObject(i)
-                        val user = ProjectMember(item)
-                        users.add(user)
-                    }
-                } else {
-                    return
-                }
-            }
-        })
+
+    fun onClick(v: View) {
+
+        Log.d("users", users.toString())
+        if (users.isEmpty()) {
+            return
+        }
         val assign = PopupMenu(this@AddTasksToAProjectActivity, v)
         for ( user in users) {
-            assign.menu.add(user.name)
-        }
-        assign.menuInflater.inflate(R.menu.attachment, assign.menu)
-        assign.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
-
-            override fun onMenuItemClick(item: MenuItem): Boolean {
-                chosen.text = item.title
-                return true
+            assign.menu.add(user.name).setOnMenuItemClickListener {
+                chosenUserId = user.user_id
+                chosen.text = user.name
+                Log.d("change_assignee ", chosenUserId)
+                true
             }
-        })
+
+        }
+        assign.menuInflater.inflate(R.menu.asigned, assign.menu)
         assign.show()
     }
 
@@ -193,9 +207,11 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         json.put("description",project_description.text.toString())
         val deadline = text_view_date_1.text.toString() + " " + timeTv.text.toString()
         json.put("deadline",deadline)
-        if (isOwner && chosen.text != null) {
-            json.put("assigned_to",chosen.text)
+        if (isOwner && chosenUserId != "") {
+
+            json.put("assignee_id", chosenUserId)
         }
+
 
         requester.httpPost("project/$projectId/tasks/add", json, object: Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -205,9 +221,9 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
-                    Log.d("DDD","OK")
+                    Log.d("DDD","OK" + response.message)
                 } else {
-                    Log.d("DDD","NOT OK")
+                    Log.d("DDD","NOT OK" + response.message)
                     return
                 }
             }
@@ -216,11 +232,13 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         //finish()
         val intent = Intent(this@AddTasksToAProjectActivity, ProjectContentActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.putExtra("projectId", projectId)
+        intent.putExtra("title", title)
         startActivity(intent)
     }
 
     private fun updateDateInView() {
-        val myFormat = "MM/dd/yyyy" // mention the format you need
+        val myFormat = "dd/MM/yyyy" // mention the format you need
         val sdf = SimpleDateFormat(myFormat, Locale.US)
         textview_date!!.text = sdf.format(cal.getTime())
     }

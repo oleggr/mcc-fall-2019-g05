@@ -87,6 +87,8 @@ class Requester(context: Context) {
                         Log.d("token", idToken)
                         val body = RequestBody.create(JSON, json.toString())
 
+                        Log.d("POST", json.toString())
+
                         val request = Request.Builder()
                             .header(X_FIREBASE_TOKEN, idToken!!)
                             .url(baseUrl + url)

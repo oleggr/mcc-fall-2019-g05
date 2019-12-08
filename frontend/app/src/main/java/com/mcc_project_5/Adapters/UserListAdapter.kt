@@ -15,7 +15,7 @@ import com.squareup.picasso.Picasso
 class UserListAdapter() : BaseAdapter() {
     val picasso = Picasso.get()
     private var items: ArrayList<User> = ArrayList()
-    private var currentProjectId = "qwe"
+    private var currentProjectId = ""
 
     constructor(currentProjectId: String) : this() {
         this.currentProjectId = currentProjectId
