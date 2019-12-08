@@ -73,9 +73,11 @@ def user_validate(uid_response, project_id):
 
     #check that user exists
     if(not(FB_functions.verify_user(uid_response))):
+        print(1)
         return "ERROR: Not such user."
 
     if(not(FB_functions.does_user_in_project(uid_response, project_id))):
+        print(2)
         return "ERROR: User not in project"
 
     return 'OK'
@@ -352,7 +354,7 @@ def add_members_to_project(project_id):
     uid_response = get_uid_from(id_token)
 
     if user_validate(uid_response, project_id) == 'OK':
-        return FB_functions.add_members_to_project(users_id, project_id)
+        return FB_functions.add_members_to_project(uid_response, project_id)
     else:
         return 'ERROR: Your user not have permissions to do this.'
 
@@ -364,9 +366,9 @@ def get_members_of_project(project_id):
     '''
 
     #check for valid token
-    id_token = request.headers["Firebase-Token"]
-    uid_response = get_uid_from(id_token)
-
+#    id_token = request.headers["Firebase-Token"]
+#    uid_response = get_uid_from(id_token)
+    uid_response= "a291rNkgKHQyUhOa9ZcyISOGqLr1"
     if user_validate(uid_response, project_id) == 'OK':
         members = FB_functions.get_members_of_project(project_id)
         return json.dumps(members)
@@ -436,9 +438,8 @@ def update_task_status(task_id):
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
-    FB_functions.update_task(task_id, data["task_status"])
+    return str(FB_functions.update_task(task_id, data["task_status"], uid_response))
 
-    return "OK"
 
 
 @app.route('/task/<task_id>/assign_to_user', methods=['POST'])
@@ -512,9 +513,10 @@ def get_list_of_projects():
     Returns list of projects with all provided information.
     '''
 
-    id_token = request.headers["Firebase-Token"]
-    uid_response = get_uid_from(id_token)
+#    id_token = request.headers["Firebase-Token"]
+#    uid_response = get_uid_from(id_token)
 
+    uid_response = "a291rNkgKHQyUhOa9ZcyISOGqLr1"
     list_of_projects = FB_functions.get_list_of_projects_implementation(uid_response)
     return json.dumps(list_of_projects)
 
