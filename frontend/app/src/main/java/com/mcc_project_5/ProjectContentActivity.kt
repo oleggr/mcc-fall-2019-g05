@@ -263,7 +263,9 @@ class ProjectContentActivity : AppCompatActivity() {
                     }
                     visibleTasks.clear()
                     visibleTasks.addAll(tasks)
-                    refreshTaskList()
+                    runOnUiThread {
+                        refreshTaskList()
+                    }
                 } else {
                     return
                 }

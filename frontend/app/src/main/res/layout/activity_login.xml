@@ -17,7 +17,7 @@
             android:layout_height="186dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:src="@drawable/logo" />
+            android:src="@drawable/ic_launcher_background" />
 
         <EditText
             android:id="@+id/tv_username"
