@@ -40,6 +40,10 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'jp.wasabeef:picasso-transformations:2.2.1'
+    implementation "androidx.annotation:annotation:1.1.0"
+
+    implementation "com.mikepenz:materialdrawer-nav:8.0.0-a01"
+    implementation "com.mikepenz:materialdrawer:8.0.0-a01"
 }
 
 apply plugin: 'com.google.gms.google-services'

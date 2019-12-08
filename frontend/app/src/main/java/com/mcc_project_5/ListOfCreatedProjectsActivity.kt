@@ -1,9 +1,9 @@
 package com.mcc_project_5
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
-import android.system.Os.remove
 import android.util.Log
 import android.view.MenuInflater
 import android.view.View
@@ -19,6 +19,11 @@ import android.webkit.MimeTypeMap
 import android.widget.*
 import com.mcc_project_5.Adapters.ProjectListAdapter
 import com.mcc_project_5.Tools.Properties
+import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
+import com.mikepenz.materialdrawer.model.interfaces.Nameable
+import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.File
@@ -31,6 +36,8 @@ import kotlin.collections.ArrayList
 
 
 class ListOfCreatedProjectsActivity : AppCompatActivity() {
+
+    private var result: Drawer? = null
 
     private val client = OkHttpClient()
     private val projects = ArrayList<Project>()
@@ -131,6 +138,32 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         toolbar.inflateMenu(R.menu.general)
         toolbar.setTitle("Projects")
         setSupportActionBar(toolbar)
+
+        result = DrawerBuilder()
+            .withActivity(this)
+            .withToolbar(toolbar)
+            .inflateMenu(R.menu.navigation)
+            .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    if (drawerItem is Nameable<*>) {
+                        when (drawerItem.identifier.toInt()) {
+                            R.id.profile -> {
+                                //GOTO PROFILE
+                            }
+                            R.id.projects -> {
+                                //GOTO PROJECTS
+                            }
+                            R.id.logout -> {
+                                //LOGOUT
+                            }
+                        }
+                    }
+
+                    return false
+                }
+            })
+            .withSelectedItemByPosition(1)
+            .build()
 
         /*findViewById<ListView>(R.id.listView).setOnItemClickListener{ _, _, position, _ ->
             val intent = Intent(this@ListOfCreatedProjectsActivity, Main2Activity::class.java)
