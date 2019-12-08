@@ -65,16 +65,16 @@ def image_upload(source_dir='img/', dest_fb_dir='attachments/', filenames=['defa
         return False
 
 
-def file_download(path_to_file='attachments/', filename='default_name'):
+def file_download(filepath='attachments/', filename='default_name'):
     # Enable Storage
     client = storage.Client()
 
     # Reference an existing bucket.
     bucket = client.get_bucket('mcc-fall-2019-g5-258415.appspot.com')
 
-    print(path_to_file)
+    print(filepath)
 
-    tmpBlob = bucket.blob(path_to_file)
+    tmpBlob = bucket.blob(filepath)
     tmpBlob.download_to_filename('tmp/' + filename)
 
 
