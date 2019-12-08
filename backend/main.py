@@ -10,6 +10,10 @@ import flask
 from flask import request
 from flask import send_file
 from flask import jsonify
+from flask_mail import Mail
+from flask_mail import Message
+# from app import app, mail
+from dev_functions import ADMINS
 
 import traceback
 import os
@@ -594,7 +598,8 @@ def check_deadlines():
 
         if days_between(today, deadline) < 2:
             connected_users = FB_functions.get_members_of_project(project_id)
-            send_notification(connected_users, project['title'])
+            send_mail_notification(connected_users, project['title'])
+            send_push_notification(connected_users, project['title'])
             # print('{} expires in {} days'.format(project_id, days_between(today, deadline)))
 
     for task_id in tasks:
@@ -605,15 +610,33 @@ def check_deadlines():
 
         if days_between(today, deadline) < 2:
             connected_users = FB_functions.get_users_by_id(FB_functions.get_users_on_task(project_id))
-            send_notification(connected_users, task['id'])
+            send_mail_notification(connected_users, task['id'])
+            send_push_notification(connected_users, task['id'])
             # print('{} expires in {} days'.format(task_id, days_between(today, deadline)))
 
 
-def send_notification(connected_users, element_name):
+def send_mail_notification(connected_users, element_name):
+    
+    from app import app, mail
 
-    # registration_token = 'eMk-_0csB7k:APA91bGGKsCU60_tuDGAG_vgL5bNWYgbV2Utoh2ERgQFRRDAUMq_oaoFMLWq5R5w5qTZfVIm1WOTDmpRbXQA0KN38jDL6K5ShLYtFECjTLxARAc_jpfTA3w3id3y7kTV8ww3pmDbPY8k'
+    mail = Mail(app)
 
-    # See documentation on defining a message payload.
+    recipients = []
+
+    for user in connected_users:
+        mail = user['email']
+        recipients.append(mail)
+
+    msg = Message('test', sender=ADMINS[0], recipients=['oleg3601350@gmail.com'])#recipients)
+
+    msg.body = '{} expires in 1 day.'.format(element_name)
+    msg.html = '<b>HTML</b> body'
+    with app.app_context():
+        mail.send(msg)
+
+
+def send_push_notification(connected_users, element_name):
+
     try:
         for user in connected_users:
 
