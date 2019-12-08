@@ -41,9 +41,10 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'jp.wasabeef:picasso-transformations:2.2.1'
     implementation "androidx.annotation:annotation:1.1.0"
-
     implementation "com.mikepenz:materialdrawer-nav:8.0.0-a01"
     implementation "com.mikepenz:materialdrawer:8.0.0-a01"
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-messaging:20.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

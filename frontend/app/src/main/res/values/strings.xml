@@ -10,4 +10,18 @@
     <string name="action_gallery">From Gallery</string>
     <string name="action_document">Attach file</string>
     <string name="title_activity_convert_image">Convert_image</string>
+    <string name="dont_have_account">NOT A MEMBER? SIGN UP NOW</string>
+    <string name="login">LOGIN</string>
+    <string name="sign_up">SignUp</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="current_password">Current Password</string>
+    <string name="change_password">Change Password</string>
+    <string name="project_name">Name</string>
+    <string name="project_description">Description</string>
+    <string name="add_keywords">Add keywords</string>
+    <string name="deadline">Deadline</string>
+    <string name="default_notification_channel_id">fcm_default_channel</string>
+    <string name="fcm_message">Notification</string>
 </resources>
