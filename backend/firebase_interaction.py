@@ -10,7 +10,7 @@ def image_upload(path_to_file='attachments/', filename='default_name'):
 
     # Reference an existing bucket.
     bucket = client.get_bucket('mcc-fall-2019-g5-258415.appspot.com')
-    
+
     im = Image.open('img/{}'.format(filename))
     low_q = Image.new('RGB', im.size, (255,255,255))
     low_q.paste(im, (0,0), im)
@@ -45,7 +45,7 @@ def image_download(path_to_file='attachments/', filename='default_name', quality
 
     else:
         tmpBlob = bucket.blob(path_to_file + filename + 'best_quality')
- 
+
     tmpBlob.download_to_filename(filename)
 
 
@@ -98,8 +98,8 @@ def add_projects():
        # if not object_exists('projects', title):
         is_shared = True
         key_words = [
-                {'key_word_1': True}, 
-                {'key_word_2': True}, 
+                {'key_word_1': True},
+                {'key_word_2': True},
                 {'key_word_3': True}
                 ]
         creator_id = 'u001'
@@ -154,6 +154,20 @@ def add_roles():
         roles_ref.push().set({
                     'rolename': rolename,
                     'level': level
+        })
+
+
+def add_favorite_project():
+
+    favorites_ref = ref.child('favorite_project')
+
+    for i in range(0, 3):
+        user_id = 'user' + str(i)
+        project_id = 'lol'
+
+        favorites_ref.push().set({
+                    'user_id': user_id,
+                    'project_id': project_id
         })
 
 

@@ -542,6 +542,22 @@ def send_notification():
     return "This is send_notification method. sends a notification"
 
 
+@app.route('/project/<project_id>/favorite_project', methods=['POST'])
+def add_favorite_project1(project_id):
+    id_token = request.headers["Firebase-Token"]
+    uid_response = get_uid_from(id_token)
+
+    return str(FB_functions.make_favorite(uid_response,project_id))
+
+
+@app.route('/project/<project_id>/delete_favorite_project', methods=['DELETE'])
+def delete_favorite_project1(project_id):
+    id_token = request.headers["Firebase-Token"]
+    uid_response = get_uid_from(id_token)
+
+    return str(FB_functions.make_unfavorite(uid_response,project_id))
+
+
 if __name__ == "__main__":
 
     app.run(host='0.0.0.0', debug = True, port = 8080)

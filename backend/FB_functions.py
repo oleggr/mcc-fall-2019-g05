@@ -232,25 +232,7 @@ def assign_task_to_users(task_id, *user_ids):
 
 
 def get_list_of_projects_implementation(user_id):
-    """
-    task_to_user_ref = ref.child('task_to_user').get()#get list of users and add_projects
-    user_tasks = []
-    response_list = []
 
-    for task_to_user in task_to_user_ref:
-        if(task_to_user_ref[task_to_user]["user_id"] == user_id):
-            user_tasks.append(task_to_user_ref[task_to_user]["task_id"]) #get a list of users tasks
-
-    if(len(user_tasks) > 0):
-        tasks_ref = ref.child('tasks').get()
-
-        for i in tasks_ref:
-            if i in user_tasks:
-                path_str = "tasks/" + i
-                response_list.append({i : ref.child(path_str).get()})
-
-    return response_list
-    """
     projects_ref = ref.child('projects/')
     projects_list = []
     projects = projects_ref.get()
@@ -273,7 +255,7 @@ def get_list_of_projects_implementation(user_id):
         certain_project_item.update({ "deadline" : certain_project["deadline"]})
         certain_project_item.update({ "imageUrl" : certain_project["image_url"]})
         certain_project_item.update({ "lastModified" : certain_project["last_modified"]})
-        certain_project_item.update({ "isFavorite" : False})
+        certain_project_item.update({ "isFavorite" : favorite_project_exists(user_id, project)})
         certain_project_item.update({ "isMediaAvailable" : certain_project["is_media_available"]})
         certain_project_item.update({ "isShared" : certain_project["is_media_available"]})
         certain_project_item.update({ "keywords" : certain_project["key_words"]})
@@ -287,7 +269,7 @@ def get_list_of_projects_implementation(user_id):
             user = users_ref[m]
             members_data_list.append({"id" : m, "imageUrl" : user["image_url"]})
         certain_project_item.update({ "members" : members_data_list})
-#        print(certain_project_item)
+
         response_list.append(certain_project_item)
     return response_list
 
@@ -523,3 +505,38 @@ def update_user(user_id, data):
             path_user_registration_token : data["registration_token"]
         })
     return "ok"
+
+
+def favorite_project_exists(user_id, project_id):
+
+    favorites_ref = ref.child('favorite_project').get()
+
+    for favorite_id in favorites_ref:
+        if (favorites_ref[favorite_id]["user_id"] == user_id and favorites_ref[favorite_id]["project_id"] == project_id):
+            return True
+
+    return False
+
+
+def make_favorite(user_id, project_id):
+    if(favorite_project_exists(user_id, project_id)):
+        return "ERROR: The project is already favorite"
+
+    favorites_ref = ref.child('favorite_project')
+    favorites_ref.push().set({
+                'user_id': user_id,
+                'project_id': project_id
+                })
+    return "OK"
+
+
+def make_unfavorite(user_id, project_id):
+    if(not(favorite_project_exists(user_id, project_id))):
+        return "ERROR: The project is not favorite"
+
+    favorites_ref = ref.child('favorite_project').get()
+    for favorite_id in favorites_ref:
+        if (favorites_ref[favorite_id]["user_id"] == user_id and favorites_ref[favorite_id]["project_id"] == project_id):
+            ref.child('favorite_project').child(favorite_id).delete()
+
+    return "OK"
