@@ -462,7 +462,9 @@ def unique_names(username):
 
 def return_all_users():
     users = ref.child('users').get()
-    response_list = list(users)
+    response_list = []
+    for user_id in users:
+        response_list.append({user_id : users[user_id]})
     return response_list
 
 
