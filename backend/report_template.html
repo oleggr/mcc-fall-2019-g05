@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>{{ title }} </title>
+    </head>
+
+    <body>
+
+        <div class="container">
+            <h1>Report of project {{ project_name }}</h1>
+            Content of this report contain all known data about project.<br>
+            Don't share this file with unauthorized users.<br>
+            <br>
+            Generated at <b>{{ datetime }}</b>
+        </div>
+        
+        <hr>
+
+        <div class="container">
+            <h2>Common information about project</h2>
+
+            Project title: {{ project_info.title }} <br>
+            Project id: {{ project_info.project_id }} <br>
+            Project description: {{ project_info.description }} <br>
+            Creator id: {{ project_info.creator_id }} <br>
+            Key words:<br>
+            key word 1: {{ key_word_1 }} <br>
+            key word 2: {{ key_word_2 }} <br>
+            key word 3: {{ key_word_3 }} <br>
+            Deadline: {{ project_info.deadline }} <br>
+            Is shared: {{ project_info.is_shared }} <br>
+            Image URL: {{ project_info.image_url }} <br>
+            Last modified: {{ project_info.last_modified }} <br>
+            Is media available: {{ project_info.is_media_available }} <br>
+        </div>
+
+        <div class="container">
+            <br>
+            <h2>Information about users in project</h2>
+
+            {% for user in users %}
+
+            Name: {{ user.name }} <br>
+            User ID: {{ user.user_id }} <br>
+            E-mail: {{ user.email }} <br>
+            Photo URL: {{ user.image_url }} <br>
+            Role name: {{ user.role_name }} <br>
+            Role level: {{ user.role_level }} <br>
+            <br>
+
+            {% endfor %}
+
+        </div>
+
+        <div class="container">
+            <h2>Tasks information</h2>
+
+            {% for task in tasks %}
+
+            Task name: {{ task.taskname }} <br>
+            Task ID: {{ task.task_id }} <br>
+            Status: {{ task.status }} <br>
+            Description: {{ task.description }} <br>
+            Creator id: {{ task.creator_id }} <br>
+            Project ID: {{ task.project_id }} <br>
+            Task members:
+
+            {% for member in task.members %}
+            <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;User name: {{ member.name }} <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;User ID: {{ member.user_id }}
+            {% endfor %}
+            <br>
+
+            {% endfor %}
+        </div>
+
+        <div class="container">
+            <h2>Attachments information</h2>
+
+            {% for attachment in attachments %}
+
+            Name of attachment: {{ attachment.name }} <br>
+            Attachment ID: {{ attachment.attachments_id }} <br>
+            Attachment type: {{ attachment.attachment_type }} <br>
+            Attachment URL: {{ attachment.attachment_url }} <br>
+            Creation time: {{ attachment.creation_time }} <br>
+            Project ID: {{ attachment.project_id }} <br>
+            <br>
+            {% endfor %}
+        </div>
+
+        <hr>
+
+        <div class="container">
+            Aalto University. Student project. 2019 <br>
+            With love from Finland
+        </div>
+
+    </body>
+
+</html>
