@@ -2,6 +2,7 @@ package com.mcc_project_5.Adapters
 
 import android.content.Context
 import android.graphics.Paint
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -39,15 +40,17 @@ class TaskListAdapter() : BaseAdapter() {
 
         checkBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-               // title.paintFlags = checkBox.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                title.paintFlags = checkBox.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                taskFinished(requester, items[position].id)
+                checkBox.isEnabled = false
             } else {
                 title.paintFlags = checkBox.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
-                taskFinished(requester, items[position].id)
         }}
 
         if (items[position].status == "completed") {
             checkBox.isChecked = true
             title.paintFlags = checkBox.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+            checkBox.isEnabled = false
         } else {
             checkBox.isChecked = false
             title.paintFlags = checkBox.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
@@ -58,10 +61,9 @@ class TaskListAdapter() : BaseAdapter() {
     }
 
     fun taskFinished(requester: Requester, uid: String) {
-        val json= JSONObject()
-        json.put("id",uid)
+        Log.d("task_id", uid)
 
-        requester.httpPost("task/$projectId/update", json, object: Callback {
+        requester.httpGet("task/$uid/update", object: Callback { //sorry for it
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
                 return

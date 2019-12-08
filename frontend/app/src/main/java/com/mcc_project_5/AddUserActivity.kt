@@ -136,7 +136,7 @@ class AddUserActivity : AppCompatActivity() {
                 checkedUsers.add(it.id)
             }
         }
-        json.put("members",checkedUsers)
+        json.put("members", JSONArray(checkedUsers))
         Log.d("members", checkedUsers.toString())
         requester.httpPost("project/$projectId/members/set", json,  object: Callback {
             override fun onFailure(call: Call, e: IOException) {

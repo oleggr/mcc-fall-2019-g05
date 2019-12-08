@@ -46,6 +46,7 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
     var cal = Calendar.getInstance()
     private lateinit var projectId: String
     private lateinit var title: String
+    var users = ArrayList<ProjectMember>()
     var isOwner = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,6 +70,31 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
             assign_text_view.isVisible = false
             chosen.isVisible = false
         }
+        if (isOwner) {
+            val requester  = Requester(baseContext)
+            requester.httpGet("project/$projectId/members", object: Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    Log.d("DDD", "FAIL")
+                    return
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.isSuccessful) {
+                        val resultJson = response.body!!.string()
+                        Log.d("Log", resultJson)
+                        val json = JSONArray(resultJson)
+                        for(i in 0 until json.length()) {
+                            val item = json.getJSONObject(i)
+                            val user = ProjectMember(item)
+                            users.add(user)
+                        }
+                    } else {
+                        return
+                    }
+                }
+            })
+        }
+
 
         val dateSetListener = object : DatePickerDialog.OnDateSetListener {
             override fun onDateSet(view: DatePicker, year: Int, monthOfYear: Int,
@@ -110,29 +136,8 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
     }
 
     fun onClick(v: View) {
-        val requester  = Requester(baseContext)
-        var users = ArrayList<ProjectMember>()
-        requester.httpGet("project/$projectId/members", object: Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.d("DDD", "FAIL")
-                return
-            }
 
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val resultJson = response.body!!.string()
-                    Log.d("Log", resultJson)
-                    val json = JSONArray(resultJson)
-                    for(i in 0 until json.length()) {
-                        val item = json.getJSONObject(i)
-                        val user = ProjectMember(item)
-                        users.add(user)
-                    }
-                } else {
-                    return
-                }
-            }
-        })
+        Log.d("users", users.toString())
         if (users.isEmpty()) {
             return
         }
