@@ -69,10 +69,7 @@ def user_validate(uid):
     if(not(FB_functions.verify_user(uid_response))):
         return "ERROR: Not such user."
 
-    #check that user in the project
-    user_id = uid_response
-
-    if(not(FB_functions.does_user_in_project(user_id, project_id))):
+    if(not(FB_functions.does_user_in_project(uid_response, project_id))):
         return "ERROR: User not in project"
 
     return 'OK'
@@ -207,11 +204,14 @@ def get_image(path, filename):
 
 @app.route('/user', methods=['GET'])
 def get_user():
+
     #check for valid token
-    id_token = request.headers["id_token"]
+    id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
+
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
+
     #check that user exists
     if(not(FB_functions.verify_user(uid_response))):
         return "ERROR: Not such user."
@@ -221,11 +221,14 @@ def get_user():
 
 @app.route('/users', methods=['GET'])
 def get_all_users():
+
     #check for valid token
-    id_token = request.headers["id_token"]
+    id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
+
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
+
     #check that user exists
     if(not(FB_functions.verify_user(uid_response))):
         return "ERROR: Not such user."
@@ -235,18 +238,21 @@ def get_all_users():
 
 @app.route('/user/update', methods=['PUT'])
 def update_user():
+
     #check for valid token
-    id_token = request.headers["id_token"]
+    id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
+
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
+
     #check that user exists
     if(not(FB_functions.verify_user(uid_response))):
         return "ERROR: Not such user."
-    user_id = uid_response
+
     data = request.get_json()
 
-    return str(FB_functions.update_user(user_id,data))
+    return str(FB_functions.update_user(uid_response,data))
 
 
 @app.route('/user/create', methods=['POST'])
@@ -316,7 +322,7 @@ def delete_project(project_id):
     uid_response = get_uid_from(id_token)
 
     if user_validate(uid_response) == 'OK' and \
-            (FB_functions.does_user_admin_of_project(user_id, project_id)):
+            (FB_functions.does_user_admin_of_project(uid_response, project_id)):
         return FB_functions.delete_project(project_id)
 
     else:
@@ -474,7 +480,7 @@ def get_list_of_projects():
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
-    list_of_projects = FB_functions.get_list_of_projects_implementation(request.args["user_id"])
+    list_of_projects = FB_functions.get_list_of_projects_implementation(uid_response)
 
     return json.dumps(list_of_projects)
 
