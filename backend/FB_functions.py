@@ -285,7 +285,8 @@ def get_list_of_projects_implementation(user_id):
 #        users_ref = ref.child('users/')
 #        for m in members_list:
 #            user = users_ref.child(m).get()
-        certain_project_item.update({ "members" : [{"id":1,"imageUrl":"ololo"}]})
+#            members_data_list.append[{"id" : m, "imageUrl" : user["image_url"]}]
+        certain_project_item.update({ "members" : [{"id" : 1, "imageUrl":"kjdhfhdfgit"}]})
         #print(certain_project_item)
         response_list.append(certain_project_item)
     return response_list
