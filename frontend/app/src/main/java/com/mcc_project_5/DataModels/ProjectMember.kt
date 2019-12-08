@@ -8,6 +8,6 @@ class ProjectMember {
     val imageUrl:String
     constructor(json: JSONObject) {
         this.id = json.getString("id")
-        this.imageUrl = String(Base64.decode(json.getString("imageUrl"), Base64.DEFAULT))
+        this.imageUrl = json.getString("imageUrl")
     }
 }

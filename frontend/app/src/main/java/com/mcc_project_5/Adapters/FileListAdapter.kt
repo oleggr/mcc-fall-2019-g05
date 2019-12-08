@@ -6,12 +6,11 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import com.mcc_project_5.DataModels.File
+import com.mcc_project_5.DataModels.Attachment
 import com.mcc_project_5.R
-import com.squareup.picasso.Picasso
 
 class FileListAdapter : BaseAdapter() {
-    private var items: ArrayList<File> = ArrayList()
+    private var items: ArrayList<Attachment> = ArrayList()
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val context = parent!!.context
         val inflater = LayoutInflater.from(context)
@@ -20,9 +19,9 @@ class FileListAdapter : BaseAdapter() {
         val imageView = rowView.findViewById<ImageView>(R.id.fileImageView)
         val textView = rowView.findViewById<TextView>(R.id.textView)
 
-        textView.text = items[position].title
+        textView.text = items[position].name
 
-        val res = items[position].title.substring(items[position].title.lastIndexOf('.') + 1)
+        val res = items[position].name.substring(items[position].name.lastIndexOf('.') + 1)
         if (res.toLowerCase() == "pdf") {
             imageView.setImageResource(R.drawable.pdf_res)
         } else if (res.toLowerCase() == "doc" || res.toLowerCase() == "docx") {
@@ -36,7 +35,7 @@ class FileListAdapter : BaseAdapter() {
         return rowView
     }
 
-    fun setItems(data: ArrayList<File>) {
+    fun setItems(data: ArrayList<Attachment>) {
         items = data
     }
 

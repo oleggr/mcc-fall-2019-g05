@@ -64,7 +64,7 @@ class SignUpActivity : AppCompatActivity() {
 
         requester.httpGetNoToken("user/unique/$username",  object: Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.d("DDD", "FAIL")
+                Log.d("DDD", "FAIL " + e.message)
                 return
             }
 
@@ -105,7 +105,7 @@ class SignUpActivity : AppCompatActivity() {
                             val json= JSONObject()
                             json.put("name",tv_username.text.toString())
                             json.put("email",tv_email.text.toString())
-                            requester.httpPost("users/create_user", json,  object: Callback {
+                            requester.httpPost("user/create", json,  object: Callback {
                                 override fun onFailure(call: Call, e: IOException) {
                                     Log.d("DDD", "FAIL")
                                     return
@@ -114,18 +114,25 @@ class SignUpActivity : AppCompatActivity() {
                                 override fun onResponse(call: Call, response: Response) {
                                     if (response.isSuccessful) {
                                         Log.d("DDD","OK")
+                                        this@SignUpActivity.startActivity(Intent(this@SignUpActivity, ListOfCreatedProjectsActivity::class.java))
+                                        this@SignUpActivity.finish()
                                     } else {
-                                        Log.d("DDD","NOT OK")
+                                        Log.d("DDD","NOT OK " + response.message)
+                                        runOnUiThread {
+                                            Toast.makeText(
+                                                baseContext, "Sign Up failed. Try again later.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                         return
                                     }
                                 }
+
                             })
-                            startActivity(Intent(this, ListOfCreatedProjectsActivity::class.java))
-                            finish()
                         }
                     }
-                val intent = Intent(this, ListOfCreatedProjectsActivity::class.java)
-                startActivity(intent)
+                //val intent = Intent(this, ListOfCreatedProjectsActivity::class.java)
+                //startActivity(intent)
             } else {
                 Toast.makeText(
                     baseContext, "Sign Up failed. Try again later.",
