@@ -237,6 +237,7 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
         intent.putExtra("projectId", projectId)
         intent.putExtra("title", title)
         intent.putExtra("isShared", isShared)
+        intent.putExtra("isOwner", isOwner)
         startActivity(intent)
     }
 
