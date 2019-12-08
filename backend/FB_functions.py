@@ -124,6 +124,9 @@ def add_members_to_project(users_id, project_id):
             name = user['name']
             image_url = user['image_url']
 
+            print(name)
+            print(image_url)
+
             member_ref.push({
                     'user_id': user_id,
                     'name': name,
@@ -131,10 +134,11 @@ def add_members_to_project(users_id, project_id):
                     'role_id': '',
                     'image_url': image_url
             })
-
+        print("ADDED")
         return 'INFO: Members added.'
 
     except:
+        print("ERROR")
         return 'ERROR: Members were not added.'
 
 
