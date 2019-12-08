@@ -110,24 +110,27 @@ def upload_image_to_project(project_id):
     try:
 
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        filename = json_data["url"]
+        filepath = json_data["url"]
+        filename = json_data["name"]
 
         # Save image locally
-        # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-        image.save('img/' + filename)
-        images_names = img_func.image_resize('img/', filename)
+        img_func.image_download(filepath)
+
+        images_names = img_func.image_resize('tmp/', filename)
 
         save_to_fb_dir = 'attachments/' + project_id + '/'
 
-        img_func.image_upload('img/', save_to_fb_dir, images_names)
+        img_func.image_upload('tmp/', save_to_fb_dir, images_names)
 
-        for element in images_names:
-            FB_functions.add_attachment(
-                    project_id,
-                    filename,
-                    save_to_fb_dir + element,
-                    'image')
-            os.remove('img/{}'.format(element))
+        FB_functions.add_attachment(
+                project_id,
+                filename,
+                save_to_fb_dir + images_names[0],
+                'image')
+
+        # delete files from backend
+        for element in images_names[1:]:
+            os.remove('tmp/{}'.format(element))
 
         return 'INFO: Image uploaded.'
 
@@ -139,33 +142,37 @@ def upload_image_to_project(project_id):
 @app.route('/project/<project_id>/set_icon', methods=['POST'])
 def upload_project_icon(project_id):
 
-    image = request.files["image"]
     data = request.headers
+    json_data = request.json
 
     try:
-        user_id = get_uid_from(data['Firebase-Token'])
-        filename = image.filename
+        user_id = get_uid_from(data['Firebase-Token']) # add user checking
+        filepath = json_data["url"]
+        filename = json_data["name"]
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-        image.save('img/' + filename)
-        images_names = img_func.image_resize('img/', filename)
+        img_func.image_download(filepath)
+
+        images_names = img_func.image_resize('tmp/', filename)
 
         save_to_fb_dir = 'attachments/' + project_id + '/icon/'
 
-        img_func.image_upload('img/', save_to_fb_dir, images_names)
+        img_func.image_upload('tmp/', save_to_fb_dir, images_names)
 
         FB_functions.update_project(project_id, 'image_url', save_to_fb_dir)
 
-        for element in images_names:
-            FB_functions.add_attachment(
-                    project_id,
-                    filename,
-                    save_to_fb_dir + element,
-                    'project_icon')
-            os.remove('img/{}'.format(element))
+        FB_functions.add_attachment(
+                project_id,
+                filename,
+                save_to_fb_dir + images_names[0],
+                'icon')
 
-        return 'INFO: Image uploaded.'
+        # delete files from backend
+        for element in images_names[1:]:
+            os.remove('tmp/{}'.format(element))
+
+        return 'INFO: Project icon uploaded.'
 
     except Exception as e:
         return 'ERROR: Project icon was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
@@ -174,25 +181,28 @@ def upload_project_icon(project_id):
 @app.route('/user/set_icon', methods=['POST'])
 def upload_user_icon():
 
-    image = request.files["image"]
     data = request.headers
+    json_data = request.json
 
     try:
-        # user_id = get_uid_from(data['id_token']) # add user checking
-        user_id = get_uid_from(data['Firebase-Token'])
-        filename = image.filename
+        user_id = get_uid_from(data['Firebase-Token']) # add user checking
+        filepath = json_data["url"]
+        filename = json_data["name"]
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-        image.save('img/' + filename)
-        images_names = img_func.image_resize('img/', filename)
+        img_func.image_download(filepath)
+
+        images_names = img_func.image_resize('tmp/', filename)
 
         save_to_fb_dir = 'attachments/' + user_id + '/'
 
-        img_func.image_upload('img/', save_to_fb_dir, images_names)
+        img_func.image_upload('tmp/', save_to_fb_dir, images_names)
 
-        for element in images_names:
-            os.remove('img/{}'.format(element))
+        FB_functions.update_user(user_id, {'image_url': save_to_fb_dir + images_names[0]})
+
+        for element in images_names[1:]:
+            os.remove('tmp/{}'.format(element))
 
         return 'INFO: User icon uploaded.'
 

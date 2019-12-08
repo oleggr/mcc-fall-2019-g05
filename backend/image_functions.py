@@ -38,7 +38,7 @@ def image_resize(path='img/', filename='def_name'):
     img.save(path + mid_quality_name, quality=40)
     img.save(path + def_quality_name, quality=95)
 
-    images_names = [low_quality_name, mid_quality_name, def_quality_name]
+    images_names = [new_filename + '.' + file_format, low_quality_name, mid_quality_name, def_quality_name]
 
     return images_names
 
@@ -65,7 +65,18 @@ def image_upload(source_dir='img/', dest_fb_dir='attachments/', filenames=['defa
         return False
 
 
-def image_download(path_to_file='attachments/', filename='default_name', quality='best_quality'):
+def image_download(path_to_file='attachments/', filename='default_name'):
+    # Enable Storage
+    client = storage.Client()
+
+    # Reference an existing bucket.
+    bucket = client.get_bucket('mcc-fall-2019-g5-258415.appspot.com')
+
+    tmpBlob = bucket.blob(path_to_file + filename)
+    tmpBlob.download_to_filename('tmp/' + filename)
+
+
+def image_download_res(path_to_file='attachments/', filename='default_name', quality='best_quality'):
     # Enable Storage
     client = storage.Client()
 
