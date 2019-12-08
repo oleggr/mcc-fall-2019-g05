@@ -377,6 +377,11 @@ def set_task_to_project(project_id):
         if "assignee_id" not in data:
             data["assignee_id"] = uid_response
 
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        data["createdAt"] = dt_string
+        data["status"] = 'pending'
+
         data=request.args
 
         task_id = FB_functions.add_task_to_project(
@@ -384,8 +389,9 @@ def set_task_to_project(project_id):
                 uid_response,
                 data["assignee_id"],
                 data["description"],
-                data["status"],
-                data["taskname"]
+                data["deadline"],
+                data["createdAt"],
+                data["status"]
         )
 
         return json.dumps(task_id)
