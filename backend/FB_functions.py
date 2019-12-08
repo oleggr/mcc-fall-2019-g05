@@ -386,6 +386,11 @@ def does_user_in_project(user_id, project_id):
         if(member["project_id"] == project_id and member["user_id"] == user_id):
             return True
 
+    project_ref = ref.child("projects").get()
+    for project in project_ref:
+        if( project == project_id and project_ref[project]["creator_id"] == user_id ):
+            return True
+
     return False
 
 
