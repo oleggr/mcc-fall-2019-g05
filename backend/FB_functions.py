@@ -388,6 +388,11 @@ def does_user_admin_of_project(user_id, project_id):
                 if (role == member_role) and (roles_ref[role]["level"] == "admin"):
                     return True
 
+    projects_ref = ref.child("projects")
+    project = projects_ref.child(progect_id).get()
+    if(project["creator_id"] == user_id):
+        return True
+
     return False
 
 
@@ -446,7 +451,9 @@ def return_all_users():
     users = ref.child('users').get()
     response_list = []
     for user_id in users:
-        response_list.append({user_id : users[user_id]})
+        temp_dict = users[user_id]
+        temp_dict.update({"id" : user_id})
+        response_list.append(temp_dict)
     return response_list
 
 
