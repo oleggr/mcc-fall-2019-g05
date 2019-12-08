@@ -569,7 +569,11 @@ def favorite_project_exists(user_id, project_id):
 
 def make_favorite(user_id, project_id):
     if(favorite_project_exists(user_id, project_id)):
-        return "ERROR: The project is already favorite"
+        favorites_ref_2 = ref.child('favorite_project').get()
+        for favorite_id_2 in favorites_ref_2:
+            if (favorites_ref_2[favorite_id_2]["user_id"] == user_id and favorites_ref_2[favorite_id_2]["project_id"] == project_id):
+                ref.child('favorite_project').child(favorite_id_2).delete()
+        return "OK"
 
     favorites_ref = ref.child('favorite_project')
     favorites_ref.push().set({
