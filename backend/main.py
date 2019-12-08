@@ -446,6 +446,17 @@ def get_tasks_of_project(project_id):
     return json.dumps(tasks)
 
 
+@app.route('/project/<project_id>/attachments', methods=['GET'])
+def add_attachments_to_project(project_id):
+
+    id_token = request.headers["Firebase-Token"]
+    uid_response = get_uid_from(id_token)
+
+    list_of_attachments = FB_functions.get_attachments_of_project(project_id)
+    
+    return json.dumps(list_of_attachments)
+
+
 @app.route('/project/<project_id>/attachments/add', methods=['POST'])
 def add_attachments_to_project(project_id):
     return "This is add_attachments_to_project method. returns fails or not"
