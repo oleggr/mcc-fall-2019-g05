@@ -472,7 +472,13 @@ def get_tasks_of_project(project_id):
 
     tasks = FB_functions.get_tasks_of_project(project_id)
 
-    return json.dumps(tasks)
+    res = []
+
+    for task in tasks:
+        if (task['assignee_id'] == uid_response) or (task['creator_id'] == uid_response):
+            res.append(task)
+
+    return json.dumps(res)
 
 
 @app.route('/project/<project_id>/attachments', methods=['GET'])
