@@ -64,7 +64,7 @@ def get_uid_from(id_token):
         return 'ERROR: Authenfication failed.'
 
 
-def user_validate(uid):
+def user_validate(uid_response):
 
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
