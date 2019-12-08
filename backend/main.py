@@ -520,6 +520,7 @@ def send_notification():
     response = messaging.send(message)
     # Response is a message ID string.
     print('Successfully sent message:', response)
+    
     return "This is send_notification method. sends a notification"
 
 
