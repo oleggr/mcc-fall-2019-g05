@@ -72,6 +72,8 @@ def file_download(path_to_file='attachments/', filename='default_name'):
     # Reference an existing bucket.
     bucket = client.get_bucket('mcc-fall-2019-g5-258415.appspot.com')
 
+    print(path_to_file)
+
     tmpBlob = bucket.blob(path_to_file)
     tmpBlob.download_to_filename('tmp/' + filename)
 

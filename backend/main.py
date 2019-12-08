@@ -112,7 +112,7 @@ def upload_image_to_project(project_id):
 
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
         filepath = json_data["url"]
-        filename = json_data["name"]
+        filename = filepath.splt('/')[-1]
 
         # Save image locally
         img_func.file_download(filepath, filename)
@@ -149,7 +149,8 @@ def upload_project_icon(project_id):
     try:
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
         filepath = json_data["url"]
-        filename = json_data["name"]
+        # filename = json_data["name"]
+        filename = filepath.splt('/')[-1]
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
@@ -188,7 +189,8 @@ def upload_user_icon():
     try:
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
         filepath = json_data["url"]
-        filename = json_data["name"]
+        # filename = json_data["name"]
+        filename = filepath.splt('/')[-1]
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
@@ -505,7 +507,8 @@ def add_attachments_to_project(project_id):
 
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
         filepath = json_data['url']
-        filename = json_data['name']
+        # filename = json_data['name']
+        filename = filepath.splt('/')[-1]
 
         fileext = filename.split('.')[-1]
 
