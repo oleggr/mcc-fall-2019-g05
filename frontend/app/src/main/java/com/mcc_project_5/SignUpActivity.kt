@@ -84,10 +84,17 @@ class SignUpActivity : AppCompatActivity() {
                         register(requester)
                     } else {
                         Log.d("DDD","Not valid")
+                        var variants = "This username is taken. You can choose between: "
                         for(i in 0 until json.length()) {
-                            val item = json.getJSONObject(i)
+                            val item = json.getString(i)
                             names.add(item.toString())
+                            variants = variants + item.toString() + ", "
                         }
+                        variants = variants + "..."
+                        runOnUiThread {
+                            possible.text = variants
+                        }
+
                     }
                     return
                 } else {

@@ -58,7 +58,8 @@ class ProjectListAdapter: BaseAdapter() {
                     context.startActivity(intent)
                 }
                 R.id.reportItem ->
-                    reportItem(projectId, requester)
+                    //reportItem(projectId, requester)
+                    Toast.makeText(context, "Project report has its own link", Toast.LENGTH_SHORT).show()
             }
             true
         })
