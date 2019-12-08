@@ -454,6 +454,7 @@ def return_all_users():
     for user_id in users:
         temp_dict = users[user_id]
         temp_dict.update({"id" : user_id})
+        temp_dict.update({"imageUrl" : temp_dict["image_url"]})
         response_list.append(temp_dict)
     return response_list
 
