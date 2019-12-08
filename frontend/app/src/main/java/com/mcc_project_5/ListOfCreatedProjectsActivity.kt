@@ -193,7 +193,7 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.title == "refresh") {
-            loadTemplate()
+            onLoadBtnClick()
         } else if (item.title == "sort") {
             if (sortOrder == SortOrder.DESC) {
                 item.setIcon(R.drawable.ic_sort_reversed_black_24dp)
@@ -236,9 +236,9 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun onLoadBtnClick(view: View) {
+    fun onLoadBtnClick() {
         val requester = Requester(baseContext)
-        requester.httpGet("/getAvailableProjects?userid=%", object:Callback {
+        requester.httpGet("projects", object:Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
                 return
@@ -247,12 +247,15 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     val resultJson = response.body!!.string()
+                    Log.d("DDD", resultJson)
                     val json = JSONArray(resultJson)
                     projects.clear()
                     for(i in 0 until json.length()) {
                         val item = json.getJSONObject(i)
                         projects.add(Project(item))
                         //Dirty hack here, b careful vvv
+                        visibleProjects.clear()
+                        visibleProjects.addAll(projects)
                         runOnUiThread {
                             refreshList()
                         }

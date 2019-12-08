@@ -67,8 +67,8 @@ class SignUpActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
-                    Log.d("DDD",response.body!!.string())
                     val resultJson = response.body!!.string()
+                    Log.d("DDD",resultJson)
                     val json = JSONArray(resultJson)
                     if (json.length() == 0){
                         Log.d("DDD","OK")
