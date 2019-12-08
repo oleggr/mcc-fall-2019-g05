@@ -26,10 +26,15 @@ def send_mail(connected_users, object_name, object_id):
         mail_sender ='mcc.fall.2019.g05@yandex.ru'
         mail_password = 'Q!W@E#r4t5y6'
 
-        subject = 'Your activity is expiring'
-        body = '\nHello!\nYour {} by id {} will expires in 1 day.'.format(object_name, object_id)
+        # body = '\nHello!\nYour {} by id {} will expires in 1 day.'.format(object_name, object_id)
 
-        message  ='Sent from: {}\nSent to:{}\nSubject:{}\n Body:{}'.format(mail_sender, mail_receiver, subject, body)
+        message = """\
+Subject: Your activity is expiring
+
+Hello!
+Your {} by id {} will expires in 1 day""".format(object_name, object_id)
+
+        # message  ='Sent from: {}\nSent to:{}\nSubject:{}\n Body:{}'.format(mail_sender, mail_receiver, subject, body)
 
         try:
             # Create a secure SSL context

@@ -599,10 +599,6 @@ def check_deadlines():
             connected_users = FB_functions.get_members_of_project(project_id)
             send_mail(connected_users, 'project', project['title'])
             send_push(connected_users, project['title'])
-            print('notification send')
-            print(project['title'], project['id'])
-            print(connected_users)
-            print()
             # print('{} expires in {} days'.format(project_id, days_between(today, deadline)))
 
     for task_id in tasks:
@@ -615,10 +611,6 @@ def check_deadlines():
             connected_users = FB_functions.get_users_by_id(FB_functions.get_users_on_task(task_id))
             send_mail(connected_users, 'task', task_id)
             send_push(connected_users, task_id)
-            print('notification send')
-            print(task_id)
-            print(connected_users)
-            print()
             # print('{} expires in {} days'.format(task_id, days_between(today, deadline)))
 
 
