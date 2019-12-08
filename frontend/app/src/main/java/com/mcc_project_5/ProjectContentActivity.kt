@@ -109,7 +109,7 @@ class ProjectContentActivity : AppCompatActivity() {
         toolbar.setTitle(projectId)
         setSupportActionBar(toolbar)
 
-        val taskListAdapter = TaskListAdapter()
+        val taskListAdapter = TaskListAdapter(projectId)
         taskListAdapter.setItems(visibleTasks)
         val taskListView = findViewById<ListView>(R.id.taskListView)
         taskListView.adapter = taskListAdapter
