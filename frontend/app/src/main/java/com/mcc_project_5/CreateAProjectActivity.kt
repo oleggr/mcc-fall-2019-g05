@@ -145,10 +145,10 @@ class CreateAProjectActivity : AppCompatActivity() {
                 }
             }
         })*/
-        val link = ImageStorage(this).saveImageToStorage((imageView.drawable as BitmapDrawable).bitmap)
-        val originalName = "project_icon"
-        System.err.println(originalName)
-        System.err.println(link)
+        //val link = ImageStorage(this).saveImageToStorage((imageView.drawable as BitmapDrawable).bitmap)
+        //val originalName = "project_icon"
+        //System.err.println(originalName)
+        //System.err.println(link)
         requester.httpPost("project/create", json, object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.d("DDD", "FAIL")
@@ -159,7 +159,7 @@ class CreateAProjectActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val projectId = response.body!!.string()
                     Log.d("DDD","CREATED" + projectId)
-                        requester.httpPost("project/$projectId/set_icon", JSONObject("{\"url\":\"$link\"}"), object: Callback {
+                        /*requester.httpPost("project/$projectId/set_icon", JSONObject("{\"url\":\"$link\"}"), object: Callback {
                             override fun onFailure(call: Call, e: IOException) {
                                 System.err.println("Image FAILED update")
                             }
@@ -168,7 +168,7 @@ class CreateAProjectActivity : AppCompatActivity() {
                                 System.err.println("Image successfully updated")
                             }
 
-                        })
+                        })*/
                 } else {
                     Log.d("DDD","NOT OK")
                     return
