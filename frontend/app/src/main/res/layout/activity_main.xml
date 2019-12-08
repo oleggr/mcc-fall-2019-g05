@@ -16,4 +16,14 @@
         app:titleTextColor="@android:color/white"
         tools:ignore="MissingConstraints"/>
 
+    <ImageView
+        android:id="@+id/tmpImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="#00110F0F"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="69dp"
+        tools:layout_editor_absoluteY="72dp"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

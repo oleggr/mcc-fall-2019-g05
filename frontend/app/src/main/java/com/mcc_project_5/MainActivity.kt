@@ -3,25 +3,35 @@ package com.mcc_project_5
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import com.mikepenz.materialdrawer.Drawer
 import com.mikepenz.materialdrawer.DrawerBuilder
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
 import com.mikepenz.materialdrawer.model.interfaces.Nameable
 import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.storage.FirebaseStorage
 import com.mcc_project_5.Tools.Requester
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
+import android.os.StrictMode
+
+
 
 class MainActivity : AppCompatActivity() {
     private var result: Drawer? = null
@@ -79,7 +89,19 @@ class MainActivity : AppCompatActivity() {
                 })
             })
 
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imageView = findViewById<ImageView>(R.id.tmpImageView)
 
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
+        storageRef.child("attachments/kek.png").stream.addOnCompleteListener {
+            System.err.println(it.exception)
+            System.err.println(it.result!!.totalByteCount)
+            System.err.println(it.result!!.bytesTransferred)
+            val bmp: Bitmap = BitmapFactory.decodeStream(it.result!!.stream)
+            imageView.setImageBitmap(bmp)
+        }
 
 
         setSupportActionBar(toolbar)
