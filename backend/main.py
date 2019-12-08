@@ -167,7 +167,7 @@ def upload_project_icon(project_id):
                 project_id,
                 filename,
                 save_to_fb_dir + images_names[0],
-                'icon')
+                'image')
 
         # delete files from backend
         for element in images_names[1:]:
@@ -504,6 +504,13 @@ def add_attachments_to_project(project_id):
         filepath = json_data['url']
         filename = json_data['name']
 
+        fileext = filename.split('.')[-1]
+
+        if fileext == 'jpg' or fileext =='jpeg' or fileext =='png':
+            filetype = 'image'
+        else:
+            filetype = 'file'
+
         # Save image locally
         img_func.file_download(filepath)
 
@@ -517,7 +524,7 @@ def add_attachments_to_project(project_id):
                 project_id,
                 filename,
                 save_to_fb_dir + new_filename,
-                'file')
+                filetype)
 
         os.remove('tmp/{}'.format(new_filename))
 
