@@ -354,7 +354,7 @@ def add_members_to_project(project_id):
     uid_response = get_uid_from(id_token)
 
     data = request.get_json()
-    print(data)    
+    print(data)
     if user_validate(uid_response, project_id) == 'OK':
         return FB_functions.add_members_to_project(data["members"], project_id)
     else:
@@ -438,11 +438,12 @@ def project_update(project_id):
 def update_task_status(task_id):
 
     data=request.json
+    print(data)
 
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
-    return str(FB_functions.update_task(task_id, data["task_status"], uid_response))
+    return str(FB_functions.update_task(task_id, uid_response))
 
 
 

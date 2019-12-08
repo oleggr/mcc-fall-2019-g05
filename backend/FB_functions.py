@@ -209,7 +209,7 @@ def add_task(project_id, creator_id, assignee_id, description, deadline, created
     return  task_id
 
 
-def update_task(task_id, new_task_status, user_id):
+def update_task(task_id, user_id):
     '''
     Updates the task status by given task ID.
     '''
@@ -223,7 +223,7 @@ def update_task(task_id, new_task_status, user_id):
     path = task_id + '/status'
 
     tasks_ref.update({
-        path : new_task_status
+        path : "completed"
     })
 
     return "OK"
