@@ -1,6 +1,10 @@
 from main import ref, storage
 from dev_functions import randomString
 
+import random
+import string
+
+
 from PIL import Image
 
 
@@ -8,7 +12,7 @@ def randomString(stringLength=10):
     '''
     Generate a random string of fixed length.
     '''
-    letters = string.ascii_lzowercase
+    letters = string.ascii_lowercase
     return ''.join(random.choice(letters) for i in range(stringLength))
 
 

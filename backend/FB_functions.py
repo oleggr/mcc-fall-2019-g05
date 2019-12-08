@@ -312,7 +312,7 @@ def get_members_of_project(project_id):
         member_record = members_dict[member_record_id]
 
         if member_record['project_id'] == project_id:
-            member_record['member_id'] = member_record_id
+            member_record['id'] = member_record_id
             members.append(member_record)
 
     return members
@@ -329,7 +329,7 @@ def get_tasks_of_project(project_id):
         task_record = tasks_dict[task_record_id]
 
         if task_record['project_id'] == project_id:
-            task_record['task_id'] = task_record_id
+            task_record['id'] = task_record_id
             tasks.append(task_record)
 
     return tasks
@@ -358,7 +358,7 @@ def get_attachments_of_project(project_id):
     for attachments_record_id in attachments_dict:
         attachments_record = attachments_dict[attachments_record_id]
         if attachments_record['project_id'] == project_id:
-            attachments_record['attachments_id'] = attachments_record_id
+            attachments_record['id'] = attachments_record_id
             attachments.append(attachments_record)
 
     return attachments

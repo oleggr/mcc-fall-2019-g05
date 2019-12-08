@@ -16,6 +16,9 @@ import traceback
 import os
 import json
 
+import random
+import string
+
 
 # Check if db activating first time
 if not len(firebase_admin._apps):
@@ -100,7 +103,8 @@ def upload_image_to_project(project_id):
 
     try:
 
-        user_id = get_uid_from(data['Firebase-Token']) # add user checking
+        # user_id = get_uid_from(data['Firebase-Token']) # add user checking
+        user_id = 'uid2'
         filename = image.filename
 
         # Save image locally
