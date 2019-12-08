@@ -267,17 +267,25 @@ def get_list_of_projects_implementation(user_id):
     response_list = []
     for project in projects_list:
         certain_project_item = {}
-        certain_project_item.update({ "project_id" : project})
+        certain_project_item.update({ "id" : project})
         certain_project = projects_ref.child(project).get()
         certain_project_item.update({ "title" : certain_project["title"]})
         certain_project_item.update({ "deadline" : certain_project["deadline"]})
-        certain_project_item.update({ "image_url" : certain_project["image_url"]})
-        certain_project_item.update({ "last_modified" : certain_project["last_modified"]})
-        certain_project_item.update({ "is_favorite" : False})
-        certain_project_item.update({ "is_media_available" : certain_project["is_media_available"]})
-        certain_project_item.update({ "is_shared" : certain_project["is_media_available"]})
-        certain_project_item.update({ "key_words" : certain_project["key_words"]})
-        certain_project_item.update({ "members" : {"id":1,"imageUrl":"ololo"}})
+        certain_project_item.update({ "imageUrl" : certain_project["image_url"]})
+        certain_project_item.update({ "lastModified" : certain_project["last_modified"]})
+        certain_project_item.update({ "isFavorite" : False})
+        certain_project_item.update({ "isMediaAvailable" : certain_project["is_media_available"]})
+        certain_project_item.update({ "isShared" : certain_project["is_media_available"]})
+        certain_project_item.update({ "keywords" : certain_project["key_words"]})
+#        members_list = []
+#        for member in members:
+#            if(members[member]["user_id"] != user_id):
+#                members_list.append(members[member]["user_id"])
+#        members_data_list = []
+#        users_ref = ref.child('users/')
+#        for m in members_list:
+#            user = users_ref.child(m).get()
+        certain_project_item.update({ "members" : [{"id":1,"imageUrl":"ololo"}]})
         #print(certain_project_item)
         response_list.append(certain_project_item)
     return response_list
