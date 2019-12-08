@@ -270,7 +270,7 @@ def get_list_of_projects_implementation(user_id):
         certain_project_item.update({ "isOwner" : True if certain_project["creator_id"] == user_id else False })
         members_list = []
         for member in members:
-            if(members[member]["user_id"] != user_id):
+            if(members[member]["user_id"] != user_id and members[member]["project_id"] == project):
                 members_list.append(members[member]["user_id"])
         members_data_list = []
         users_ref = ref.child('users/').get()
