@@ -168,7 +168,8 @@ class ProfileSettingsActivity: AppCompatActivity(){
             val bmp = (imageView.drawable as BitmapDrawable).bitmap
             val storedUrl = ImageStorage(this).saveImageToStorage(bmp)
             val requester = Requester(this)
-            requester.httpPost("user/set_icon", JSONObject("{\"url\":\"$storedUrl\"}") , object: Callback {
+            val originalName = "avatar"
+            requester.httpPost("user/set_icon", JSONObject("{\"name\":\"$originalName\", \"url\":\"$storedUrl\"}") , object: Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     System.err.println(e.message)
                     runOnUiThread {

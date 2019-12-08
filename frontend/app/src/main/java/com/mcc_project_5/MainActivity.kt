@@ -94,8 +94,6 @@ class MainActivity : AppCompatActivity() {
         val storageRef = FirebaseStorage.getInstance().reference
         val imageView = findViewById<ImageView>(R.id.tmpImageView)
 
-        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-        StrictMode.setThreadPolicy(policy)
 
         storageRef.child("attachments/kek.png").stream.addOnCompleteListener {
             System.err.println(it.exception)

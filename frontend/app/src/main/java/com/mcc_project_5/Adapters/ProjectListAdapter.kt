@@ -90,7 +90,7 @@ class ProjectListAdapter: BaseAdapter() {
     fun updateFavorite(position: Int, isFavorite: ImageView) {
         val projectId = items[position].id
         val requester = Requester(context)
-        requester.httpPost("project/$projectId/favorite_project", JSONObject(""), object: Callback {
+        requester.httpPost("project/$projectId/favorite_project", JSONObject("{}"), object: Callback {
             override fun onFailure(call: Call, e: IOException) {
                 System.err.println(e.message)
             }
