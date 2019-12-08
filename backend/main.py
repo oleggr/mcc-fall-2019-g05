@@ -21,7 +21,8 @@ import os
 import json
 import time
 from datetime import datetime
-import urllib.parse
+# import urllib
+from urllib.parse import urlparse
 
 import atexit
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -107,12 +108,14 @@ def update_data():
 def upload_image_to_project(project_id):
 
     data = request.headers
-    json_data = request.json
+    json_data = request.get_json()
 
     try:
 
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        filepath = urllib.unquote_plus(json_data["url"])
+        # filepath = urllib.unquote_plus(json_data["url"])
+        # filepath = urlparse(json_data["url"])
+        filepath = json_data["url"]
         print(filepath)
         filename = filepath.split('/')[-1]
 
@@ -146,11 +149,12 @@ def upload_image_to_project(project_id):
 def upload_project_icon(project_id):
 
     data = request.headers
-    json_data = request.json
+    json_data = request.get_json()
 
     try:
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        filepath = urllib.unquote_plus(json_data["url"])
+        # filepath = urllib.unquote_plus(json_data["url"])
+        filepath = json_data["url"]
         print(filepath)
         # filename = json_data["name"]
         filename = filepath.split('/')[-1]
@@ -187,11 +191,14 @@ def upload_project_icon(project_id):
 def upload_user_icon():
 
     data = request.headers
-    json_data = request.json
+    json_data = request.get_json()
 
     try:
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        filepath = urllib.unquote_plus(json_data["url"])
+        # filepath = urllib.unquote_plus(json_data["url"])
+        filepath = json_data["url"]
+
+
         print(filepath)
         # filename = json_data["name"]
         filename = filepath.split('/')[-1]
@@ -505,12 +512,14 @@ def get_attachments_of_project(project_id):
 def add_attachments_to_project(project_id):
 
     data = request.headers
-    json_data = request.json
+    json_data = request.get_json()
 
     try:
 
         user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        filepath = urllib.unquote_plus(json_data["url"])
+        # filepath = urllib.unquote_plus(json_data["url"])
+        filepath = json_data["url"]
+        
         print(filepath)
         # filename = json_data['name']
         filename = filepath.splt('/')[-1]
