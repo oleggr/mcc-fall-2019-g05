@@ -434,7 +434,7 @@ def project_update(project_id):
 
 
 # Add task assign functionality
-@app.route('/task/<task_id>/update', methods=['PUT'])
+@app.route('/task/<task_id>/update', methods=['GET'])
 def update_task_status(task_id):
 
     data=request.json
