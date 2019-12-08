@@ -233,11 +233,19 @@ def get_all_users():
 
 @app.route('/user/update', methods=['PUT'])
 def update_user():
-
-    user_id = "uid2"
+    #check for valid token
+    id_token = request.headers["id_token"]
+    uid_response = get_uid_from(id_token)
+    if(uid_response == "ERROR: Authenfication failed."):
+        return "ERROR: Authenfication failed."
+    #check that user exists
+    if(not(FB_functions.verify_user(uid_response))):
+        return "ERROR: Not such user."
+    user_id = uid_response
     data = request.get_json()
 
     return str(FB_functions.update_user(user_id,data))
+
 
 
 
