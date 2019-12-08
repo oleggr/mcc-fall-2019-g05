@@ -24,4 +24,6 @@
     <string name="project_description">Description</string>
     <string name="add_keywords">Add keywords</string>
     <string name="deadline">Deadline</string>
+    <string name="default_notification_channel_id">fcm_default_channel</string>
+    <string name="fcm_message">Notification</string>
 </resources>
