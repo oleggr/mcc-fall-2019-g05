@@ -7,6 +7,66 @@
     tools:context=".CreateAProjectActivity">
 
 
+    <EditText
+        android:id="@+id/first"
+        android:layout_width="117dp"
+        android:layout_height="54dp"
+        android:background="@drawable/et_style"
+        android:gravity="center"
+        android:hint="First"
+        android:importantForAutofill="no"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/second"
+        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.96"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/second"
+        android:layout_width="113dp"
+        android:layout_height="52dp"
+        android:background="@drawable/et_style"
+        android:gravity="center"
+        android:hint="Second"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/third"
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintStart_toStartOf="@+id/keys"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.957"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/third"
+        android:layout_width="113dp"
+        android:layout_height="54dp"
+        android:background="@drawable/et_style"
+        android:gravity="center"
+        android:hint="Third"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.912"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.957"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/keys"
+        android:layout_width="134dp"
+        android:layout_height="28dp"
+        android:text="@string/add_keywords"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/second"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_view_date_1"
+        app:layout_constraintVertical_bias="0.733"
+        tools:ignore="MissingConstraints" />
+
     <Button
         android:id="@+id/upload"
         android:layout_width="wrap_content"
@@ -15,46 +75,22 @@
         android:text="Project icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.309"
+        app:layout_constraintVertical_bias="0.269"
         tools:ignore="OnClick" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="251dp"
-        android:layout_height="132dp"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
         android:layout_centerHorizontal="true"
         app:layout_constraintBottom_toTopOf="@+id/upload"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.493"
-        tools:ignore="MissingConstraints" />
-
-    <CheckBox
-        android:id="@+id/checkBoxProject"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/timeTv"
-        app:layout_constraintTop_toBottomOf="@+id/project_description"
-        app:layout_constraintVertical_bias="0.13"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="224dp" />
-
-    <TextView
-        android:id="@+id/group_project"
-        android:layout_width="186dp"
-        android:layout_height="26dp"
-        android:text="Group project"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/text_view_date_1"
-        app:layout_constraintEnd_toStartOf="@+id/checkBoxProject"
-        app:layout_constraintHorizontal_bias="0.763"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.85"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -65,48 +101,53 @@
         android:text="dd-mm-yyyy"
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button_date_1"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintEnd_toStartOf="@+id/timeTv"
+        app:layout_constraintHorizontal_bias="0.22"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.816"
+        app:layout_constraintVertical_bias="0.707"
         tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/button_date_1"
         android:layout_width="34dp"
-        android:layout_height="32dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="24dp"
         android:text="^"
-        app:layout_constraintBottom_toTopOf="@+id/add_keywords"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/keys"
+        app:layout_constraintEnd_toStartOf="@+id/timeTv"
+        app:layout_constraintHorizontal_bias="0.841"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/deadline_text_view"
-        app:layout_constraintVertical_bias="0.567"
+        app:layout_constraintTop_toBottomOf="@+id/project_description"
+        app:layout_constraintVertical_bias="0.642"
         tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/pickTimeBtn"
-        android:layout_width="31dp"
-        android:layout_height="32dp"
+        android:layout_width="30dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="8dp"
         android:text="^"
-        app:layout_constraintBottom_toTopOf="@+id/add_keywords"
+        app:layout_constraintBottom_toTopOf="@+id/keys"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.878"
-        app:layout_constraintStart_toEndOf="@+id/button_date_1"
+        app:layout_constraintHorizontal_bias="0.884"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/project_description"
-        app:layout_constraintVertical_bias="0.732"
+        app:layout_constraintVertical_bias="0.644"
         tools:ignore="MissingConstraints" />
 
     <TextView
         android:id="@+id/timeTv"
         android:layout_width="89dp"
-        android:layout_height="32dp"
+        android:layout_height="35dp"
         android:text="00:00:00"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/add_keywords"
+        app:layout_constraintBottom_toTopOf="@+id/keys"
         app:layout_constraintEnd_toStartOf="@+id/pickTimeBtn"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/project_description"
-        app:layout_constraintVertical_bias="0.732"
+        app:layout_constraintVertical_bias="0.642"
         tools:ignore="MissingConstraints" />
 
     <EditText
@@ -117,7 +158,7 @@
         android:hint="@string/project_name"
         app:layout_constraintBottom_toTopOf="@+id/project_description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.461"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/upload"
         app:layout_constraintVertical_bias="1.0"
@@ -129,12 +170,12 @@
         android:layout_height="39dp"
         android:text="Deadline"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/text_view_date_1"
+        app:layout_constraintBottom_toTopOf="@+id/first"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.106"
+        app:layout_constraintHorizontal_bias="0.564"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintVertical_bias="0.653"
         tools:ignore="MissingConstraints" />
 
     <EditText
@@ -145,21 +186,9 @@
         android:hint="@string/project_description"
         app:layout_constraintBottom_toTopOf="@+id/deadline_text_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.45"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/upload"
-        app:layout_constraintVertical_bias="0.617"
-        tools:ignore="MissingConstraints" />
-
-    <EditText
-        android:id="@+id/add_keywords"
-        android:layout_width="314dp"
-        android:layout_height="45dp"
-        android:hint="@string/add_keywords"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_view_date_1"
+        app:layout_constraintVertical_bias="0.713"
         tools:ignore="MissingConstraints" />
 
 
