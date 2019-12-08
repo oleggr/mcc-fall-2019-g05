@@ -132,7 +132,6 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         toolbar.setTitle("Projects")
         setSupportActionBar(toolbar)
 
-        //delete this when make logout
         auth = FirebaseAuth.getInstance()
 
         result = DrawerBuilder()

@@ -21,6 +21,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.net.toFile
+import com.google.firebase.auth.FirebaseAuth
 import com.mcc_project_5.Adapters.FileListAdapter
 import com.mcc_project_5.Adapters.PictureListAdapter
 import com.mcc_project_5.Adapters.TaskListAdapter
@@ -29,6 +30,10 @@ import com.mcc_project_5.DataModels.Picture
 import com.mcc_project_5.DataModels.Project
 import com.mcc_project_5.DataModels.Task
 import com.mcc_project_5.Tools.Requester
+import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
+import com.mikepenz.materialdrawer.model.interfaces.Nameable
 import kotlinx.android.synthetic.main.project_content_activity.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -41,6 +46,10 @@ import java.util.*
 import kotlin.Comparator
 
 class ProjectContentActivity : AppCompatActivity() {
+
+    private var result: Drawer? = null
+    private lateinit var auth: FirebaseAuth
+
     private val tasks  =  arrayListOf<Task>()
     private val visibleTasks = arrayListOf<Task>()
 
@@ -127,11 +136,45 @@ class ProjectContentActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.tasks).performClick()
 
+        auth = FirebaseAuth.getInstance()
+        result = DrawerBuilder()
+            .withActivity(this)
+            .withToolbar(toolbar)
+            .inflateMenu(R.menu.navigation)
+            .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    if (drawerItem is Nameable<*>) {
+                        when (drawerItem.identifier.toInt()) {
+                            R.id.profile -> {
+                                val intent = Intent(this@ProjectContentActivity, ProfileSettingsActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                            }
+                            R.id.projects -> {
+                                val intent = Intent(this@ProjectContentActivity, ListOfCreatedProjectsActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                            }
+                            R.id.logout -> {
+                                auth.signOut()
+                                val intent = Intent(this@ProjectContentActivity, LoginActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                            }
+                        }
+                    }
+
+                    return false
+                }
+            })
+            .withSelectedItemByPosition(1)
+            .build()
+
     }
 
     fun attachment(v: View) {
         val popupMenu: PopupMenu = PopupMenu(this,fab)
-        popupMenu.menuInflater.inflate(R.layout.attachment, popupMenu.menu)
+        popupMenu.menuInflater.inflate(R.menu.attachment, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item ->
             when(item.itemId) {
                 R.id.action_user -> {
