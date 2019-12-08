@@ -129,19 +129,19 @@ class AddTasksToAProjectActivity : AppCompatActivity() {
                 }
             }
         })
-        val menu = PopupMenu(this@AddTasksToAProjectActivity, v)
+        val assign = PopupMenu(this@AddTasksToAProjectActivity, v)
         for ( user in users) {
-            menu.menu.add(user.name)
+            assign.menu.add(user.name)
         }
-        menu.menuInflater.inflate(R.menu.attachment, menu.menu)
-        menu.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
+        assign.menuInflater.inflate(R.menu.attachment, assign.menu)
+        assign.setOnMenuItemClickListener(object : PopupMenu.OnMenuItemClickListener {
 
             override fun onMenuItemClick(item: MenuItem): Boolean {
                 chosen.text = item.title
                 return true
             }
         })
-        menu.show()
+        assign.show()
     }
 
     fun selectImage(v: View) {
