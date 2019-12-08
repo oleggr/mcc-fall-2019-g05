@@ -1,7 +1,9 @@
 package com.mcc_project_5
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.util.Patterns
 import android.view.View
@@ -23,13 +25,14 @@ class SignUpActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     var names = arrayListOf<String>()
+    private val GALLERY = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
         auth = FirebaseAuth.getInstance()
 
-
+        imageView.setOnClickListener { choosePhotoFromGallary()}
     }
 
     fun signUpUser(v: View) {
@@ -130,4 +133,18 @@ class SignUpActivity : AppCompatActivity() {
                 ).show()
             }
         }
+
+    private fun choosePhotoFromGallary() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        startActivityForResult(intent, GALLERY)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            imageView.setImageURI(data!!.data)
+
+        }
+    }
 }

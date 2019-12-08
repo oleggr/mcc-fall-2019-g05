@@ -74,6 +74,7 @@
                 android:layout_height="wrap_content"
                 android:autofillHints=""
                 android:hint="Current Password"
+                android:inputType="textPassword"
                 tools:ignore="MissingConstraints" />
 
             <EditText
@@ -82,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:autofillHints=""
                 android:hint="New Password"
+                android:inputType="textPassword"
                 tools:ignore="MissingConstraints" />
 
             <EditText
@@ -90,6 +92,7 @@
                 android:layout_height="wrap_content"
                 android:autofillHints=""
                 android:hint="Confirm Password"
+                android:inputType="textPassword"
                 tools:ignore="MissingConstraints" />
 
             <Button
