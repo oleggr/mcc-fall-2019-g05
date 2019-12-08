@@ -119,7 +119,7 @@ def add_members_to_project(users_id, project_id):
     try:
 
         for user_id in users_id:
-            user = users_ref.child(user_id)
+            user = users_ref.child(user_id).get()
 
             name = user['name']
             image_url = user['image_url']
