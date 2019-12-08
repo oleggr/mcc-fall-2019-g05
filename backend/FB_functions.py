@@ -298,6 +298,7 @@ def get_members_of_project(project_id):
 
         if member_record['project_id'] == project_id:
             member_record['id'] = member_record_id
+            member_record.update({"imageUrl" : member_record["image_url"]})
             members.append(member_record)
 
     return members
