@@ -110,12 +110,13 @@ class CreateAProjectActivity : AppCompatActivity() {
     fun createProject(v: View) {
         var requester = Requester(baseContext)
         val json= JSONObject()
-        json.put("name",project_name.text.toString())
+        json.put("title",project_name.text.toString())
         json.put("description",project_description.text.toString())
-        json.put("is_shared",checkBoxProject.text.toString())
+        json.put("is_shared",checkBoxProject.isChecked)
         val deadline = text_view_date_1.text.toString() + " " + timeTv.text.toString()
         json.put("deadline",deadline)
-        json.put("keywords",add_keywords.text.toString())
+        json.put("key_words",add_keywords.text.toString())
+
         /*var file_uri = imageView.getTag().toString()
         val extension = MimeTypeMap.getFileExtensionFromUrl(file_uri.toString())
         val ext = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
