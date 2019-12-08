@@ -64,7 +64,7 @@ def get_uid_from(id_token):
         return 'ERROR: Authenfication failed.'
 
 
-def user_validate(uid_response):
+def user_validate(uid_response, project_id):
 
     if(uid_response == "ERROR: Authenfication failed."):
         return "ERROR: Authenfication failed."
@@ -326,7 +326,7 @@ def delete_project(project_id):
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
-    if user_validate(uid_response) == 'OK' and \
+    if user_validate(uid_response, project_id) == 'OK' and \
             (FB_functions.does_user_admin_of_project(uid_response, project_id)):
         return FB_functions.delete_project(project_id)
 
@@ -342,7 +342,7 @@ def add_members_to_project(project_id):
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
-    if user_validate(uid_response) == 'OK':
+    if user_validate(uid_response, project_id) == 'OK':
         return FB_functions.add_members_to_project(users_id, project_id)
     else:
         return 'ERROR: Your user not have permissions to do this.'
@@ -358,7 +358,7 @@ def get_members_of_project(project_id):
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
-    if user_validate(uid_response) == 'OK':
+    if user_validate(uid_response, project_id) == 'OK':
         members = FB_functions.get_members_of_project(project_id)
         return json.dumps(members)
     else:
@@ -372,7 +372,7 @@ def set_task_to_project(project_id):
     id_token = request.headers["Firebase-Token"]
     uid_response = get_uid_from(id_token)
 
-    if user_validate(uid_response) == 'OK':
+    if user_validate(uid_response, project_id) == 'OK':
 
         data=request.args
         task_id = FB_functions.add_task_to_project(
