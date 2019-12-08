@@ -17,20 +17,26 @@ import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.mcc_project_5.Adapters.ProjectListAdapter
 import com.mcc_project_5.Tools.Requester
+import com.mikepenz.materialdrawer.Drawer
+import com.mikepenz.materialdrawer.DrawerBuilder
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem
+import com.mikepenz.materialdrawer.model.interfaces.Nameable
 import kotlinx.android.synthetic.main.list_of_created_projects_activity.*
 import java.util.*
 import kotlin.Comparator
 import kotlin.collections.ArrayList
 
 
+
+
 class ListOfCreatedProjectsActivity : AppCompatActivity() {
+
+    private var result: Drawer? = null
 
     private val projects = ArrayList<Project>()
     private val visibleProjects = ArrayList<Project>()
     private var lastClicked = 0
     private var sortOrder = SortOrder.DESC
-
-    //delete this when make logout
     private lateinit var auth: FirebaseAuth
 
     private enum class Sort {
@@ -129,6 +135,37 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         //delete this when make logout
         auth = FirebaseAuth.getInstance()
 
+        result = DrawerBuilder()
+            .withActivity(this)
+            .withToolbar(toolbar)
+            .inflateMenu(R.menu.navigation)
+            .withOnDrawerItemClickListener(object : Drawer.OnDrawerItemClickListener {
+                override fun onItemClick(view: View?, position: Int, drawerItem: IDrawerItem<*>): Boolean {
+                    if (drawerItem is Nameable<*>) {
+                        when (drawerItem.identifier.toInt()) {
+                            R.id.profile -> {
+                                //GOTO PROFILE
+                            }
+                            R.id.projects -> {
+                                val intent = Intent(this@ListOfCreatedProjectsActivity, ListOfCreatedProjectsActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                            }
+                            R.id.logout -> {
+                                auth.signOut()
+                                val intent = Intent(this@ListOfCreatedProjectsActivity, LoginActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                startActivity(intent)
+                            }
+                        }
+                    }
+
+                    return false
+                }
+            })
+            .withSelectedItemByPosition(1)
+            .build()
+
         /*findViewById<ListView>(R.id.listView).setOnItemClickListener{ _, _, position, _ ->
             val intent = Intent(this@ListOfCreatedProjectsActivity, Main2Activity::class.java)
             val item = photoList[position]
@@ -147,13 +184,6 @@ class ListOfCreatedProjectsActivity : AppCompatActivity() {
         }
 
         this.byTime.performClick()
-
-        toolbar.setOnClickListener{
-            auth.signOut()
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-
-        }
     }
 
 
