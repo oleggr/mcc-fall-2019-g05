@@ -14,6 +14,7 @@ from flask_mail import Mail
 from flask_mail import Message
 # from app import app, mail
 from dev_functions import send_mail
+from dev_functions import randomString
 
 import traceback
 import os
@@ -62,11 +63,9 @@ def get_uid_from(id_token):
     try:
         decoded_token = auth.verify_id_token(id_token)
         uid = decoded_token['uid']
-
         return uid
 
     except:
-
         return 'ERROR: Authenfication failed.'
 
 
@@ -114,7 +113,7 @@ def upload_image_to_project(project_id):
         filename = json_data["name"]
 
         # Save image locally
-        img_func.image_download(filepath)
+        img_func.file_download(filepath)
 
         images_names = img_func.image_resize('tmp/', filename)
 
@@ -152,7 +151,7 @@ def upload_project_icon(project_id):
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-        img_func.image_download(filepath)
+        img_func.file_download(filepath)
 
         images_names = img_func.image_resize('tmp/', filename)
 
@@ -191,7 +190,7 @@ def upload_user_icon():
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-        img_func.image_download(filepath)
+        img_func.file_download(filepath)
 
         images_names = img_func.image_resize('tmp/', filename)
 
@@ -208,18 +207,6 @@ def upload_user_icon():
 
     except Exception as e:
         return 'ERROR: Project icon was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
-
-
-# TODO: Fix this function
-@app.route('/get_image/<path>/<filename>', methods=['GET'])
-def get_image(path, filename):
-
-    data = request.get_json()
-    quality = data['quality']
-
-    img_func.image_download(path + '/', filename, quality)
-
-    return 'INFO::Image downloaded'
 
 
 @app.route('/user', methods=['GET'])
@@ -495,7 +482,37 @@ def get_attachments_of_project(project_id):
 
 @app.route('/project/<project_id>/attachments/add', methods=['POST'])
 def add_attachments_to_project(project_id):
-    return "This is add_attachments_to_project method. returns fails or not"
+
+    data = request.headers
+    json_data = request.json
+
+    try:
+
+        user_id = get_uid_from(data['Firebase-Token']) # add user checking
+        filepath = json_data['url']
+        filename = json_data['name']
+
+        # Save image locally
+        img_func.file_download(filepath)
+
+        new_filename = randomString()
+
+        save_to_fb_dir = 'attachments/' + project_id + '/'
+
+        img_func.file_upload('tmp/', save_to_fb_dir, images_names)
+
+        FB_functions.add_attachment(
+                project_id,
+                filename,
+                save_to_fb_dir + new_filename,
+                'file')
+
+        os.remove('tmp/{}'.format(new_filename))
+
+        return 'INFO: Image uploaded.'
+
+    except Exception as e:
+        return 'ERROR: Image was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
 
 
 @app.route('/project/<project_id>/generate_report')
