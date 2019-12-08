@@ -468,9 +468,16 @@ def return_all_users():
     users = ref.child('users').get()
     response_list = []
     for user_id in users:
+        list_of_projects_user_in = []
         temp_dict = users[user_id]
         temp_dict.update({"id" : user_id})
         temp_dict.update({"imageUrl" : temp_dict["image_url"]})
+
+        members_dict = ref.child('members').get()
+        for member_id in members_dict:
+            if(members_dict[member_id]["user_id"] == user_id):
+                list_of_projects_user_in.append(members_dict[member_id]["project_id"])
+        temp_dict.update({"projects" : list_of_projects_user_in})
         response_list.append(temp_dict)
     return response_list
 
