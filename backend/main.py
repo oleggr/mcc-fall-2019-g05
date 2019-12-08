@@ -395,7 +395,7 @@ def set_task_to_project(project_id):
         data["createdAt"] = dt_string
         data["status"] = 'pending'
 
-        data=request.args
+        #data=request.args
 
         task_id = FB_functions.add_task(
                 project_id,
