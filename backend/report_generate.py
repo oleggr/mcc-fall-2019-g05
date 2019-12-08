@@ -3,7 +3,7 @@ from FB_functions import get_members_of_project, get_tasks_of_project, get_users
 
 from datetime import datetime
 from jinja2 import Environment, FileSystemLoader
-# from weasyprint import HTML
+from weasyprint import HTML
 
 
 def get_data(project_id):
@@ -103,7 +103,7 @@ def generate_pdf(data):
     html_file.write(html_out)
     html_file.close()
 
-    # HTML(string=html_out).write_pdf(dt_string + '.pdf')
+    HTML(string=html_out).write_pdf(dt_string + '.pdf')
 
     return dt_string
 

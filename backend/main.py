@@ -10,6 +10,11 @@ import flask
 from flask import request
 from flask import send_file
 from flask import jsonify
+from flask_mail import Mail
+from flask_mail import Message
+# from app import app, mail
+from dev_functions import send_mail
+from dev_functions import randomString
 
 import traceback
 import os
@@ -58,11 +63,9 @@ def get_uid_from(id_token):
     try:
         decoded_token = auth.verify_id_token(id_token)
         uid = decoded_token['uid']
-
         return uid
 
     except:
-
         return 'ERROR: Authenfication failed.'
 
 
@@ -102,31 +105,33 @@ def update_data():
 @app.route('/project/<project_id>/upload_image', methods=['POST'])
 def upload_image_to_project(project_id):
 
-    image = request.files["image"]
     data = request.headers
+    json_data = request.json
 
     try:
 
-        # user_id = get_uid_from(data['Firebase-Token']) # add user checking
-        user_id = 'uid2'
-        filename = image.filename
+        user_id = get_uid_from(data['Firebase-Token']) # add user checking
+        filepath = json_data["url"]
+        filename = json_data["name"]
 
         # Save image locally
-        # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-        image.save('img/' + filename)
-        images_names = img_func.image_resize('img/', filename)
+        img_func.file_download(filepath)
+
+        images_names = img_func.image_resize('tmp/', filename)
 
         save_to_fb_dir = 'attachments/' + project_id + '/'
 
-        img_func.image_upload('img/', save_to_fb_dir, images_names)
+        img_func.image_upload('tmp/', save_to_fb_dir, images_names)
 
-        for element in images_names:
-            FB_functions.add_attachment(
-                    project_id,
-                    filename,
-                    save_to_fb_dir + element,
-                    'image')
-            os.remove('img/{}'.format(element))
+        FB_functions.add_attachment(
+                project_id,
+                filename,
+                save_to_fb_dir + images_names[0],
+                'image')
+
+        # delete files from backend
+        for element in images_names[1:]:
+            os.remove('tmp/{}'.format(element))
 
         return 'INFO: Image uploaded.'
 
@@ -138,33 +143,37 @@ def upload_image_to_project(project_id):
 @app.route('/project/<project_id>/set_icon', methods=['POST'])
 def upload_project_icon(project_id):
 
-    image = request.files["image"]
     data = request.headers
+    json_data = request.json
 
     try:
-        user_id = get_uid_from(data['Firebase-Token'])
-        filename = image.filename
+        user_id = get_uid_from(data['Firebase-Token']) # add user checking
+        filepath = json_data["url"]
+        filename = json_data["name"]
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-        image.save('img/' + filename)
-        images_names = img_func.image_resize('img/', filename)
+        img_func.file_download(filepath)
+
+        images_names = img_func.image_resize('tmp/', filename)
 
         save_to_fb_dir = 'attachments/' + project_id + '/icon/'
 
-        img_func.image_upload('img/', save_to_fb_dir, images_names)
+        img_func.image_upload('tmp/', save_to_fb_dir, images_names)
 
         FB_functions.update_project(project_id, 'image_url', save_to_fb_dir)
 
-        for element in images_names:
-            FB_functions.add_attachment(
-                    project_id,
-                    filename,
-                    save_to_fb_dir + element,
-                    'project_icon')
-            os.remove('img/{}'.format(element))
+        FB_functions.add_attachment(
+                project_id,
+                filename,
+                save_to_fb_dir + images_names[0],
+                'icon')
 
-        return 'INFO: Image uploaded.'
+        # delete files from backend
+        for element in images_names[1:]:
+            os.remove('tmp/{}'.format(element))
+
+        return 'INFO: Project icon uploaded.'
 
     except Exception as e:
         return 'ERROR: Project icon was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
@@ -173,42 +182,33 @@ def upload_project_icon(project_id):
 @app.route('/user/set_icon', methods=['POST'])
 def upload_user_icon():
 
-    image = request.files["image"]
     data = request.headers
+    json_data = request.json
 
     try:
-        # user_id = get_uid_from(data['id_token']) # add user checking
-        user_id = get_uid_from(data['Firebase-Token'])
-        filename = image.filename
+        user_id = get_uid_from(data['Firebase-Token']) # add user checking
+        filepath = json_data["url"]
+        filename = json_data["name"]
 
         # Save image locally
         # image.save(os.path.join(app.config["IMAGE_UPLOADS"], filename))
-        image.save('img/' + filename)
-        images_names = img_func.image_resize('img/', filename)
+        img_func.file_download(filepath)
+
+        images_names = img_func.image_resize('tmp/', filename)
 
         save_to_fb_dir = 'attachments/' + user_id + '/'
 
-        img_func.image_upload('img/', save_to_fb_dir, images_names)
+        img_func.image_upload('tmp/', save_to_fb_dir, images_names)
 
-        for element in images_names:
-            os.remove('img/{}'.format(element))
+        FB_functions.update_user(user_id, {'image_url': save_to_fb_dir + images_names[0]})
+
+        for element in images_names[1:]:
+            os.remove('tmp/{}'.format(element))
 
         return 'INFO: User icon uploaded.'
 
     except Exception as e:
         return 'ERROR: Project icon was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
-
-
-# TODO: Fix this function
-@app.route('/get_image/<path>/<filename>', methods=['GET'])
-def get_image(path, filename):
-
-    data = request.get_json()
-    quality = data['quality']
-
-    img_func.image_download(path + '/', filename, quality)
-
-    return 'INFO::Image downloaded'
 
 
 @app.route('/user', methods=['GET'])
@@ -488,7 +488,37 @@ def get_attachments_of_project(project_id):
 
 @app.route('/project/<project_id>/attachments/add', methods=['POST'])
 def add_attachments_to_project(project_id):
-    return "This is add_attachments_to_project method. returns fails or not"
+
+    data = request.headers
+    json_data = request.json
+
+    try:
+
+        user_id = get_uid_from(data['Firebase-Token']) # add user checking
+        filepath = json_data['url']
+        filename = json_data['name']
+
+        # Save image locally
+        img_func.file_download(filepath)
+
+        new_filename = randomString()
+
+        save_to_fb_dir = 'attachments/' + project_id + '/'
+
+        img_func.file_upload('tmp/', save_to_fb_dir, images_names)
+
+        FB_functions.add_attachment(
+                project_id,
+                filename,
+                save_to_fb_dir + new_filename,
+                'file')
+
+        os.remove('tmp/{}'.format(new_filename))
+
+        return 'INFO: Image uploaded.'
+
+    except Exception as e:
+        return 'ERROR: Image was not uploaded.\nException: {}\n{}'.format(e, traceback.print_exc())
 
 
 @app.route('/project/<project_id>/generate_report')
@@ -545,7 +575,7 @@ def start_notification_scheduler():
     data = request.json
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=check_deadlines, trigger="interval", seconds=30)
+    scheduler.add_job(func=check_deadlines, trigger="interval", seconds=43200)
     scheduler.start()
 
     # Shut down the scheduler when exiting the app
@@ -600,7 +630,8 @@ def check_deadlines():
 
         if days_between(today, deadline) < 2:
             connected_users = FB_functions.get_members_of_project(project_id)
-            send_notification(connected_users, project['title'])
+            send_mail(connected_users, 'project', project['title'])
+            send_push(connected_users, project['title'])
             # print('{} expires in {} days'.format(project_id, days_between(today, deadline)))
 
     for task_id in tasks:
@@ -610,16 +641,14 @@ def check_deadlines():
         deadline = deadline.split()[0]
 
         if days_between(today, deadline) < 2:
-            connected_users = FB_functions.get_users_by_id(FB_functions.get_users_on_task(project_id))
-            send_notification(connected_users, task['id'])
+            connected_users = FB_functions.get_users_by_id(FB_functions.get_users_on_task(task_id))
+            send_mail(connected_users, 'task', task_id)
+            send_push(connected_users, task_id)
             # print('{} expires in {} days'.format(task_id, days_between(today, deadline)))
 
 
-def send_notification(connected_users, element_name):
+def send_push(connected_users, element_name):
 
-    # registration_token = 'eMk-_0csB7k:APA91bGGKsCU60_tuDGAG_vgL5bNWYgbV2Utoh2ERgQFRRDAUMq_oaoFMLWq5R5w5qTZfVIm1WOTDmpRbXQA0KN38jDL6K5ShLYtFECjTLxARAc_jpfTA3w3id3y7kTV8ww3pmDbPY8k'
-
-    # See documentation on defining a message payload.
     try:
         for user in connected_users:
 
